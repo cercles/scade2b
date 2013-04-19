@@ -1,6 +1,6 @@
 
 *~
-_build
+src/_build
 *#*
-tests
-cercles
+src/tests
+src/cercles
