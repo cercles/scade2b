@@ -1,0 +1,28 @@
+
+|-------------------------------------------------------|
+|	Traducteur Scade/Lustre vers Machine B		|
+|-------------------------------------------------------|
+
+Traducteur réalisé dans le cadre du projet ANR.
+
+1. LE FRONTEND
+
+Le frontend est basé pour le moment sur un ensemble réduit de Lustre. Il sera par la suite remplacé par une sortie de SCADE (format ???).
+
+2. L'AST
+
+On cherche à représenter un node de Lustre. 
+
+3. MIDLEEND
+
+3.1) Atomisation des opérations
+3.2) Tri Topologique
+
+4. BACKEND
+
+La sortie est un couple de machines B signature/implémentation .
+
+
+
+
+
