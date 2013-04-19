@@ -1,0 +1,137 @@
+%{
+  (* Florian Thibord  --  Projet CERCLES *)
+
+  open Ast_repr
+
+
+(* (real|int)*(real|int)->real *)
+(* int*int->int *)
+(* int*int->int *)
+
+%}
+
+%token NODE RETURNS LET TEL VAR CONST ASSERT
+%token IF THEN ELSE
+%token PRE FBY 
+%token PLUS MINUS MULT DIV DIV_INT MOD 
+%token EQ NEQ INF INFEQ SUP SUPEQ
+%token AND OR NOT XOR SHARP
+%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOTDOT CARET CONCAT  /* these three last are array ops */
+%token T_BOOL T_INT T_REAL
+%token <bool> BOOL
+%token <int> INT
+%token <float> REAL
+%token <string> IDENT
+%token EOF
+
+%nonassoc THEN
+%nonassoc ELSE
+%right FBY
+%left OR
+%left AND
+%left COMP EQUAL NEQ
+%left CARET CONCAT
+%left PLUS MINUS    
+%left STAR SLASH DIV DIV_INT MOD
+%nonassoc uminus
+%nonassoc NOT PRE
+
+%start prog
+%type <Ast_repr.prog> prog
+
+%%
+
+prog : 
+ | node_list EOF { $1 }
+;
+
+node_list :
+ |   { [] }
+ | node node_list { $1::$2 }
+;
+
+node :
+ | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL 
+   var_decl 
+   LET eq_list TEL semi_opt
+   { { id = $2; param_in = $4; param_out = $8; vars = $11; eqs = $13; } }
+;
+
+var_decl :
+ |   { [] } 
+ | VAR decl { $2 }
+;
+
+decl :
+ | id_list COLON typ semi_opt { let typ = $3 in
+				List.map (fun id -> (id, typ)) $1 }
+ | id_list COLON typ SEMICOL decl { let typ = $3 in
+				    (List.map (fun id -> (id, typ)) $1) @ $5 }
+;
+
+id_list :
+ | IDENT { [$1] }
+ | IDENT COMMA id_list { $1::$3 }
+;
+
+typ :
+ | T_BOOL { T_Bool }
+ | T_INT { T_Int } 
+ | T_REAL { T_Float }
+;
+
+eq_list :
+ | ASSERT expr SEMICOL { [Assert $2] }
+ | ASSERT expr SEMICOL eq_list { (Assert $2)::$4 }
+ | left_part EQ expr SEMICOL { [Eq ($1, $3)] }
+ | left_part EQ expr SEMICOL eq_list { (Eq ($1, $3))::$5 }
+;
+
+left_part :
+ | IDENT { LP_Ident $1 }
+ | LPAREN IDENT COMMA id_list RPAREN { LP_Tuple ($2::$4) }
+;
+
+expr :
+ | IDENT { E_Ident $1 }
+ | INT { E_Value (Int $1) }
+ | BOOL { E_Value (Bool $1) } 
+ | REAL { E_Value (Float $1) }
+ | expr PLUS expr { E_Bop (Op_add, $1, $3) }
+ | expr MINUS expr { E_Bop (Op_sub, $1, $3) }
+ | expr MULT expr { E_Bop (Op_mul, $1, $3) }
+ | expr DIV expr { E_Bop (Op_div_f, $1, $3) }
+ | expr DIV_INT expr { E_Bop (Op_div, $1, $3) }
+ | expr MOD expr { E_Bop (Op_mod, $1, $3) }
+ | expr EQ expr { E_Bop (Op_eq, $1, $3) }
+ | expr NEQ expr { E_Bop (Op_neq, $1, $3) }
+ | expr INF expr { E_Bop (Op_lt, $1, $3) }
+ | expr INFEQ expr { E_Bop (Op_le, $1, $3) }
+ | expr SUP expr { E_Bop (Op_gt, $1, $3) }
+ | expr SUPEQ expr { E_Bop (Op_ge, $1, $3) }
+ | expr AND expr { E_Bop (Op_and, $1, $3) }
+ | expr OR expr { E_Bop (Op_or, $1, $3) }
+ | expr XOR expr { E_Bop (Op_xor, $1, $3) }
+ | MINUS expr { E_Unop (Op_minus, $2) }
+ | NOT expr { E_Unop (Op_not, $2) }
+ | expr FBY expr { E_Fby ($1, $3) }
+ | PRE expr { E_Pre $2 }
+ | IF expr THEN expr ELSE expr { E_If ($2, $4, $6) }
+ | IDENT LPAREN expr_list RPAREN { E_App ($1, $3) }
+ | LPAREN expr COMMA expr_list RPAREN { E_Tuple ($2::$4) }
+ | LPAREN expr RPAREN { $2 }
+
+/* ajouter sharp */
+;
+
+expr_list:
+ |   { [] }
+ | expr COMMA expr_list { $1::$3 }
+;
+
+semi_opt :
+ |   { () }
+ | SEMICOL { () }
+;
+
+%%

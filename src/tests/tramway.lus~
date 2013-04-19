@@ -1,0 +1,60 @@
+
+include "utils.lus";
+
+node controle(porte_ouverte, demande_porte, en_station, attention_depart:  bool)
+returns(
+        accepter_demande, -- si vrai,  ouverture immédiate
+        porte_demandee, 
+        depart,  -- vrai à l'instant où le tramway quitte une station. 
+        arrive, 
+        depart_imminent, 
+        fermer_porte, ouvrir_porte, porte_ok: bool); --porte_ok = porte_fermee
+-- var accepter_demande, -- si vrai,  ouverture immédiate
+--     porte_demandee, 
+--     depart,  -- vrai à l'instant où le tramway quitte une station. 
+--     depart_imminent
+--     : bool;
+let
+  
+  -- assert uniquement sur les entrées !! 
+  -- propriétés,  à  vérifier via lesar
+  assert not (porte_ouverte and not en_station);
+  assert not (porte_ouverte and porte_ok);
+  assert not (depart and not (pre porte_ok));
+  assert not ( not en_station and attention_depart);
+  
+
+  porte_demandee= if depart then false
+                  else if demande_porte then true
+                       else false -> pre porte_demandee;
+  
+  accepter_demande= if attention_depart then false
+                    else if depart then true
+                         else not depart_imminent -> pre accepter_demande;
+  
+  depart_imminent = if attention_depart then true 
+                    else if depart then false
+                         else false -> pre depart_imminent;
+
+  depart = false -> pre en_station and not en_station;
+  arrive = false -> not (pre en_station) and en_station;
+  -- fermer_porte = if pre fermer_porte and porte_ouverte then true
+  --                else if not porte_ouverte then false
+  --                     else pre fermer_porte;
+  -- 
+  fermer_porte = if depart_imminent and porte_demandee and porte_ouverte then true
+                 else if not porte_ouverte then false
+                      else false -> pre fermer_porte;
+
+  ouvrir_porte = if en_station and porte_demandee then true
+                 else if porte_ouverte then false
+                      else false -> pre ouvrir_porte;
+  
+
+  porte_ok = if arrive then false 
+             else depart_imminent and 
+               ((not porte_demandee) or ( porte_demandee and not porte_ouverte));
+  
+tel
+
+

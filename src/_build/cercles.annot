@@ -1,0 +1,1513 @@
+"cercles.ml" 8 93 97 "cercles.ml" 8 93 102
+type(
+  string
+)
+ident(
+  def usage "cercles.ml" 10 156 156 --
+)
+"cercles.ml" 8 93 105 "cercles.ml" 8 93 114
+type(
+  string
+)
+"cercles.ml" 8 93 114 "cercles.ml" 8 93 115
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"cercles.ml" 8 93 115 "cercles.ml" 8 93 123
+type(
+  string array
+)
+ident(
+  ext_ref Sys.argv
+)
+"cercles.ml" 8 93 125 "cercles.ml" 8 93 126
+type(
+  int
+)
+"cercles.ml" 8 93 115 "cercles.ml" 8 93 127
+type(
+  string
+)
+"cercles.ml" 8 93 127 "cercles.ml" 8 93 128
+type(
+  string -> string -> string
+)
+ident(
+  ext_ref Pervasives.^
+)
+"cercles.ml" 8 93 128 "cercles.ml" 8 93 154
+type(
+  string
+)
+"cercles.ml" 8 93 115 "cercles.ml" 8 93 154
+type(
+  string
+)
+"cercles.ml" 8 93 105 "cercles.ml" 8 93 154
+type(
+  string
+)
+"cercles.ml" 10 156 160 "cercles.ml" 10 156 172
+type(
+  Lexing.position * Lexing.position -> unit
+)
+ident(
+  def handle_error "cercles.ml" 16 410 410 --
+)
+"cercles.ml" 10 156 174 "cercles.ml" 10 156 179
+type(
+  Lexing.position
+)
+ident(
+  def start "cercles.ml" 11 190 192 "cercles.ml" 14 335 408
+)
+"cercles.ml" 10 156 180 "cercles.ml" 10 156 186
+type(
+  Lexing.position
+)
+ident(
+  def finish "cercles.ml" 11 190 192 "cercles.ml" 14 335 408
+)
+"cercles.ml" 10 156 173 "cercles.ml" 10 156 187
+type(
+  Lexing.position * Lexing.position
+)
+"cercles.ml" 11 190 196 "cercles.ml" 11 190 200
+type(
+  int
+)
+"cercles.ml" 11 190 203 "cercles.ml" 11 190 208
+type(
+  Lexing.position
+)
+ident(
+  int_ref start "cercles.ml" 10 156 174 "cercles.ml" 10 156 179
+)
+"cercles.ml" 11 190 203 "cercles.ml" 11 190 217
+type(
+  int
+)
+"cercles.ml" 12 221 227 "cercles.ml" 12 221 237
+type(
+  int
+)
+"cercles.ml" 12 221 240 "cercles.ml" 12 221 245
+type(
+  Lexing.position
+)
+ident(
+  int_ref start "cercles.ml" 10 156 174 "cercles.ml" 10 156 179
+)
+"cercles.ml" 12 221 240 "cercles.ml" 12 221 254
+type(
+  int
+)
+"cercles.ml" 12 221 255 "cercles.ml" 12 221 256
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"cercles.ml" 12 221 257 "cercles.ml" 12 221 262
+type(
+  Lexing.position
+)
+ident(
+  int_ref start "cercles.ml" 10 156 174 "cercles.ml" 10 156 179
+)
+"cercles.ml" 12 221 257 "cercles.ml" 12 221 270
+type(
+  int
+)
+"cercles.ml" 12 221 240 "cercles.ml" 12 221 270
+type(
+  int
+)
+"cercles.ml" 12 221 271 "cercles.ml" 12 221 272
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"cercles.ml" 12 221 273 "cercles.ml" 12 221 274
+type(
+  int
+)
+"cercles.ml" 12 221 240 "cercles.ml" 12 221 274
+type(
+  int
+)
+"cercles.ml" 13 278 284 "cercles.ml" 13 278 293
+type(
+  int
+)
+"cercles.ml" 13 278 296 "cercles.ml" 13 278 302
+type(
+  Lexing.position
+)
+ident(
+  int_ref finish "cercles.ml" 10 156 180 "cercles.ml" 10 156 186
+)
+"cercles.ml" 13 278 296 "cercles.ml" 13 278 311
+type(
+  int
+)
+"cercles.ml" 13 278 312 "cercles.ml" 13 278 313
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.-
+)
+"cercles.ml" 13 278 314 "cercles.ml" 13 278 319
+type(
+  Lexing.position
+)
+ident(
+  int_ref start "cercles.ml" 10 156 174 "cercles.ml" 10 156 179
+)
+"cercles.ml" 13 278 314 "cercles.ml" 13 278 327
+type(
+  int
+)
+"cercles.ml" 13 278 296 "cercles.ml" 13 278 327
+type(
+  int
+)
+"cercles.ml" 13 278 328 "cercles.ml" 13 278 329
+type(
+  int -> int -> int
+)
+ident(
+  ext_ref Pervasives.+
+)
+"cercles.ml" 13 278 330 "cercles.ml" 13 278 331
+type(
+  int
+)
+"cercles.ml" 13 278 296 "cercles.ml" 13 278 331
+type(
+  int
+)
+"cercles.ml" 14 335 337 "cercles.ml" 14 335 351
+type(
+  (int -> int -> int -> unit, out_channel, unit) format ->
+  int -> int -> int -> unit
+)
+ident(
+  ext_ref Printf.eprintf
+)
+"cercles.ml" 14 335 352 "cercles.ml" 14 335 382
+type(
+  (int -> int -> int -> unit, out_channel, unit) format
+)
+"cercles.ml" 14 335 383 "cercles.ml" 14 335 387
+type(
+  int
+)
+ident(
+  int_ref line "cercles.ml" 11 190 196 "cercles.ml" 11 190 200
+)
+"cercles.ml" 14 335 388 "cercles.ml" 14 335 398
+type(
+  int
+)
+ident(
+  int_ref first_char "cercles.ml" 12 221 227 "cercles.ml" 12 221 237
+)
+"cercles.ml" 14 335 399 "cercles.ml" 14 335 408
+type(
+  int
+)
+ident(
+  int_ref last_char "cercles.ml" 13 278 284 "cercles.ml" 13 278 293
+)
+"cercles.ml" 14 335 337 "cercles.ml" 14 335 408
+type(
+  unit
+)
+"cercles.ml" 13 278 280 "cercles.ml" 14 335 408
+type(
+  unit
+)
+"cercles.ml" 12 221 223 "cercles.ml" 14 335 408
+type(
+  unit
+)
+"cercles.ml" 11 190 192 "cercles.ml" 14 335 408
+type(
+  unit
+)
+"cercles.ml" 16 410 414 "cercles.ml" 16 410 424
+type(
+  bool ref
+)
+ident(
+  def parse_only "cercles.ml" 17 437 437 --
+)
+"cercles.ml" 16 410 427 "cercles.ml" 16 410 430
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"cercles.ml" 16 410 431 "cercles.ml" 16 410 436
+type(
+  bool
+)
+"cercles.ml" 16 410 427 "cercles.ml" 16 410 436
+type(
+  bool ref
+)
+"cercles.ml" 17 437 441 "cercles.ml" 17 437 450
+type(
+  bool ref
+)
+ident(
+  def norm_only "cercles.ml" 18 463 463 --
+)
+"cercles.ml" 17 437 453 "cercles.ml" 17 437 456
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"cercles.ml" 17 437 457 "cercles.ml" 17 437 462
+type(
+  bool
+)
+"cercles.ml" 17 437 453 "cercles.ml" 17 437 462
+type(
+  bool ref
+)
+"cercles.ml" 18 463 467 "cercles.ml" 18 463 474
+type(
+  bool ref
+)
+ident(
+  def verbose "cercles.ml" 20 488 488 --
+)
+"cercles.ml" 18 463 477 "cercles.ml" 18 463 480
+type(
+  bool -> bool ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"cercles.ml" 18 463 481 "cercles.ml" 18 463 486
+type(
+  bool
+)
+"cercles.ml" 18 463 477 "cercles.ml" 18 463 486
+type(
+  bool ref
+)
+"cercles.ml" 20 488 492 "cercles.ml" 20 488 496
+type(
+  (string * Arg.spec * string) list
+)
+ident(
+  def spec "cercles.ml" 26 698 698 --
+)
+"cercles.ml" 21 499 502 "cercles.ml" 21 499 515
+type(
+  string
+)
+"cercles.ml" 21 499 525 "cercles.ml" 21 499 535
+type(
+  bool ref
+)
+ident(
+  int_ref parse_only "cercles.ml" 16 410 414 "cercles.ml" 16 410 424
+)
+"cercles.ml" 21 499 517 "cercles.ml" 21 499 535
+type(
+  Arg.spec
+)
+"cercles.ml" 21 499 537 "cercles.ml" 21 499 560
+type(
+  string
+)
+"cercles.ml" 21 499 502 "cercles.ml" 21 499 560
+type(
+  string * Arg.spec * string
+)
+"cercles.ml" 22 562 565 "cercles.ml" 22 562 577
+type(
+  string
+)
+"cercles.ml" 22 562 587 "cercles.ml" 22 562 596
+type(
+  bool ref
+)
+ident(
+  int_ref norm_only "cercles.ml" 17 437 441 "cercles.ml" 17 437 450
+)
+"cercles.ml" 22 562 579 "cercles.ml" 22 562 596
+type(
+  Arg.spec
+)
+"cercles.ml" 22 562 598 "cercles.ml" 22 562 627
+type(
+  string
+)
+"cercles.ml" 22 562 565 "cercles.ml" 22 562 627
+type(
+  string * Arg.spec * string
+)
+"cercles.ml" 23 629 632 "cercles.ml" 23 629 636
+type(
+  string
+)
+"cercles.ml" 23 629 646 "cercles.ml" 23 629 653
+type(
+  bool ref
+)
+ident(
+  int_ref verbose "cercles.ml" 18 463 467 "cercles.ml" 18 463 474
+)
+"cercles.ml" 23 629 638 "cercles.ml" 23 629 653
+type(
+  Arg.spec
+)
+"cercles.ml" 23 629 655 "cercles.ml" 23 629 691
+type(
+  string
+)
+"cercles.ml" 23 629 632 "cercles.ml" 23 629 691
+type(
+  string * Arg.spec * string
+)
+"cercles.ml" 21 499 501 "cercles.ml" 24 693 696
+type(
+  (string * Arg.spec * string) list
+)
+"cercles.ml" 26 698 702 "cercles.ml" 26 698 706
+type(
+  string
+)
+ident(
+  def file "cercles.ml" 49 1288 1288 --
+)
+"cercles.ml" 26 698 708 "cercles.ml" 26 698 717
+type(
+  string
+)
+ident(
+  def main_node "cercles.ml" 49 1288 1288 --
+)
+"cercles.ml" 26 698 702 "cercles.ml" 26 698 717
+type(
+  string * string
+)
+"cercles.ml" 27 720 726 "cercles.ml" 27 720 730
+type(
+  string option ref
+)
+"cercles.ml" 27 720 733 "cercles.ml" 27 720 736
+type(
+  string option -> string option ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"cercles.ml" 27 720 737 "cercles.ml" 27 720 741
+type(
+  string option
+)
+"cercles.ml" 27 720 733 "cercles.ml" 27 720 741
+type(
+  string option ref
+)
+"cercles.ml" 28 745 751 "cercles.ml" 28 745 755
+type(
+  string option ref
+)
+"cercles.ml" 28 745 758 "cercles.ml" 28 745 761
+type(
+  string option -> string option ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"cercles.ml" 28 745 762 "cercles.ml" 28 745 766
+type(
+  string option
+)
+"cercles.ml" 28 745 758 "cercles.ml" 28 745 766
+type(
+  string option ref
+)
+"cercles.ml" 29 770 776 "cercles.ml" 29 770 784
+type(
+  string -> unit
+)
+"cercles.ml" 29 770 785 "cercles.ml" 29 770 786
+type(
+  string
+)
+ident(
+  def s "cercles.ml" 30 789 793 "cercles.ml" 32 881 899
+)
+"cercles.ml" 30 789 796 "cercles.ml" 30 789 799
+type(
+  bool -> bool
+)
+ident(
+  ext_ref Pervasives.not
+)
+"cercles.ml" 30 789 801 "cercles.ml" 30 789 822
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Filename.check_suffix
+)
+"cercles.ml" 30 789 823 "cercles.ml" 30 789 824
+type(
+  string
+)
+ident(
+  int_ref s "cercles.ml" 29 770 785 "cercles.ml" 29 770 786
+)
+"cercles.ml" 30 789 825 "cercles.ml" 30 789 831
+type(
+  string
+)
+"cercles.ml" 30 789 800 "cercles.ml" 30 789 832
+type(
+  bool
+)
+"cercles.ml" 30 789 796 "cercles.ml" 30 789 832
+type(
+  bool
+)
+"cercles.ml" 31 838 844 "cercles.ml" 31 838 849
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"cercles.ml" 31 838 859 "cercles.ml" 31 838 878
+type(
+  string
+)
+"cercles.ml" 31 838 850 "cercles.ml" 31 838 879
+type(
+  exn
+)
+"cercles.ml" 31 838 844 "cercles.ml" 31 838 879
+type(
+  unit
+)
+"cercles.ml" 30 789 793 "cercles.ml" 31 838 879
+type(
+  unit
+)
+"cercles.ml" 32 881 885 "cercles.ml" 32 881 889
+type(
+  string option ref
+)
+ident(
+  int_ref file "cercles.ml" 27 720 726 "cercles.ml" 27 720 730
+)
+"cercles.ml" 32 881 890 "cercles.ml" 32 881 892
+type(
+  string option ref -> string option -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"cercles.ml" 32 881 898 "cercles.ml" 32 881 899
+type(
+  string
+)
+ident(
+  int_ref s "cercles.ml" 29 770 785 "cercles.ml" 29 770 786
+)
+"cercles.ml" 32 881 893 "cercles.ml" 32 881 899
+type(
+  string option
+)
+"cercles.ml" 32 881 885 "cercles.ml" 32 881 899
+type(
+  unit
+)
+"cercles.ml" 30 789 793 "cercles.ml" 32 881 899
+type(
+  unit
+)
+"cercles.ml" 34 905 911 "cercles.ml" 34 905 919
+type(
+  string -> unit
+)
+"cercles.ml" 34 905 920 "cercles.ml" 34 905 921
+type(
+  string
+)
+ident(
+  def s "cercles.ml" 35 924 928 "cercles.ml" 35 924 942
+)
+"cercles.ml" 35 924 928 "cercles.ml" 35 924 932
+type(
+  string option ref
+)
+ident(
+  int_ref main "cercles.ml" 28 745 751 "cercles.ml" 28 745 755
+)
+"cercles.ml" 35 924 933 "cercles.ml" 35 924 935
+type(
+  string option ref -> string option -> unit
+)
+ident(
+  ext_ref Pervasives.:=
+)
+"cercles.ml" 35 924 941 "cercles.ml" 35 924 942
+type(
+  string
+)
+ident(
+  int_ref s "cercles.ml" 34 905 920 "cercles.ml" 34 905 921
+)
+"cercles.ml" 35 924 936 "cercles.ml" 35 924 942
+type(
+  string option
+)
+"cercles.ml" 35 924 928 "cercles.ml" 35 924 942
+type(
+  unit
+)
+"cercles.ml" 37 948 954 "cercles.ml" 37 948 957
+type(
+  int ref
+)
+"cercles.ml" 37 948 960 "cercles.ml" 37 948 963
+type(
+  int -> int ref
+)
+ident(
+  ext_ref Pervasives.ref
+)
+"cercles.ml" 37 948 964 "cercles.ml" 37 948 965
+type(
+  int
+)
+"cercles.ml" 37 948 960 "cercles.ml" 37 948 965
+type(
+  int ref
+)
+"cercles.ml" 38 969 975 "cercles.ml" 38 969 978
+type(
+  string -> unit
+)
+"cercles.ml" 38 969 979 "cercles.ml" 38 969 980
+type(
+  string
+)
+ident(
+  def s "cercles.ml" 39 983 987 "cercles.ml" 43 1061 1108
+)
+"cercles.ml" 39 983 987 "cercles.ml" 39 983 991
+type(
+  int ref -> unit
+)
+ident(
+  ext_ref Pervasives.incr
+)
+"cercles.ml" 39 983 992 "cercles.ml" 39 983 995
+type(
+  int ref
+)
+ident(
+  int_ref cpt "cercles.ml" 37 948 954 "cercles.ml" 37 948 957
+)
+"cercles.ml" 39 983 987 "cercles.ml" 39 983 995
+type(
+  unit
+)
+"cercles.ml" 40 997 1007 "cercles.ml" 40 997 1008
+type(
+  int ref -> int
+)
+ident(
+  ext_ref Pervasives.!
+)
+"cercles.ml" 40 997 1008 "cercles.ml" 40 997 1011
+type(
+  int ref
+)
+ident(
+  int_ref cpt "cercles.ml" 37 948 954 "cercles.ml" 37 948 957
+)
+"cercles.ml" 40 997 1007 "cercles.ml" 40 997 1011
+type(
+  int
+)
+"cercles.ml" 41 1017 1023 "cercles.ml" 41 1017 1024
+type(
+  int
+)
+"cercles.ml" 41 1017 1028 "cercles.ml" 41 1017 1036
+type(
+  string -> unit
+)
+ident(
+  int_ref set_file "cercles.ml" 29 770 776 "cercles.ml" 29 770 784
+)
+"cercles.ml" 41 1017 1037 "cercles.ml" 41 1017 1038
+type(
+  string
+)
+ident(
+  int_ref s "cercles.ml" 38 969 979 "cercles.ml" 38 969 980
+)
+"cercles.ml" 41 1017 1028 "cercles.ml" 41 1017 1038
+type(
+  unit
+)
+"cercles.ml" 42 1039 1045 "cercles.ml" 42 1039 1046
+type(
+  int
+)
+"cercles.ml" 42 1039 1050 "cercles.ml" 42 1039 1058
+type(
+  string -> unit
+)
+ident(
+  int_ref set_main "cercles.ml" 34 905 911 "cercles.ml" 34 905 919
+)
+"cercles.ml" 42 1039 1059 "cercles.ml" 42 1039 1060
+type(
+  string
+)
+ident(
+  int_ref s "cercles.ml" 38 969 979 "cercles.ml" 38 969 980
+)
+"cercles.ml" 42 1039 1050 "cercles.ml" 42 1039 1060
+type(
+  unit
+)
+"cercles.ml" 43 1061 1067 "cercles.ml" 43 1061 1068
+type(
+  int
+)
+"cercles.ml" 43 1061 1072 "cercles.ml" 43 1061 1077
+type(
+  exn -> unit
+)
+ident(
+  ext_ref Pervasives.raise
+)
+"cercles.ml" 43 1061 1087 "cercles.ml" 43 1061 1107
+type(
+  string
+)
+"cercles.ml" 43 1061 1078 "cercles.ml" 43 1061 1108
+type(
+  exn
+)
+"cercles.ml" 43 1061 1072 "cercles.ml" 43 1061 1108
+type(
+  unit
+)
+"cercles.ml" 40 997 1001 "cercles.ml" 43 1061 1108
+type(
+  unit
+)
+"cercles.ml" 39 983 987 "cercles.ml" 43 1061 1108
+type(
+  unit
+)
+"cercles.ml" 45 1114 1116 "cercles.ml" 45 1114 1125
+type(
+  (Arg.key * Arg.spec * Arg.doc) list ->
+  Arg.anon_fun -> Arg.usage_msg -> unit
+)
+ident(
+  ext_ref Arg.parse
+)
+"cercles.ml" 45 1114 1126 "cercles.ml" 45 1114 1130
+type(
+  (Arg.key * Arg.spec * Arg.doc) list
+)
+ident(
+  int_ref spec "cercles.ml" 20 488 492 "cercles.ml" 20 488 496
+)
+"cercles.ml" 45 1114 1131 "cercles.ml" 45 1114 1134
+type(
+  Arg.anon_fun
+)
+ident(
+  int_ref set "cercles.ml" 38 969 975 "cercles.ml" 38 969 978
+)
+"cercles.ml" 45 1114 1135 "cercles.ml" 45 1114 1140
+type(
+  Arg.usage_msg
+)
+ident(
+  int_ref usage "cercles.ml" 8 93 97 "cercles.ml" 8 93 102
+)
+"cercles.ml" 45 1114 1116 "cercles.ml" 45 1114 1140
+type(
+  unit
+)
+"cercles.ml" 46 1142 1151 "cercles.ml" 46 1142 1152
+type(
+  string option ref -> string option
+)
+ident(
+  ext_ref Pervasives.!
+)
+"cercles.ml" 46 1142 1152 "cercles.ml" 46 1142 1156
+type(
+  string option ref
+)
+ident(
+  int_ref file "cercles.ml" 27 720 726 "cercles.ml" 27 720 730
+)
+"cercles.ml" 46 1142 1151 "cercles.ml" 46 1142 1156
+type(
+  string option
+)
+"cercles.ml" 46 1142 1167 "cercles.ml" 46 1142 1168
+type(
+  string
+)
+ident(
+  def f "cercles.ml" 46 1142 1172 "cercles.ml" 46 1142 1173
+)
+"cercles.ml" 46 1142 1162 "cercles.ml" 46 1142 1168
+type(
+  string option
+)
+"cercles.ml" 46 1142 1172 "cercles.ml" 46 1142 1173
+type(
+  string
+)
+ident(
+  int_ref f "cercles.ml" 46 1142 1167 "cercles.ml" 46 1142 1168
+)
+"cercles.ml" 46 1142 1176 "cercles.ml" 46 1142 1180
+type(
+  string option
+)
+"cercles.ml" 46 1142 1184 "cercles.ml" 46 1142 1193
+type(
+  (Arg.key * Arg.spec * Arg.doc) list -> Arg.usage_msg -> unit
+)
+ident(
+  ext_ref Arg.usage
+)
+"cercles.ml" 46 1142 1194 "cercles.ml" 46 1142 1198
+type(
+  (Arg.key * Arg.spec * Arg.doc) list
+)
+ident(
+  int_ref spec "cercles.ml" 20 488 492 "cercles.ml" 20 488 496
+)
+"cercles.ml" 46 1142 1199 "cercles.ml" 46 1142 1204
+type(
+  Arg.usage_msg
+)
+ident(
+  int_ref usage "cercles.ml" 8 93 97 "cercles.ml" 8 93 102
+)
+"cercles.ml" 46 1142 1184 "cercles.ml" 46 1142 1204
+type(
+  unit
+)
+"cercles.ml" 46 1142 1206 "cercles.ml" 46 1142 1210
+type(
+  int -> string
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 46 1142 1211 "cercles.ml" 46 1142 1212
+type(
+  int
+)
+"cercles.ml" 46 1142 1206 "cercles.ml" 46 1142 1212
+type(
+  string
+)
+"cercles.ml" 46 1142 1184 "cercles.ml" 46 1142 1212
+type(
+  string
+)
+"cercles.ml" 46 1142 1144 "cercles.ml" 46 1142 1213
+type(
+  string
+)
+"cercles.ml" 47 1215 1224 "cercles.ml" 47 1215 1225
+type(
+  string option ref -> string option
+)
+ident(
+  ext_ref Pervasives.!
+)
+"cercles.ml" 47 1215 1225 "cercles.ml" 47 1215 1229
+type(
+  string option ref
+)
+ident(
+  int_ref main "cercles.ml" 28 745 751 "cercles.ml" 28 745 755
+)
+"cercles.ml" 47 1215 1224 "cercles.ml" 47 1215 1229
+type(
+  string option
+)
+"cercles.ml" 47 1215 1240 "cercles.ml" 47 1215 1241
+type(
+  string
+)
+ident(
+  def n "cercles.ml" 47 1215 1245 "cercles.ml" 47 1215 1246
+)
+"cercles.ml" 47 1215 1235 "cercles.ml" 47 1215 1241
+type(
+  string option
+)
+"cercles.ml" 47 1215 1245 "cercles.ml" 47 1215 1246
+type(
+  string
+)
+ident(
+  int_ref n "cercles.ml" 47 1215 1240 "cercles.ml" 47 1215 1241
+)
+"cercles.ml" 47 1215 1249 "cercles.ml" 47 1215 1253
+type(
+  string option
+)
+"cercles.ml" 47 1215 1257 "cercles.ml" 47 1215 1266
+type(
+  (Arg.key * Arg.spec * Arg.doc) list -> Arg.usage_msg -> unit
+)
+ident(
+  ext_ref Arg.usage
+)
+"cercles.ml" 47 1215 1267 "cercles.ml" 47 1215 1271
+type(
+  (Arg.key * Arg.spec * Arg.doc) list
+)
+ident(
+  int_ref spec "cercles.ml" 20 488 492 "cercles.ml" 20 488 496
+)
+"cercles.ml" 47 1215 1272 "cercles.ml" 47 1215 1277
+type(
+  Arg.usage_msg
+)
+ident(
+  int_ref usage "cercles.ml" 8 93 97 "cercles.ml" 8 93 102
+)
+"cercles.ml" 47 1215 1257 "cercles.ml" 47 1215 1277
+type(
+  unit
+)
+"cercles.ml" 47 1215 1279 "cercles.ml" 47 1215 1283
+type(
+  int -> string
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 47 1215 1284 "cercles.ml" 47 1215 1285
+type(
+  int
+)
+"cercles.ml" 47 1215 1279 "cercles.ml" 47 1215 1285
+type(
+  string
+)
+"cercles.ml" 47 1215 1257 "cercles.ml" 47 1215 1285
+type(
+  string
+)
+"cercles.ml" 47 1215 1217 "cercles.ml" 47 1215 1286
+type(
+  string
+)
+"cercles.ml" 46 1142 1144 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 45 1114 1116 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 38 969 971 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 37 948 950 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 34 905 907 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 29 770 772 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 28 745 747 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 27 720 722 "cercles.ml" 47 1215 1286
+type(
+  string * string
+)
+"cercles.ml" 49 1288 1292 "cercles.ml" 49 1288 1294
+type(
+  unit
+)
+"cercles.ml" 50 1297 1303 "cercles.ml" 50 1297 1310
+type(
+  in_channel
+)
+"cercles.ml" 50 1297 1313 "cercles.ml" 50 1297 1320
+type(
+  string -> in_channel
+)
+ident(
+  ext_ref Pervasives.open_in
+)
+"cercles.ml" 50 1297 1321 "cercles.ml" 50 1297 1325
+type(
+  string
+)
+ident(
+  int_ref file "cercles.ml" 26 698 702 "cercles.ml" 26 698 706
+)
+"cercles.ml" 50 1297 1313 "cercles.ml" 50 1297 1325
+type(
+  in_channel
+)
+"cercles.ml" 51 1329 1335 "cercles.ml" 51 1329 1341
+type(
+  Lexing.lexbuf
+)
+"cercles.ml" 51 1329 1344 "cercles.ml" 51 1329 1363
+type(
+  in_channel -> Lexing.lexbuf
+)
+ident(
+  ext_ref Lexing.from_channel
+)
+"cercles.ml" 51 1329 1364 "cercles.ml" 51 1329 1371
+type(
+  in_channel
+)
+ident(
+  int_ref channel "cercles.ml" 50 1297 1303 "cercles.ml" 50 1297 1310
+)
+"cercles.ml" 51 1329 1344 "cercles.ml" 51 1329 1371
+type(
+  Lexing.lexbuf
+)
+"cercles.ml" 53 1381 1389 "cercles.ml" 53 1381 1392
+type(
+  Ast_repr.prog
+)
+ident(
+  def ast "cercles.ml" 54 1429 1433 "cercles.ml" 60 1642 1648
+)
+"cercles.ml" 53 1381 1395 "cercles.ml" 53 1381 1406
+type(
+  (Lexing.lexbuf -> Parser.token) -> Lexing.lexbuf -> Ast_repr.prog
+)
+ident(
+  ext_ref Parser.prog
+)
+"cercles.ml" 53 1381 1407 "cercles.ml" 53 1381 1418
+type(
+  Lexing.lexbuf -> Parser.token
+)
+ident(
+  ext_ref Lexer.token
+)
+"cercles.ml" 53 1381 1419 "cercles.ml" 53 1381 1425
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "cercles.ml" 51 1329 1335 "cercles.ml" 51 1329 1341
+)
+"cercles.ml" 53 1381 1395 "cercles.ml" 53 1381 1425
+type(
+  Ast_repr.prog
+)
+"cercles.ml" 54 1429 1433 "cercles.ml" 54 1429 1441
+type(
+  in_channel -> unit
+)
+ident(
+  ext_ref Pervasives.close_in
+)
+"cercles.ml" 54 1429 1442 "cercles.ml" 54 1429 1449
+type(
+  in_channel
+)
+ident(
+  int_ref channel "cercles.ml" 50 1297 1303 "cercles.ml" 50 1297 1310
+)
+"cercles.ml" 54 1429 1433 "cercles.ml" 54 1429 1449
+type(
+  unit
+)
+"cercles.ml" 55 1451 1458 "cercles.ml" 55 1451 1459
+type(
+  bool ref -> bool
+)
+ident(
+  ext_ref Pervasives.!
+)
+"cercles.ml" 55 1451 1459 "cercles.ml" 55 1451 1469
+type(
+  bool ref
+)
+ident(
+  int_ref parse_only "cercles.ml" 16 410 414 "cercles.ml" 16 410 424
+)
+"cercles.ml" 55 1451 1458 "cercles.ml" 55 1451 1469
+type(
+  bool
+)
+"cercles.ml" 55 1451 1475 "cercles.ml" 55 1451 1479
+type(
+  int -> unit
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 55 1451 1480 "cercles.ml" 55 1451 1481
+type(
+  int
+)
+"cercles.ml" 55 1451 1475 "cercles.ml" 55 1451 1481
+type(
+  unit
+)
+"cercles.ml" 55 1451 1455 "cercles.ml" 55 1451 1481
+type(
+  unit
+)
+"cercles.ml" 56 1484 1491 "cercles.ml" 56 1484 1500
+type(
+  string
+)
+ident(
+  int_ref main_node "cercles.ml" 26 698 708 "cercles.ml" 26 698 717
+)
+"cercles.ml" 56 1484 1501 "cercles.ml" 56 1484 1502
+type(
+  string -> string -> bool
+)
+ident(
+  ext_ref Pervasives.=
+)
+"cercles.ml" 56 1484 1503 "cercles.ml" 56 1484 1505
+type(
+  string
+)
+"cercles.ml" 56 1484 1491 "cercles.ml" 56 1484 1505
+type(
+  bool
+)
+"cercles.ml" 56 1484 1511 "cercles.ml" 56 1484 1515
+type(
+  int -> unit
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 56 1484 1516 "cercles.ml" 56 1484 1517
+type(
+  int
+)
+"cercles.ml" 56 1484 1511 "cercles.ml" 56 1484 1517
+type(
+  unit
+)
+"cercles.ml" 56 1484 1488 "cercles.ml" 56 1484 1517
+type(
+  unit
+)
+"cercles.ml" 57 1519 1527 "cercles.ml" 57 1519 1532
+type(
+  unit
+)
+ident(
+  def ast_n "cercles.ml" 58 1568 1572 "cercles.ml" 60 1642 1648
+)
+"cercles.ml" 57 1519 1535 "cercles.ml" 57 1519 1550
+type(
+  Ast_repr.prog -> Ast_base.ident -> unit
+)
+ident(
+  ext_ref Normalizer.main
+)
+"cercles.ml" 57 1519 1551 "cercles.ml" 57 1519 1554
+type(
+  Ast_repr.prog
+)
+ident(
+  int_ref ast "cercles.ml" 53 1381 1389 "cercles.ml" 53 1381 1392
+)
+"cercles.ml" 57 1519 1555 "cercles.ml" 57 1519 1564
+type(
+  Ast_base.ident
+)
+ident(
+  int_ref main_node "cercles.ml" 26 698 708 "cercles.ml" 26 698 717
+)
+"cercles.ml" 57 1519 1535 "cercles.ml" 57 1519 1564
+type(
+  unit
+)
+"cercles.ml" 58 1568 1575 "cercles.ml" 58 1568 1576
+type(
+  bool ref -> bool
+)
+ident(
+  ext_ref Pervasives.!
+)
+"cercles.ml" 58 1568 1576 "cercles.ml" 58 1568 1585
+type(
+  bool ref
+)
+ident(
+  int_ref norm_only "cercles.ml" 17 437 441 "cercles.ml" 17 437 450
+)
+"cercles.ml" 58 1568 1575 "cercles.ml" 58 1568 1585
+type(
+  bool
+)
+"cercles.ml" 58 1568 1591 "cercles.ml" 58 1568 1595
+type(
+  int -> unit
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 58 1568 1596 "cercles.ml" 58 1568 1597
+type(
+  int
+)
+"cercles.ml" 58 1568 1591 "cercles.ml" 58 1568 1597
+type(
+  unit
+)
+"cercles.ml" 58 1568 1572 "cercles.ml" 58 1568 1597
+type(
+  unit
+)
+"cercles.ml" 60 1642 1646 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 58 1568 1572 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 57 1519 1523 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 56 1484 1488 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 55 1451 1455 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 54 1429 1433 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 53 1381 1385 "cercles.ml" 60 1642 1648
+type(
+  unit
+)
+"cercles.ml" 62 1656 1680 "cercles.ml" 62 1656 1681
+type(
+  string
+)
+ident(
+  def s "cercles.ml" 63 1685 1689 "cercles.ml" 65 1794 1804
+)
+"cercles.ml" 62 1656 1660 "cercles.ml" 62 1656 1681
+type(
+  exn
+)
+"cercles.ml" 63 1685 1689 "cercles.ml" 63 1685 1703
+type(
+  (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+ident(
+  ext_ref Format.eprintf
+)
+"cercles.ml" 63 1685 1704 "cercles.ml" 63 1685 1727
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"cercles.ml" 63 1685 1728 "cercles.ml" 63 1685 1729
+type(
+  string
+)
+ident(
+  int_ref s "cercles.ml" 62 1656 1680 "cercles.ml" 62 1656 1681
+)
+"cercles.ml" 63 1685 1689 "cercles.ml" 63 1685 1729
+type(
+  unit
+)
+"cercles.ml" 64 1731 1735 "cercles.ml" 64 1731 1747
+type(
+  Lexing.position * Lexing.position -> unit
+)
+ident(
+  int_ref handle_error "cercles.ml" 10 156 160 "cercles.ml" 10 156 172
+)
+"cercles.ml" 64 1731 1749 "cercles.ml" 64 1731 1763
+type(
+  Lexing.lexbuf -> Lexing.position
+)
+ident(
+  ext_ref Lexing.lexeme_start_p
+)
+"cercles.ml" 64 1731 1764 "cercles.ml" 64 1731 1770
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "cercles.ml" 51 1329 1335 "cercles.ml" 51 1329 1341
+)
+"cercles.ml" 64 1731 1749 "cercles.ml" 64 1731 1770
+type(
+  Lexing.position
+)
+"cercles.ml" 64 1731 1772 "cercles.ml" 64 1731 1784
+type(
+  Lexing.lexbuf -> Lexing.position
+)
+ident(
+  ext_ref Lexing.lexeme_end_p
+)
+"cercles.ml" 64 1731 1785 "cercles.ml" 64 1731 1791
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "cercles.ml" 51 1329 1335 "cercles.ml" 51 1329 1341
+)
+"cercles.ml" 64 1731 1772 "cercles.ml" 64 1731 1791
+type(
+  Lexing.position
+)
+"cercles.ml" 64 1731 1748 "cercles.ml" 64 1731 1792
+type(
+  Lexing.position * Lexing.position
+)
+"cercles.ml" 64 1731 1735 "cercles.ml" 64 1731 1792
+type(
+  unit
+)
+"cercles.ml" 65 1794 1798 "cercles.ml" 65 1794 1802
+type(
+  int -> unit
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 65 1794 1803 "cercles.ml" 65 1794 1804
+type(
+  int
+)
+"cercles.ml" 65 1794 1798 "cercles.ml" 65 1794 1804
+type(
+  unit
+)
+"cercles.ml" 64 1731 1735 "cercles.ml" 65 1794 1804
+type(
+  unit
+)
+"cercles.ml" 63 1685 1689 "cercles.ml" 65 1794 1804
+type(
+  unit
+)
+"cercles.ml" 66 1805 1809 "cercles.ml" 66 1805 1828
+type(
+  exn
+)
+"cercles.ml" 67 1832 1836 "cercles.ml" 67 1832 1850
+type(
+  (unit, Format.formatter, unit) format -> unit
+)
+ident(
+  ext_ref Format.eprintf
+)
+"cercles.ml" 67 1832 1851 "cercles.ml" 67 1832 1869
+type(
+  (unit, Format.formatter, unit) format
+)
+"cercles.ml" 67 1832 1836 "cercles.ml" 67 1832 1869
+type(
+  unit
+)
+"cercles.ml" 68 1871 1875 "cercles.ml" 68 1871 1887
+type(
+  Lexing.position * Lexing.position -> unit
+)
+ident(
+  int_ref handle_error "cercles.ml" 10 156 160 "cercles.ml" 10 156 172
+)
+"cercles.ml" 68 1871 1889 "cercles.ml" 68 1871 1903
+type(
+  Lexing.lexbuf -> Lexing.position
+)
+ident(
+  ext_ref Lexing.lexeme_start_p
+)
+"cercles.ml" 68 1871 1904 "cercles.ml" 68 1871 1910
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "cercles.ml" 51 1329 1335 "cercles.ml" 51 1329 1341
+)
+"cercles.ml" 68 1871 1889 "cercles.ml" 68 1871 1910
+type(
+  Lexing.position
+)
+"cercles.ml" 68 1871 1912 "cercles.ml" 68 1871 1924
+type(
+  Lexing.lexbuf -> Lexing.position
+)
+ident(
+  ext_ref Lexing.lexeme_end_p
+)
+"cercles.ml" 68 1871 1925 "cercles.ml" 68 1871 1931
+type(
+  Lexing.lexbuf
+)
+ident(
+  int_ref lexbuf "cercles.ml" 51 1329 1335 "cercles.ml" 51 1329 1341
+)
+"cercles.ml" 68 1871 1912 "cercles.ml" 68 1871 1931
+type(
+  Lexing.position
+)
+"cercles.ml" 68 1871 1888 "cercles.ml" 68 1871 1932
+type(
+  Lexing.position * Lexing.position
+)
+"cercles.ml" 68 1871 1875 "cercles.ml" 68 1871 1932
+type(
+  unit
+)
+"cercles.ml" 69 1934 1938 "cercles.ml" 69 1934 1942
+type(
+  int -> unit
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 69 1934 1943 "cercles.ml" 69 1934 1944
+type(
+  int
+)
+"cercles.ml" 69 1934 1938 "cercles.ml" 69 1934 1944
+type(
+  unit
+)
+"cercles.ml" 68 1871 1875 "cercles.ml" 69 1934 1944
+type(
+  unit
+)
+"cercles.ml" 67 1832 1836 "cercles.ml" 69 1934 1944
+type(
+  unit
+)
+"cercles.ml" 70 1945 1949 "cercles.ml" 70 1945 1950
+type(
+  exn
+)
+ident(
+  def e "cercles.ml" 71 1954 1958 "cercles.ml" 72 2015 2025
+)
+"cercles.ml" 71 1954 1958 "cercles.ml" 71 1954 1972
+type(
+  (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+ident(
+  ext_ref Format.eprintf
+)
+"cercles.ml" 71 1954 1973 "cercles.ml" 71 1954 1990
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"cercles.ml" 71 1954 1992 "cercles.ml" 71 1954 2010
+type(
+  exn -> string
+)
+ident(
+  ext_ref Printexc.to_string
+)
+"cercles.ml" 71 1954 2011 "cercles.ml" 71 1954 2012
+type(
+  exn
+)
+ident(
+  int_ref e "cercles.ml" 70 1945 1949 "cercles.ml" 70 1945 1950
+)
+"cercles.ml" 71 1954 1991 "cercles.ml" 71 1954 2013
+type(
+  string
+)
+"cercles.ml" 71 1954 1958 "cercles.ml" 71 1954 2013
+type(
+  unit
+)
+"cercles.ml" 72 2015 2019 "cercles.ml" 72 2015 2023
+type(
+  int -> unit
+)
+ident(
+  ext_ref Pervasives.exit
+)
+"cercles.ml" 72 2015 2024 "cercles.ml" 72 2015 2025
+type(
+  int
+)
+"cercles.ml" 72 2015 2019 "cercles.ml" 72 2015 2025
+type(
+  unit
+)
+"cercles.ml" 71 1954 1958 "cercles.ml" 72 2015 2025
+type(
+  unit
+)
+"cercles.ml" 52 1375 1377 "cercles.ml" 72 2015 2025
+type(
+  unit
+)
+"cercles.ml" 51 1329 1331 "cercles.ml" 72 2015 2025
+type(
+  unit
+)
+"cercles.ml" 50 1297 1299 "cercles.ml" 72 2015 2025
+type(
+  unit
+)

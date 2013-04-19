@@ -1,0 +1,5 @@
+
+node etat_init(A, B: bool^2) returns (etat: bool^2);
+let
+  etat = if A then B else [true,  true];
+tel
