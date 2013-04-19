@@ -11,12 +11,16 @@ Le frontend est basé pour le moment sur un ensemble réduit de Lustre. Il sera 
 
 2. L'AST
 
-On cherche à représenter un node de Lustre. 
+On cherche à représenter un node de Lustre. Le fichier base_ast comprend la base de l'AST qui sera réutilisée pour les évolutions de l'AST.
 
 3. MIDLEEND
 
-3.1) Atomisation des opérations
-3.2) Tri Topologique
+3.1) Gestion Asserts
+3.2) Gestion des registres
+3.3) Vérifications de l'atomicité des opérations
+3.4) Tri Topologique
+
+??
 
 4. BACKEND
 
