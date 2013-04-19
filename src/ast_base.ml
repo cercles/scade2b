@@ -17,11 +17,12 @@ type typ =
   T_Bool 
 | T_Int 
 | T_Float
-| Array of typ * int
+| T_Array of typ * int
 
 type value = 
   Bool of bool 
 | Int of int 
 | Float of float
+| Array of value list
 
 type decl = ident * typ

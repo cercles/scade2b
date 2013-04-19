@@ -83,15 +83,14 @@ typ :
  | T_REAL { T_Float }
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
-				Array (typ, (List.length type_list)) }
- | typ CARET INT { Array ($1, $3) }
+				T_Array (typ, (List.length type_list)) }
+ | typ CARET INT { T_Array ($1, $3) }
 ;
 
 typ_list :
  | typ { [$1] }
  | typ COMMA typ_list { $1::$3 }
 ;
-
 
 eq_list :
  | ASSERT expr SEMICOL { [P_Assert $2] }
@@ -110,6 +109,7 @@ expr :
  | INT { PE_Value (Int $1) }
  | BOOL { PE_Value (Bool $1) } 
  | REAL { PE_Value (Float $1) }
+/* | array_expr { $1 } */
  | expr PLUS expr { PE_Bop (Op_add, $1, $3) }
  | expr MINUS expr { PE_Bop (Op_sub, $1, $3) }
  | expr MULT expr { PE_Bop (Op_mul, $1, $3) }
@@ -137,11 +137,20 @@ expr :
 /* ajouter sharp */
 ;
 
-expr_list:
+expr_list :
  |   { [] }
  | expr { [$1] }
  | expr COMMA expr_list { $1::$3 }
 ;
+
+/*
+array_expr :
+ | {()}
+    AFAIRE 
+    LBRACKET expr_list RBRACKET { PE_Value (Array $2) } 
+    ajouter filtrage et concat 
+;
+*/
 
 semi_opt :
  |   { () }

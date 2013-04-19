@@ -21,7 +21,10 @@ let handle_assert asser node_out = ()
    si FBY -> vérifier que c'est : C -> pre X . Puis céer registre x, type, C.
    Vérifier Atomicité: en parcourant et en recréant l'arbre? 
 *)
-let folder eq_list node_out = ()
+let folder eq_list node_out = 
+  ()
+
+
 
 (* extraction du main *)
 (* appel fold eq_list *)
