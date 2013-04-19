@@ -4,9 +4,11 @@
   open Ast_repr
   open Ast_base
 
-(* (real|int)*(real|int)->real *)
-(* int*int->int *)
-(* int*int->int *)
+  (* Check if all the types in the list are the same. Used to check array coherence *)
+  let check_type list =
+    let typ = List.hd list in
+    List.iter (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
+    typ
 
 %}
 
@@ -79,7 +81,17 @@ typ :
  | T_BOOL { T_Bool }
  | T_INT { T_Int } 
  | T_REAL { T_Float }
+ | LBRACKET typ_list RBRACKET { let type_list = $2 in
+				let typ = check_type type_list in
+				Array (typ, (List.length type_list)) }
+ | typ CARET INT { Array ($1, $3) }
 ;
+
+typ_list :
+ | typ { [$1] }
+ | typ COMMA typ_list { $1::$3 }
+;
+
 
 eq_list :
  | ASSERT expr SEMICOL { [P_Assert $2] }

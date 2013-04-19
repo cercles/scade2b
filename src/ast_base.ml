@@ -12,10 +12,12 @@ type bop =
 type unop = 
   Op_not | Op_minus
 
-type typ = 
+(* Si on fais un type supérieur pour différencier Array des autres, les Arrays de Arrays sont plus compliqués *)
+type typ =
   T_Bool 
 | T_Int 
 | T_Float
+| Array of typ * int
 
 type value = 
   Bool of bool 
