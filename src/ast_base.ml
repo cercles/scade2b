@@ -11,18 +11,3 @@ type bop =
 
 type unop = 
   Op_not | Op_minus
-
-(* Si on fais un type supérieur pour différencier Array des autres, les Arrays de Arrays sont plus compliqués *)
-type typ =
-  T_Bool 
-| T_Int 
-| T_Float
-| T_Array of typ * int
-
-type value = 
-  Bool of bool 
-| Int of int 
-| Float of float
-| Array of value list
-
-type decl = ident * typ

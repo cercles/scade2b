@@ -83,8 +83,9 @@ typ :
  | T_REAL { T_Float }
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
-				T_Array (typ, (List.length type_list)) }
- | typ CARET INT { T_Array ($1, $3) }
+				T_Array (typ, PE_Value (Int (List.length type_list))) }
+ | typ CARET expr { T_Array ($1, $3) }
+/*  Remplacer int par une expr ? */
 ;
 
 typ_list :
@@ -99,17 +100,35 @@ eq_list :
  | left_part EQ expr SEMICOL eq_list { (P_Eq ($1, $3))::$5 }
 ;
 
+/*
 left_part :
  | IDENT { PLP_Ident $1 }
  | LPAREN IDENT COMMA id_list RPAREN { PLP_Tuple ($2::$4) }
 ;
+*/
+
+left_part : 
+ | struct_item { PLP_Item $1 }
+ | LPAREN struct_item COMMA left_list RPAREN  { PLP_Tuple ($2::$4) }
+;
+
+left_list :
+ | struct_item { [$1] }
+ | struct_item COMMA left_list { $1::$3 }
+;
+
+struct_item :
+ | IDENT { PLP_Ident $1 }
+ | IDENT LBRACKET expr RBRACKET { PLP_Array $1, $3, $3 }
+ | IDENT LBRACKET expr DOTDOT expr RBRACKET { PLP_Array $1, $3, $5 }
+;
+/* GERER LES MULTI-DIMENSIONS!!!!!!!!!!!!! */
 
 expr :
  | IDENT { PE_Ident $1 }
  | INT { PE_Value (Int $1) }
  | BOOL { PE_Value (Bool $1) } 
  | REAL { PE_Value (Float $1) }
-/* | array_expr { $1 } */
  | expr PLUS expr { PE_Bop (Op_add, $1, $3) }
  | expr MINUS expr { PE_Bop (Op_sub, $1, $3) }
  | expr MULT expr { PE_Bop (Op_mul, $1, $3) }
@@ -133,25 +152,24 @@ expr :
  | IDENT LPAREN expr_list RPAREN { PE_App ($1, $3) }
  | LPAREN expr COMMA expr_list RPAREN { PE_Tuple ($2::$4) }
  | LPAREN expr RPAREN { $2 }
-
-/* ajouter sharp */
+ | array_expr { PE_Array $1 } 
+/* ajouter sharp ? */
 ;
 
+/* For Call & Tuple */
 expr_list :
  |   { [] }
  | expr { [$1] }
  | expr COMMA expr_list { $1::$3 }
 ;
 
-/*
 array_expr :
- | {()}
-    AFAIRE 
-    LBRACKET expr_list RBRACKET { PE_Value (Array $2) } 
-    ajouter filtrage et concat 
+ | IDENT LBRACKET expr RBRACKET { P_Slice ($3, $3) }
+ | IDENT LBRACKET expr DOTDOT expr RBRACKET { P_Slice ($3, $5) } 
+ | array_expr CONCAT array_expr { P_Concat ($1, $3) }
 ;
-*/
 
+/* In decl */
 semi_opt :
  |   { () }
  | SEMICOL { () }

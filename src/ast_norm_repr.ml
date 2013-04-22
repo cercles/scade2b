@@ -20,7 +20,13 @@ type n_equation = n_left_part * n_expression
 
 type n_condition = ident * typ * n_expression
 
-type n_registre = ident * typ * value
+
+type n_registre = 
+  { reg_id: ident;
+    reg_type: typ;
+    reg_ini: n_expression;
+    reg_var: n_expression;
+  }
 
 type n_node = 
   {  n_id: ident; 
