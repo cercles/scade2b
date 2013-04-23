@@ -9,7 +9,13 @@
     let typ = List.hd list in
     List.iter (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
     typ
-
+(*
+  let loc () = symbol_start_pos (), symbol_end_pos ()
+  let mk_expr e = { pexpr_desc = e; pexpr_loc = loc () }
+  (* return a Parse_ast.p_expr *)
+  let mk_patt p = { ppatt_desc = p; ppatt_loc = loc () }
+  (* return a Parse_ast.p_patt *) 
+*)  
 %}
 
 %token NODE RETURNS LET TEL VAR CONST ASSERT
@@ -85,7 +91,6 @@ typ :
 				let typ = check_type type_list in
 				T_Array (typ, PE_Value (Int (List.length type_list))) }
  | typ CARET expr { T_Array ($1, $3) }
-/*  Remplacer int par une expr ? */
 ;
 
 typ_list :
@@ -112,7 +117,7 @@ left_part :
  | LPAREN struct_item COMMA left_list RPAREN  { PLP_Tuple ($2::$4) }
 ;
 
-left_list :
+left_list : /* struct_item_list */
  | struct_item { [$1] }
  | struct_item COMMA left_list { $1::$3 }
 ;

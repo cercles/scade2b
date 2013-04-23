@@ -11,7 +11,7 @@ open Ast_norm_repr
 exception Assert_id_error
 exception Register_error 
 
-(* ATTENTION AUX TUPLES !!*) 
+(* ATTENTION AUX TUPLES *) 
 
 
 (* AJOUTER un p_expr to n_expr *)
