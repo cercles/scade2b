@@ -12,6 +12,7 @@ Le frontend est basé pour le moment sur un ensemble réduit de Lustre. Il sera 
 2. L'AST
 
 On cherche à représenter un node de Lustre. Le fichier base_ast comprend la base de l'AST qui sera réutilisée pour les évolutions de l'AST.
+Gestion des arrays à ajouter.
 
 3. MIDLEEND
 
