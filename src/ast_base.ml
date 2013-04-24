@@ -1,7 +1,16 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
-
 type ident = string
+
+type value = 
+  Bool of bool 
+| Int of int 
+| Float of float
+
+type base_type =
+  T_Bool 
+| T_Int 
+| T_Float
 
 type bop =
   Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge

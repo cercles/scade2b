@@ -32,18 +32,19 @@
 %token <string> IDENT
 %token EOF
 
+
+%left CARET CONCAT
+%nonassoc NOT PRE
+%left MULT DIV DIV_INT MOD
+%left PLUS MINUS    
+%left EQ NEQ INF INFEQ SUP SUPEQ 
+%left AND
+%left OR XOR
+%left FBY
+%left DOTDOT
+%nonassoc uminus
 %nonassoc THEN
 %nonassoc ELSE
-%right FBY
-%left OR
-%left XOR
-%left AND
-%left EQ NEQ INF INFEQ SUP SUPEQ 
-%left CARET CONCAT
-%left PLUS MINUS    
-%left MULT DIV DIV_INT MOD
-%nonassoc uminus
-%nonassoc NOT PRE
 
 %start prog
 %type <Ast_repr.prog> prog
@@ -84,13 +85,21 @@ id_list :
 ;
 
 typ :
+ | base_type { PT_Base $1 }
+ | array_type { $1 }
+;
+
+base_type :
  | T_BOOL { T_Bool }
  | T_INT { T_Int } 
  | T_REAL { T_Float }
+;
+
+array_type :
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
-				T_Array (typ, PE_Value (Int (List.length type_list))) }
- | typ CARET expr { T_Array ($1, $3) }
+				PT_Array (typ, PE_Value (Int (List.length type_list))) }
+ | typ CARET expr { PT_Array ($1, $3) }
 ;
 
 typ_list :
@@ -114,12 +123,12 @@ left_part :
 
 left_part : 
  | struct_item { PLP_Item $1 }
- | LPAREN struct_item COMMA left_list RPAREN  { PLP_Tuple ($2::$4) }
+ | LPAREN struct_item COMMA struct_item_list RPAREN  { PLP_Tuple ($2::$4) }
 ;
 
-left_list : /* struct_item_list */
+struct_item_list : /* struct_item_list */
  | struct_item { [$1] }
- | struct_item COMMA left_list { $1::$3 }
+ | struct_item COMMA struct_item_list { $1::$3 }
 ;
 
 struct_item :
@@ -127,9 +136,11 @@ struct_item :
  | IDENT LBRACKET expr RBRACKET { PLP_Array $1, $3, $3 }
  | IDENT LBRACKET expr DOTDOT expr RBRACKET { PLP_Array $1, $3, $5 }
 ;
+
+
 /* GERER LES MULTI-DIMENSIONS!!!!!!!!!!!!! */
 
-expr :
+expr : 
  | IDENT { PE_Ident $1 }
  | INT { PE_Value (Int $1) }
  | BOOL { PE_Value (Bool $1) } 
@@ -158,7 +169,7 @@ expr :
  | LPAREN expr COMMA expr_list RPAREN { PE_Tuple ($2::$4) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 } 
-/* ajouter sharp ? */
+ | SHARP LPAREN expr COMMA expr_list RPAREN{ PE_Sharp ($3::$5) }
 ;
 
 /* For Call & Tuple */
@@ -168,11 +179,37 @@ expr_list :
  | expr COMMA expr_list { $1::$3 }
 ;
 
+/*
+array_expr :
+ | LBRACKET expr_list RBRACKET { PA_Def $2 } 
+ | IDENT LBRACKET expr RBRACKET { PA_Index ($1, $3) } 
+ | IDENT LBRACKET expr DOTDOT expr RBRACKET { PA_Slice ($1, $3, $5) }
+ | expr CARET expr { PA_Caret ($1, $3) }
+ | expr CONCAT expr { PA_Concat ($1, $3) }
+;
+*/
+
+array_expr :
+ | LBRACKET expr_list RBRACKET { PA_Def $2 } /* OK POUR TABLEAU MULTI-DIM */
+ | IDENT array_list { PA_Slice ($1, $2) } 
+ | expr CARET expr { PA_Caret ($1, $3) }
+ | expr CONCAT expr { PA_Concat ($1, $3) }
+;
+
+array_list :
+ | LBRACKET expr RBRACKET { [($2, $2)] }
+ | LBRACKET expr DOTDOT expr RBRACKET { [($2, $4)] }
+ | LBRACKET expr RBRACKET array_list { ($2, $2)::$4 }
+ | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4)::$6 }
+;
+
+/*
 array_expr :
  | IDENT LBRACKET expr RBRACKET { P_Slice ($3, $3) }
  | IDENT LBRACKET expr DOTDOT expr RBRACKET { P_Slice ($3, $5) } 
  | array_expr CONCAT array_expr { P_Concat ($1, $3) }
 ;
+*/
 
 /* In decl */
 semi_opt :

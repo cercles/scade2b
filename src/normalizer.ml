@@ -102,9 +102,8 @@ let folder main_node =
 			      eqs := eq:: !eqs
 	      | _ -> () (* TRANSFORMER LE RESTE DES EQUATIONS MAINTENANT? *)
 	  end
-	| P_Assert expr -> 
-	  let 
-	  match handle_assert main_node eq with
+	| P_Assert expr ->  
+	  match (handle_assert main_node eq) with
 	  | Post (id, typ, expr) -> post := (id, typ, expr):: !post
 	  | Pre (id, typ, expr) -> pre := (id, typ, expr):: !pre
       end
