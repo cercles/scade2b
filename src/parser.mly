@@ -95,11 +95,17 @@ base_type :
  | T_REAL { T_Float }
 ;
 
-array_type :
+array_type : /* 2 facons de déclarer un tableau apparement (a verifier, la premiere semble un peu maladroite) */
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
 				PT_Array (typ, PE_Value (Int (List.length type_list))) }
- | typ CARET expr { PT_Array ($1, $3) }
+ | typ CARET caret_list { PT_Array ($1, $3) }
+;
+
+/* pour la declaration de tableaux multi dimension */
+caret_list :
+ | expr { [$1] }
+ /* | expr CARET caret_list { $1::$3 } */
 ;
 
 typ_list :
@@ -114,31 +120,11 @@ eq_list :
  | left_part EQ expr SEMICOL eq_list { (P_Eq ($1, $3))::$5 }
 ;
 
-/*
 left_part :
  | IDENT { PLP_Ident $1 }
  | LPAREN IDENT COMMA id_list RPAREN { PLP_Tuple ($2::$4) }
+ | IDENT COMMA id_list { PLP_Tuple ($1::$3) }
 ;
-*/
-
-left_part : 
- | struct_item { PLP_Item $1 }
- | LPAREN struct_item COMMA struct_item_list RPAREN  { PLP_Tuple ($2::$4) }
-;
-
-struct_item_list : /* struct_item_list */
- | struct_item { [$1] }
- | struct_item COMMA struct_item_list { $1::$3 }
-;
-
-struct_item :
- | IDENT { PLP_Ident $1 }
- | IDENT LBRACKET expr RBRACKET { PLP_Array $1, $3, $3 }
- | IDENT LBRACKET expr DOTDOT expr RBRACKET { PLP_Array $1, $3, $5 }
-;
-
-
-/* GERER LES MULTI-DIMENSIONS!!!!!!!!!!!!! */
 
 expr : 
  | IDENT { PE_Ident $1 }
@@ -179,16 +165,6 @@ expr_list :
  | expr COMMA expr_list { $1::$3 }
 ;
 
-/*
-array_expr :
- | LBRACKET expr_list RBRACKET { PA_Def $2 } 
- | IDENT LBRACKET expr RBRACKET { PA_Index ($1, $3) } 
- | IDENT LBRACKET expr DOTDOT expr RBRACKET { PA_Slice ($1, $3, $5) }
- | expr CARET expr { PA_Caret ($1, $3) }
- | expr CONCAT expr { PA_Concat ($1, $3) }
-;
-*/
-
 array_expr :
  | LBRACKET expr_list RBRACKET { PA_Def $2 } /* OK POUR TABLEAU MULTI-DIM */
  | IDENT array_list { PA_Slice ($1, $2) } 
@@ -203,6 +179,26 @@ array_list :
  | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4)::$6 }
 ;
 
+/* In decl */
+semi_opt :
+ |   { () }
+ | SEMICOL { () }
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*OLD STUFF*/
+
 /*
 array_expr :
  | IDENT LBRACKET expr RBRACKET { P_Slice ($3, $3) }
@@ -211,10 +207,34 @@ array_expr :
 ;
 */
 
-/* In decl */
-semi_opt :
- |   { () }
- | SEMICOL { () }
+/*
+array_expr :
+ | LBRACKET expr_list RBRACKET { PA_Def $2 } 
+ | IDENT LBRACKET expr RBRACKET { PA_Index ($1, $3) } 
+ | IDENT LBRACKET expr DOTDOT expr RBRACKET { PA_Slice ($1, $3, $5) }
+ | expr CARET expr { PA_Caret ($1, $3) }
+ | expr CONCAT expr { PA_Concat ($1, $3) }
 ;
+*/
+
+/*
+left_part : 
+ | struct_item { PLP_Item $1 }
+ | LPAREN struct_item COMMA struct_item_list RPAREN  { PLP_Tuple ($2::$4) }
+;
+
+struct_item_list : 
+ | struct_item { [$1] }
+ | struct_item COMMA struct_item_list { $1::$3 }
+;
+
+struct_item :
+ | IDENT { PLP_Ident $1 }
+ | IDENT LBRACKET expr RBRACKET { PLP_Array $1, $3, $3 }
+ | IDENT LBRACKET expr DOTDOT expr RBRACKET { PLP_Array $1, $3, $5 }
+;
+*/
+
+
 
 %%

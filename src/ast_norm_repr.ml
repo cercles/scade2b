@@ -16,15 +16,11 @@ type n_expression =
 and n_array_expr = 
   NA_Def of n_expression list
 | NA_Caret of n_expression * n_expression
-| NA_Concat of n_array_expr * n_array_expr
+| NA_Concat of n_expression * n_expression
 | NA_Slice of ident * (n_expression * n_expression) list
-
-type nlp_item =
-  NLP_Ident of ident
-| NLP_Array of ident * n_expression * n_expression (* Array of ident * array_smthg *)
  
 type n_left_part = 
-  NLP_Item of nlp_item
+  NLP_Ident of ident
 | NLP_Tuple of nlp_item list
  
 type n_equation = n_left_part * n_expression
@@ -54,3 +50,12 @@ type n_node =
      n_post: n_condition list;
      n_eqs: n_equation list; }
 
+
+(* type nlp_item = *)
+(*   NLP_Ident of ident *)
+(* | NLP_Array of ident * n_expression * n_expression (\* Array of ident * array_smthg *\) *)
+ 
+(* type n_left_part =  *)
+(*   NLP_Item of nlp_item *)
+(* | NLP_Tuple of nlp_item list *)
+ 

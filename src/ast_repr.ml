@@ -1,10 +1,7 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
-(* Probleme des tableaux multi dimension à résoudre (penser liste de tableaux) *)
-
 open Ast_base
  
-
 type p_expression =
   PE_Ident of ident
 | PE_Tuple of p_expression list
@@ -21,17 +18,13 @@ type p_expression =
 and p_array_expr = 
   PA_Def of p_expression list (* Initaialisation avec [e1, e2, ...] (ex: [3,4,5] ) *)
 | PA_Caret of p_expression * p_expression (* Initialisation avec e1^ e2 (ex: false^4) *)
-| PA_Concat of p_array_expr * p_array_expr
+| PA_Concat of p_expression * p_expression
 | PA_Slice of ident * (p_expression * p_expression) list
 (* list pour gerer la multi dimension. slice est aussi utilisé pour l'index, dans ce cas la borne est unitaire *)
 
-type plp_item =
-  PLP_Ident of ident
-| PLP_Array of ident * p_expression * p_expression (* Array of ident * array_smthg *)
- 
 type p_left_part = 
-  PLP_Item of plp_item
-| PLP_Tuple of plp_item list
+  PLP_Ident of ident
+| PLP_Tuple of ident list
 
 type p_equation = 
   P_Eq of p_left_part * p_expression
@@ -39,7 +32,7 @@ type p_equation =
 
 type p_type =
   PT_Base of base_type
-| PT_Array of p_type * p_expression
+| PT_Array of p_type * p_expression list (* liste des tailles pour un tableau multi-dim *)
 
 type p_decl = ident * p_type
 
@@ -51,3 +44,13 @@ type p_node =
      p_eqs: p_equation list; }
     
 type prog = p_node list
+
+
+
+(* type plp_item = *)
+(*   PLP_Ident of ident *)
+(* | PLP_Array of ident * p_expression * p_expression (\* Array of ident * array_smthg *\) *)
+ 
+(* type p_left_part =  *)
+(*   PLP_Item of plp_item *)
+(* | PLP_Tuple of plp_item list *)
