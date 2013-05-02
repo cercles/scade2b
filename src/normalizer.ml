@@ -51,7 +51,8 @@ let handle_assert main_node asser =
     | None -> raise Assert_id_error
 
       
-(* Two steps: 1. create a register ( c -> pre x with type t becomes reg_id = t, c, x 
+(* Two steps: 
+   1. create a register ( c -> pre x with type t becomes reg_id = t, c, x 
    2. replace the register in the old equation by its new ident 
    This fun returns the new register and the new equation *)
 let handle_register main_node= 
@@ -72,7 +73,6 @@ let handle_register main_node=
     end
   | _ -> raise Register_error
     
-
 (* Parcours de eq_list, et pour chaque eq :
    si Assert -> vérifier que sur un seul ident, puis regarder si param_in ou param_out
    si FBY -> vérifier que c'est : C -> pre X . Puis céer registre x, type, C.

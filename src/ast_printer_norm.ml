@@ -1,8 +1,8 @@
+(* Florian Thibord  --  Projet CERCLES *)
 
 open Format
-open Ast_repr
+open Ast_norm_repr
 open Ast_base
-
 
 let print_id ppt id = fprintf ppt "%s" id
 
@@ -12,23 +12,21 @@ let print_value ppt = function
   | Float f -> fprintf ppt "%f" f
 
 let rec print_expr ppt = function
-  | PE_Ident id -> print_id ppt id
-  | PE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
-  | PE_Value v -> print_value ppt v
-  | PE_Array ar -> print_array ppt ar
-  | PE_App (id, e_list) -> fprintf ppt "%a@[(%a)@]" print_id id print_e_list e_list
-  | PE_Bop (bop, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_bop bop print_expr e1 print_expr e2
-  | PE_Unop (unop, e) -> fprintf ppt "%a@[(%a)@]" print_unop unop print_expr e
-  | PE_Fby (e1, e2) -> fprintf ppt "@[(%a)@] -> @[(%a)@]" print_expr e1 print_expr e2
-  | PE_Pre e -> fprintf ppt "pre@[(%a)@]" print_expr e
-  | PE_If (cond, e1, e2) -> fprintf ppt "if @[%a@] then @\n@[<v 4>%a@] @\nelse @\n@[<v 4>%a@]" print_expr cond print_expr e1 print_expr e2
-  | PE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
+  | NE_Ident id -> print_id ppt id
+  | NE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
+  | NE_Value v -> print_value ppt v
+  | NE_Array ar -> print_array ppt ar
+  | NE_App (id, e_list) -> fprintf ppt "%a@[(%a)@]" print_id id print_e_list e_list
+  | NE_Bop (bop, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_bop bop print_expr e1 print_expr e2
+  | NE_Unop (unop, e) -> fprintf ppt "%a@[(%a)@]" print_unop unop print_expr e
+  | NE_If (cond, e1, e2) -> fprintf ppt "if @[%a@] then @\n@[<v 2>%a@] @\nelse @\n@[<v 2>%a@]" print_expr cond print_expr e1 print_expr e2
+  | NE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
 
 and print_array ppt = function
-  | PA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
-  | PA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
-  | PA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
-  | PA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_id id print_slice_list e_list
+  | NA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
+  | NA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
+  | NA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
+  | NA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_id id print_slice_list e_list
 
 and print_e_list ppt = function 
   | [] -> ()
@@ -71,12 +69,11 @@ let rec print_eq_list ppt = function
   | eq::l -> fprintf ppt "@[%a@];@\n%a" print_eq eq print_eq_list l 
 
 and print_eq ppt = function
-  | P_Eq (lp, e) -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
-  | P_Assert e -> fprintf ppt "ASSERT : %a " print_expr e
+  | (lp, e) -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
 
 and print_leftpart ppt = function
-  | PLP_Ident id -> print_id ppt id
-  | PLP_Tuple id_list -> print_id_list ppt id_list
+  | NLP_Ident id -> print_id ppt id
+  | NLP_Tuple id_list -> print_id_list ppt id_list
 
 and print_id_list ppt = function
   | [] -> ()
@@ -85,8 +82,8 @@ and print_id_list ppt = function
  
 
 let rec print_type ppt = function
-  | PT_Base b -> print_base_type ppt b
-  | PT_Array (t, e) -> 
+  | NT_Base b -> print_base_type ppt b
+  | NT_Array (t, e) -> 
     fprintf ppt 
       "%a ^ %a" 
       print_type t
@@ -106,15 +103,37 @@ let rec print_decl_list ppt =  function
 and print_decl ppt = function
   | (name, ty) -> fprintf ppt "%a : %a" print_id name print_type ty
 
+let print_reg_list ppt = function
+  | [] -> ()
+  | [r] -> fprintf ppt "%a" print_reg r
+  | r::l -> fprintf ppt "%a; %a" print_reg r print_reg_list l
+
+and print_reg ppt reg =
+  fprintf ppt "%a = REG(@[%a@], @[%a@]) : %a"
+    print_id reg.reg_id
+    print_expr reg.reg_ini
+    print_expr reg.reg_var
+    print_type reg.reg_type
+
+let print_cond_list ppt = function
+  | [] -> ()
+  | [r] -> fprintf ppt "%a" print_condition r
+  | r::l -> fprintf ppt "%a;@\n%a" print_condition r print_cond_list l
+
+and print_condition ppt = function
+  |(id, ty, e) -> fprintf ppt "%a : %a & @[%a@]" print_id id print_type ty print_expr e
 
 let print_node ppt node =
   fprintf ppt
-    "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\n@[<v 2>LET @ @[%a @] @]@\nTEL @]"
-    print_id node.p_id
-    print_decl_list node.p_param_in
-    print_decl_list node.p_param_out
-    print_decl_list node.p_vars
-    print_eq_list node.p_eqs
+    "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\nPRE : @[%a]@\n@[<v 2>LET @[%a@] @ @[%a @] @]@\nTEL @\nPOST : @[%a] @]"
+    print_id node.n_id
+    print_decl_list node.n_param_in
+    print_decl_list node.n_param_out
+    print_decl_list node.n_vars
+    print_cond_list node.n_pre
+    print_reg_list node.n_reg
+    print_eq_list node.n_eqs
+    print_cond_list node.n_post
 
 let print_prog prog =
-  List.iter (fun node -> Format.printf "%a@\n@\n@." print_node node) prog
+  Format.printf "@\n%a@\n@." print_node node

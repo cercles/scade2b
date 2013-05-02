@@ -99,13 +99,7 @@ array_type : /* 2 facons de déclarer un tableau apparement (a verifier, la premi
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
 				PT_Array (typ, PE_Value (Int (List.length type_list))) }
- | typ CARET caret_list { PT_Array ($1, $3) }
-;
-
-/* pour la declaration de tableaux multi dimension */
-caret_list :
- | expr { [$1] }
- /* | expr CARET caret_list { $1::$3 } */
+ | typ CARET expr { PT_Array ($1, $3) }
 ;
 
 typ_list :
@@ -235,6 +229,13 @@ struct_item :
 ;
 */
 
+
+/* pour la declaration de tableaux multi dimension */
+/*caret_list :
+ | expr { [$1] }
+ | expr CARET caret_list { $1::$3 } 
+;
+*/
 
 
 %%

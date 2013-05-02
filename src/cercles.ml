@@ -52,9 +52,11 @@ let () =
   try
     let ast = Parser.prog Lexer.token lexbuf in
     close_in channel;
-    if !parse_only then exit 0; 
+    if !verbose then Ast_printer.print_prog ast;
+    if !parse_only then exit 0;
     if main_node = "" then exit 0;
     let ast_n = Normalizer.main ast main_node in
+    if !verbose then Ast_printer_norm.print_prog ast_n;
     if !norm_only then exit 0 ;
     (* let ast_s = Sched.main ast_n in *)
     ()
