@@ -21,7 +21,7 @@ and n_array_expr =
  
 type n_left_part = 
   NLP_Ident of ident
-| NLP_Tuple of nlp_item list
+| NLP_Tuple of ident list
  
 type n_equation = n_left_part * n_expression
 

@@ -1,9 +1,7 @@
-
 *~
 *#*
 src/*~
 src/_build
 src/*#*
-src/tests/
+src/tests
 src/cercles
-src/ast_printer.ml
