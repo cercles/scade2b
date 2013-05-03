@@ -119,6 +119,28 @@ let handle_register main_node=
 
 
 
+module L = Set.Make(ident)
+module EQs = Set.Make(
+  struct 
+    type t = n_equation * ident list * ident list
+    let compare (x:t) (y:t) = compare x y
+  end
+)
+
+let scheduler eqs inputs =
+  let rec schedul_rec res l eqs =
+    let (ok,nok) = List.fold_left (fun (ok,nok) (eq, llist, elist) -> ??? ) eqs ([], []) in 
+    (* retourne une liste dont les équations sont pretes a etre mises dans res (ok) et les autres (nok) *)
+    (* ajouter les llist des eqs de ok à l. Puis ajouter les eqs dans res. Puis recommencer. *)
+  in
+  let eqs = List.fold_left 
+    (fun acc eq -> 
+      let left_list = ident_of_left eq in
+      let expr_list = ident_of_expr eq in
+      EQs.Add (eq, left_list, expr_list) acc) EQs.empty eqs in
+  let l = List.fold_left (fun acc id -> L.Add id acc) EQs.empty inputs in
+  schedul_rec [] l eqs
+
 
 let check_atomicite eq = true (* TODO? *)
 
@@ -160,7 +182,7 @@ let folder main_node =
   in
   fold main_node.p_eqs;
 
-  (* APPEL DU SCHEDULER ICI POUR ORDONNANCER LES EQUATIONS !eqs *)
+  let scheduled_eqs = scheduler !eqs in
 
   let node_out = ref
     { n_id = main_node.p_id;
@@ -170,7 +192,7 @@ let folder main_node =
       n_reg = !registres;
       n_pre = !pre;
       n_post = !post;
-      n_eqs = !eqs; } in
+      n_eqs = scheduled_eqs; } in
   node_out
 
 
