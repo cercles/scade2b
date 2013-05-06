@@ -117,4 +117,4 @@ let print_node ppt node =
     print_eq_list node.p_eqs
 
 let print_prog prog =
-  List.iter (fun node -> Format.printf "%a@\n@\n@." print_node node) prog
+  List.iter (fun node -> Format.printf "Program before normalizer:@\n@\n%a@\n@\n@." print_node node) prog

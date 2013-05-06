@@ -51,16 +51,6 @@ let p_decl_to_n_decl declist =
 
 
 
-
-
-
-(* ATTENTION AUX TUPLES *) 
-
-
-(* AJOUTER un p_expr to n_expr *)
-
-
-
 (* New type used for pre/post conditions *)
 type pre_post = Pre of n_condition | Post of n_condition
 
@@ -100,24 +90,22 @@ let handle_assert main_node asser =
    1. create a register ( c -> pre x with type t becomes reg_id = t, c, x 
    2. replace the register in the old equation by its new ident 
    This fun returns the new register and the new equation *)
-let handle_register main_node= 
+let handle_register main_node equation= 
   let cpt = ref 0 in
-  function 
-  | P_Eq (l, PE_Fby (a, PE_Pre (PE_Ident id))) -> 
-    begin 
-      incr cpt;
-      let typ = match find_type id (main_node.p_param_in@main_node.p_param_out@main_node.p_vars) with
-	| Some typ -> typ
-	| None -> raise Register_error
-      in
-      let reg = { reg_id = "reg"^(string_of_int !cpt);
-		  reg_type = p_type_to_n_type typ;
-		  reg_ini = p_expr_to_n_expr a;
-		  reg_var = NE_Ident id;
-		} in
-      let new_equation = (plp_to_nlp l, NE_Ident reg.reg_id) in
-      (reg, new_equation)
-    end
+  match equation with
+  | P_Eq (l, PE_Fby (a, PE_Pre (PE_Ident id))) ->
+    incr cpt;
+    let typ = match find_type id (main_node.p_param_in@main_node.p_param_out@main_node.p_vars) with
+      | Some typ -> typ
+      | None -> raise Register_error
+    in
+    let reg = { reg_id = "reg" ^ (string_of_int !cpt);
+    		reg_type = p_type_to_n_type typ;
+    		reg_ini = p_expr_to_n_expr a;
+    		reg_var = NE_Ident id;
+    	      } in
+    let new_equation = (plp_to_nlp l, NE_Ident reg.reg_id) in
+    (reg, new_equation)
   | _ -> raise Register_error
     
 
@@ -187,7 +175,7 @@ let scheduler eqs inputs =
        let (left_set, expr_set) = ident_of_eq eq in
        EQs.add (eq, left_set, expr_set) acc) EQs.empty eqs in
   let l = List.fold_left (fun acc id -> L.add id acc) L.empty inputs in
-  schedul_rec [] l eqs
+  List.rev (schedul_rec [] l eqs)
     
 
 let check_atomicite eq = true (* TODO? *)
@@ -202,37 +190,33 @@ let check_atomicite eq = true (* TODO? *)
 *)
 
 let folder main_node = 
-
   let registres = ref [] in
   let pre = ref [] in
   let post = ref [] in
   let eqs = ref [] in
-
-  let rec fold eq_list =
-    match eq_list with
-      | [] -> ()
-      | eq::l -> 
-	  begin 
-	match eq with 
-	  | P_Eq (l, r) -> 
-	      begin 
-		match r with
-		  | PE_Fby (a, b) -> let (reg, new_eq) = handle_register main_node eq in
-		    registres := reg:: !registres;
-		    eqs := new_eq:: !eqs
-		  | _ -> eqs := (plp_to_nlp l, p_expr_to_n_expr r):: !eqs
-	      end
-	  | P_Assert expr ->  
-	      match (handle_assert main_node expr) with
-	      | Post (id, typ, e) -> post := (id, typ, e):: !post
-	      | Pre (id, typ, e) -> pre := (id, typ, e):: !pre
-	  end
+  let normalize_eq eq =    
+    match eq with 
+    | P_Eq (l, r) -> 
+      begin 
+	match r with
+	| PE_Fby (a, b) -> let (reg, new_eq) = handle_register main_node eq in
+			   registres := reg:: !registres;
+			   eqs := new_eq:: !eqs
+	| _ -> eqs := (plp_to_nlp l, p_expr_to_n_expr r):: !eqs
+      end
+    | P_Assert expr ->  
+      match (handle_assert main_node expr) with
+      | Post (id, typ, e) -> post := (id, typ, e):: !post
+      | Pre (id, typ, e) -> pre := (id, typ, e):: !pre
   in
-  fold main_node.p_eqs;
+  List.iter normalize_eq main_node.p_eqs;
+  (* if (List.length !eqs = 0) then failwith "EQSBIS EMPTY!!!!!!!!!!!!!!!" else print_string "EQS_OK..."; *)
   let inputs = p_decl_to_n_decl main_node.p_param_in in
   let scheduled_eqs = 
     let (id_inputs, _) = List.split inputs in 
     scheduler !eqs id_inputs in
+  (* if (List.length scheduled_eqs = 0) then failwith "EQS EMPTY!!!!!!!!!!!!!!!" else (); *)
+  (* if (List.length !registres = 0) then failwith "REGS EMPTY!!!!!!!!!!!!!!!" else (); *)
   let node_out =
     { n_id = main_node.p_id;
       n_param_in = inputs;
@@ -253,4 +237,5 @@ let normalize (ast:prog) main =
       List.find (fun node -> node.p_id = main) ast
     with Not_found -> assert false
   in
+
   folder main_node

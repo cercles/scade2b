@@ -125,15 +125,15 @@ and print_condition ppt = function
 
 let print_node ppt node =
   fprintf ppt
-    "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\nPRE : @[%a]@\n@[<v 2>LET @[%a@] @ @[%a @] @]@\nTEL @\nPOST : @[%a] @]"
+    "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\nPRE : @[%a@]@\n@[<v 2>LET @\n @[%a@] @\n @[%a @] @]@\nTEL @\nPOST : @[%a@] @]"
     print_id node.n_id
     print_decl_list node.n_param_in
     print_decl_list node.n_param_out
     print_decl_list node.n_vars
     print_cond_list node.n_pre
-    print_reg_list node.n_reg
     print_eq_list node.n_eqs
+    print_reg_list node.n_reg
     print_cond_list node.n_post
 
 let print_prog node =
-  Format.printf "@\n%a@\n@." print_node node
+  Format.printf "Program normalized : @\n%a@\n@." print_node node
