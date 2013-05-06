@@ -5,6 +5,7 @@
    Vérifs de bases en plus nécessaires?
    Différentier pre/post conditions *)
 
+open Ast_base
 open Ast_repr
 open Ast_norm_repr
 
@@ -27,6 +28,7 @@ let rec p_expr_to_n_expr = function
   | PE_Fby (e1, e2) -> failwith "Arrow misssed in normalizer"
   | PE_Pre e -> failwith "Pre misssed in normalizer"
   | PE_If (e1, e2, e3) -> NE_If (p_expr_to_n_expr e1, p_expr_to_n_expr e2, p_expr_to_n_expr e3)
+  | PE_Sharp elist -> NE_Sharp (List.map (fun e -> p_expr_to_n_expr e) elist)
 
 and p_array_to_n_array = function
   | PA_Def elist -> NA_Def (List.map (fun e -> p_expr_to_n_expr e) elist)
@@ -42,7 +44,8 @@ let rec p_type_to_n_type = function
   | PT_Base b -> NT_Base b
   | PT_Array (t, e) -> NT_Array (p_type_to_n_type t, p_expr_to_n_expr e)
 
-let p_decl_to_n_decl (id, p_type) = (id, p_type_to_n_type p_type)
+let p_decl_to_n_decl declist = 
+  List.map (fun (id, p_type) -> (id, p_type_to_n_type p_type)) declist
 
 
 
@@ -83,11 +86,12 @@ let handle_assert main_node asser =
     | PE_Fby (e1, e2) -> ident_finder e1; ident_finder e2
     | PE_Pre exp -> ident_finder exp
     | PE_If (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3
+    | PE_Sharp elist -> List.iter (fun eq -> ident_finder eq) elist
   in
   ident_finder asser;
-  match find_type !id (main_node.p_param_in) with
+  match find_type !id main_node.p_param_in with
   | Some typ -> Pre (!id, p_type_to_n_type typ, p_expr_to_n_expr asser)
-  | None -> match find_type id main_node.p_param_out with
+  | None -> match find_type !id main_node.p_param_out with
     | Some typ -> Post (!id, p_type_to_n_type typ, p_expr_to_n_expr asser)
     | None -> raise Assert_id_error
 
@@ -119,28 +123,72 @@ let handle_register main_node=
 
 
 
-module L = Set.Make(ident)
-module EQs = Set.Make(
-  struct 
-    type t = n_equation * ident list * ident list
-    let compare (x:t) (y:t) = compare x y
+module L = Set.Make(
+  struct
+    type t = ident
+    let compare = compare
   end
 )
 
+module EQs = Set.Make(
+  struct 
+    (* 1 equation, ses ids à gauche et à droite *)
+    type t = n_equation * L.t * L.t
+    let compare = compare 
+  end
+)
+
+(* A reecrire en fonctionnel *)
+let ident_of_expr expr =
+  let id = ref L.empty in 
+  let rec idexpr_rec = function
+    | NE_Ident iden -> id := L.add iden !id
+    | NE_Tuple elist -> List.iter (fun e -> idexpr_rec e) elist
+    | NE_Value v -> ()
+    | NE_Array array -> idarray_rec array
+    | NE_App (id, elist) -> List.iter (fun eq -> idexpr_rec eq) elist
+    | NE_Bop (bop, e1, e2) -> idexpr_rec e1; idexpr_rec e2 
+    | NE_Unop (unop, exp) -> idexpr_rec exp
+    | NE_If (e1, e2, e3) -> idexpr_rec e1; idexpr_rec e2; idexpr_rec e3
+    | NE_Sharp elist -> List.iter (fun eq -> idexpr_rec eq) elist
+  and idarray_rec = function
+    |NA_Def elist -> List.iter (fun eq -> idexpr_rec eq) elist
+    |NA_Caret (e1, e2) -> idexpr_rec e1; idexpr_rec e2 
+    |NA_Concat (e1, e2) -> idexpr_rec e1; idexpr_rec e2 
+    |NA_Slice (iden, l) -> id := L.add iden !id;
+	List.iter (fun (e1, e2) -> idexpr_rec e1; idexpr_rec e2) l
+  in
+  idexpr_rec expr;
+  !id
+
+let ident_of_left = function
+  | NLP_Ident id -> L.add id L.empty
+  | NLP_Tuple idl -> List.fold_left (fun s id ->  L.add id s) L.empty idl
+
+let ident_of_eq (lp, expr) = (ident_of_left lp, ident_of_expr expr)
+  
 let scheduler eqs inputs =
   let rec schedul_rec res l eqs =
-    let (ok,nok) = List.fold_left (fun (ok,nok) (eq, llist, elist) -> ??? ) eqs ([], []) in 
-    (* retourne une liste dont les équations sont pretes a etre mises dans res (ok) et les autres (nok) *)
-    (* ajouter les llist des eqs de ok à l. Puis ajouter les eqs dans res. Puis recommencer. *)
+    if EQs.is_empty eqs then res else begin
+      let pred = fun l e_idset -> L.is_empty (L.diff e_idset l) in
+      let (ok,nok) = 
+	EQs.fold
+	  (fun ((_, _, e_idset) as eq) (ok,nok) -> 
+	     if pred l e_idset then (eq::ok, nok) else (ok, EQs.add eq nok)
+	  ) eqs ([], EQs.empty) in 
+      let l' = 	List.fold_left (fun s (_, l_idset, _) -> L.union s l_idset) l ok in
+      let res' = List.fold_left (fun r (eq, _, _) -> eq::r) res ok in
+      let eqs' = nok in
+      schedul_rec res' l' eqs'
+    end
   in
   let eqs = List.fold_left 
     (fun acc eq -> 
-      let left_list = ident_of_left eq in
-      let expr_list = ident_of_expr eq in
-      EQs.Add (eq, left_list, expr_list) acc) EQs.empty eqs in
-  let l = List.fold_left (fun acc id -> L.Add id acc) EQs.empty inputs in
+       let (left_set, expr_set) = ident_of_eq eq in
+       EQs.add (eq, left_set, expr_set) acc) EQs.empty eqs in
+  let l = List.fold_left (fun acc id -> L.add id acc) L.empty inputs in
   schedul_rec [] l eqs
-
+    
 
 let check_atomicite eq = true (* TODO? *)
 
@@ -162,31 +210,32 @@ let folder main_node =
 
   let rec fold eq_list =
     match eq_list with
-    | [] -> ()
-    | eq::l -> 
-      begin 
-	match eq with 
-	| P_Eq (l, r) -> 
+      | [] -> ()
+      | eq::l -> 
 	  begin 
-	    match r with
-	    | PE_Fby (a, b) -> let (reg, new_eq) = handle_register main_node eq in
-			       registres := reg:: !registres;
-			       eqs := eq:: !eqs
-	    | _ -> eqs := (plp_to_nlp l, p_expr_to_n_expr r):: !eqs
+	match eq with 
+	  | P_Eq (l, r) -> 
+	      begin 
+		match r with
+		  | PE_Fby (a, b) -> let (reg, new_eq) = handle_register main_node eq in
+		    registres := reg:: !registres;
+		    eqs := new_eq:: !eqs
+		  | _ -> eqs := (plp_to_nlp l, p_expr_to_n_expr r):: !eqs
+	      end
+	  | P_Assert expr ->  
+	      match (handle_assert main_node expr) with
+	      | Post (id, typ, e) -> post := (id, typ, e):: !post
+	      | Pre (id, typ, e) -> pre := (id, typ, e):: !pre
 	  end
-	| P_Assert expr ->  
-	  match (handle_assert main_node eq) with
-	  | Post (id, typ, expr) -> post := (id, typ, expr):: !post
-	  | Pre (id, typ, expr) -> pre := (id, typ, expr):: !pre
-      end
   in
   fold main_node.p_eqs;
-
-  let scheduled_eqs = scheduler !eqs in
-
-  let node_out = ref
+  let inputs = p_decl_to_n_decl main_node.p_param_in in
+  let scheduled_eqs = 
+    let (id_inputs, _) = List.split inputs in 
+    scheduler !eqs id_inputs in
+  let node_out =
     { n_id = main_node.p_id;
-      n_param_in = p_decl_to_n_decl main_node.p_param_in;
+      n_param_in = inputs;
       n_param_out = p_decl_to_n_decl main_node.p_param_out;
       n_vars = p_decl_to_n_decl main_node.p_vars;
       n_reg = !registres;
@@ -205,4 +254,3 @@ let normalize (ast:prog) main =
     with Not_found -> assert false
   in
   folder main_node
-  

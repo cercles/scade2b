@@ -103,7 +103,7 @@ let rec print_decl_list ppt =  function
 and print_decl ppt = function
   | (name, ty) -> fprintf ppt "%a : %a" print_id name print_type ty
 
-let print_reg_list ppt = function
+let rec print_reg_list ppt = function
   | [] -> ()
   | [r] -> fprintf ppt "%a" print_reg r
   | r::l -> fprintf ppt "%a; %a" print_reg r print_reg_list l
@@ -115,7 +115,7 @@ and print_reg ppt reg =
     print_expr reg.reg_var
     print_type reg.reg_type
 
-let print_cond_list ppt = function
+let rec print_cond_list ppt = function
   | [] -> ()
   | [r] -> fprintf ppt "%a" print_condition r
   | r::l -> fprintf ppt "%a;@\n%a" print_condition r print_cond_list l
@@ -135,5 +135,5 @@ let print_node ppt node =
     print_eq_list node.n_eqs
     print_cond_list node.n_post
 
-let print_prog prog =
+let print_prog node =
   Format.printf "@\n%a@\n@." print_node node
