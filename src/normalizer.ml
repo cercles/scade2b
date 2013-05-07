@@ -12,9 +12,6 @@ open Ast_norm_repr
 exception Assert_id_error
 exception Register_error 
 
-
-
-
 (* Fonctions de passage de ast_repr à ast_norm_repr *)
 
 let rec p_expr_to_n_expr = function
@@ -60,7 +57,6 @@ let rec find_type id declist =
   | [] -> None
   | (ident, typ)::l -> if ident = id then Some typ else find_type id l
 
-
 (* Transform an assert into a pre/post condition *)
 let handle_assert main_node asser = 
   let id = ref "" in
@@ -85,29 +81,30 @@ let handle_assert main_node asser =
     | Some typ -> Post (!id, p_type_to_n_type typ, p_expr_to_n_expr asser)
     | None -> raise Assert_id_error
 
-
 (* Two steps: 
    1. create a register ( c -> pre x with type t becomes reg_id = t, c, x 
    2. replace the register in the old equation by its new ident 
    This fun returns the new register and the new equation *)
-let handle_register main_node equation= 
+
+let handle_register = 
   let cpt = ref 0 in
-  match equation with
-  | P_Eq (l, PE_Fby (a, PE_Pre (PE_Ident id))) ->
+  fun main_node eq -> match eq with
+  | P_Eq (l, PE_Fby (init, PE_Pre (PE_Ident id))) ->
     incr cpt;
     let typ = match find_type id (main_node.p_param_in@main_node.p_param_out@main_node.p_vars) with
       | Some typ -> typ
       | None -> raise Register_error
     in
-    let reg = { reg_id = "reg" ^ (string_of_int !cpt);
+    let new_id = "reg" ^ (string_of_int !cpt) in
+    let reg = { reg_id = new_id;
     		reg_type = p_type_to_n_type typ;
-    		reg_ini = p_expr_to_n_expr a;
+    		reg_ini = p_expr_to_n_expr init;
     		reg_var = NE_Ident id;
     	      } in
     let new_equation = (plp_to_nlp l, NE_Ident reg.reg_id) in
     (reg, new_equation)
   | _ -> raise Register_error
-    
+      
 
 
 
@@ -193,44 +190,36 @@ let folder main_node =
   let registres = ref [] in
   let pre = ref [] in
   let post = ref [] in
-  let eqs = ref [] in
-  let normalize_eq eq =    
-    match eq with 
-    | P_Eq (l, r) -> 
-      begin 
-	match r with
-	| PE_Fby (a, b) -> let (reg, new_eq) = handle_register main_node eq in
-			   registres := reg:: !registres;
-			   eqs := new_eq:: !eqs
-	| _ -> eqs := (plp_to_nlp l, p_expr_to_n_expr r):: !eqs
-      end
-    | P_Assert expr ->  
+  let normalize_eq res = function
+    | P_Eq (lp, expr) as eq -> (
+      match expr with
+      | PE_Fby (_, _) -> let reg = handle_register main_node eq in
+  			 registres := reg:: !registres; res
+      | _ -> (plp_to_nlp lp, p_expr_to_n_expr expr)::res
+    )
+    | P_Assert expr ->
       match (handle_assert main_node expr) with
-      | Post (id, typ, e) -> post := (id, typ, e):: !post
-      | Pre (id, typ, e) -> pre := (id, typ, e):: !pre
+      | Post (id, typ, e) -> post := (id, typ, e):: !post; res
+      | Pre (id, typ, e) -> pre := (id, typ, e):: !pre; res
   in
-  List.iter normalize_eq main_node.p_eqs;
-  (* if (List.length !eqs = 0) then failwith "EQSBIS EMPTY!!!!!!!!!!!!!!!" else print_string "EQS_OK..."; *)
+  let eqs = List.fold_left normalize_eq [] main_node.p_eqs in
   let inputs = p_decl_to_n_decl main_node.p_param_in in
   let scheduled_eqs = 
     let (id_inputs, _) = List.split inputs in 
-    scheduler !eqs id_inputs in
-  (* if (List.length scheduled_eqs = 0) then failwith "EQS EMPTY!!!!!!!!!!!!!!!" else (); *)
-  (* if (List.length !registres = 0) then failwith "REGS EMPTY!!!!!!!!!!!!!!!" else (); *)
+    scheduler eqs id_inputs in
+  let (regs, reg_eqs) = List.split !registres in
+  let scheduled_eqs = scheduled_eqs @ reg_eqs in
   let node_out =
     { n_id = main_node.p_id;
       n_param_in = inputs;
       n_param_out = p_decl_to_n_decl main_node.p_param_out;
       n_vars = p_decl_to_n_decl main_node.p_vars;
-      n_reg = !registres;
+      n_reg = regs;
       n_pre = !pre;
       n_post = !post;
       n_eqs = scheduled_eqs; } in
   node_out
 
-
-(* extraction du main *)
-(* appel fold eq_list *)
 let normalize (ast:prog) main =
   let main_node =
     try 
