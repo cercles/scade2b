@@ -25,7 +25,12 @@ and p_array_to_n_array = function
   | PA_Def elist -> NA_Def (List.map p_expr_to_n_expr elist)
   | PA_Caret (e1, e2) -> NA_Caret (p_expr_to_n_expr e1, p_expr_to_n_expr e2)
   | PA_Concat (e1, e2) -> NA_Concat (p_expr_to_n_expr e1, p_expr_to_n_expr e2)
-  | PA_Slice (id, l) -> NA_Slice (id, (List.map (fun (e1, e2) -> p_expr_to_n_expr e1, p_expr_to_n_expr e2) l))
+  | PA_Slice (id, l) -> (* if the slice is actually an index *)
+    if Utils.a_b_list_equals l then NA_Index (id, (List.map (fun (e, _) -> p_expr_to_n_expr e) l))
+    else NA_Slice (id, (List.map (fun (e1, e2) -> p_expr_to_n_expr e1, p_expr_to_n_expr e2) l))
+
+(* FAIRE LE SLICE TO INDEX A UN AUTRE MOMENT? pas forcément clair ici... *)
+
 
 let plp_to_nlp = function
   | PLP_Ident id -> NLP_Ident id
@@ -138,11 +143,13 @@ let ident_of_expr expr =
     | NE_If (e1, e2, e3) -> idexpr_rec e1; idexpr_rec e2; idexpr_rec e3
     | NE_Sharp elist -> List.iter idexpr_rec elist
   and idarray_rec = function
-    |NA_Def elist -> List.iter idexpr_rec elist
-    |NA_Caret (e1, e2) -> idexpr_rec e1; idexpr_rec e2 
-    |NA_Concat (e1, e2) -> idexpr_rec e1; idexpr_rec e2 
-    |NA_Slice (iden, l) -> id := L.add iden !id;
-	List.iter (fun (e1, e2) -> idexpr_rec e1; idexpr_rec e2) l
+    | NA_Def elist -> List.iter idexpr_rec elist
+    | NA_Caret (e1, e2) -> idexpr_rec e1; idexpr_rec e2 
+    | NA_Concat (e1, e2) -> idexpr_rec e1; idexpr_rec e2 
+    | NA_Slice (iden, l) -> id := L.add iden !id;
+      List.iter (fun (e1, e2) -> idexpr_rec e1; idexpr_rec e2) l
+    | NA_Index (iden, l) -> id := L.add iden !id;
+      List.iter idexpr_rec l
   in
   idexpr_rec expr;
   !id

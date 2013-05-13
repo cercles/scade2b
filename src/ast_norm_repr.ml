@@ -18,6 +18,7 @@ and n_array_expr =
 | NA_Caret of n_expression * n_expression
 | NA_Concat of n_expression * n_expression
 | NA_Slice of ident * (n_expression * n_expression) list
+| NA_Index of ident * n_expression list
  
 type n_left_part = 
   NLP_Ident of ident
