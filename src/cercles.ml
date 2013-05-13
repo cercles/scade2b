@@ -69,6 +69,8 @@ let () =
     Format.eprintf "syntax error\n@.";
     handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
     exit 1
+  | Normalizer.Assert_id_error e ->
+    Format.eprintf "assert error: %s \n@." e
   | e ->
     Format.eprintf "Anomaly: %s\n@." (Printexc.to_string e);
     exit 2

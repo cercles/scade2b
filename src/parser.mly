@@ -33,18 +33,22 @@
 %token EOF
 
 
-%left CARET CONCAT
-%nonassoc NOT PRE
-%left MULT DIV DIV_INT MOD
-%left PLUS MINUS    
-%left EQ NEQ INF INFEQ SUP SUPEQ 
-%left AND
-%left OR XOR
-%left FBY
+
 %left DOTDOT
+%left FBY
+%left OR XOR
+%left AND
+%left EQ NEQ INF INFEQ SUP SUPEQ 
+%left PLUS MINUS
+%left MULT DIV DIV_INT MOD
+%nonassoc NOT PRE
+%left CARET CONCAT
 %nonassoc uminus
 %nonassoc THEN
 %nonassoc ELSE
+
+
+
 
 %start prog
 %type <Ast_repr.prog> prog
