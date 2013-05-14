@@ -50,13 +50,3 @@ type n_node =
      n_pre: n_condition list;
      n_post: n_condition list;
      n_eqs: n_equation list; }
-
-
-(* type nlp_item = *)
-(*   NLP_Ident of ident *)
-(* | NLP_Array of ident * n_expression * n_expression (\* Array of ident * array_smthg *\) *)
- 
-(* type n_left_part =  *)
-(*   NLP_Item of nlp_item *)
-(* | NLP_Tuple of nlp_item list *)
- 

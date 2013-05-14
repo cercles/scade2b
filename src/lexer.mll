@@ -18,12 +18,15 @@ let sep = ['\t' '\r' ' ' ]+
 
 let digit = ['0'-'9'] 
 let exponent = ('e' | 'E') ('+' | '-')? digit+
-let real = digit+ '.' digit* exponent?
-  (* | digit* '.' digit+ exponent? *)
+let real = digit+ '.' digit+ exponent?
+  | digit* '.' digit+ exponent?
   | digit+ exponent
 let alpha = ['a'-'z''A'-'Z''_']
 let ident = alpha (digit|alpha)*
   
+
+
+
 rule token = parse
 	  | sep  { token lexbuf }
 	  | '\n' { newline lexbuf;

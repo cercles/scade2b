@@ -36,13 +36,15 @@ and print_e_list ppt = function
 
 and print_slice_list ppt = function
   | [] -> ()
+  | [(e1, e2)] when e1 = e2 -> fprintf ppt "[%a]" print_expr e1
+  | (e1, e2)::l when e1 = e2 -> fprintf ppt "[%a]%a" print_expr e1 print_slice_list l
   | [(e1, e2)] -> fprintf ppt "[%a .. %a]" print_expr e1 print_expr e2
   | (e1, e2)::l -> fprintf ppt "[%a .. %a]%a" print_expr e1 print_expr e2 print_slice_list l
 
 and print_index_list ppt = function
   | [] -> ()
   | [(e)] -> fprintf ppt "[%a]" print_expr e
-  | (e)::l -> fprintf ppt "[%a]%a" print_expr e print_slice_list l
+  | (e)::l -> fprintf ppt "[%a]%a" print_expr e print_index_list l
 
 and print_bop ppt = function
   | Op_eq -> fprintf ppt "eq"
@@ -142,4 +144,4 @@ let print_node ppt node =
     print_cond_list node.n_post
 
 let print_prog node =
-  Format.printf "Program normalized : @\n%a@\n@." print_node node
+  Format.printf "Program normalized : @\n@\n%a@\n@." print_node node
