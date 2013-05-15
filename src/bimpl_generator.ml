@@ -74,6 +74,22 @@ and print_unop ppt = function
   | Op_not -> fprintf ppt "not "
   | Op_minus -> fprintf ppt " -"
 
+
+
+(*                *              *STAND_BY REFACTORING AST*                  *                   *)
+
+let rec print_eqs ppt = function
+  | [] -> ()
+  | [(lp, expr)] -> ()
+  | _ -> ()
+
+
+
+let print_vars ppt var_list =
+  if (List.length var_list) = 0 then () else
+    let (id_var_list, _) = List.split var_list in
+    fprintf ppt "VAR %s IN" (Utils.string_of_list id_var_list)
+
 let rec print_declist ppt = function
   | [] -> ()
   | [(id, _)] -> fprintf ppt "%a" print_bid id
@@ -84,6 +100,16 @@ let print_op_decl ppt node =
     print_declist node.n_param_out
     node.n_id
     print_declist node.n_param_in
+ 
+let print_operation ppt node =
+  fprintf ppt 
+    "OPERATIONS@\n@\n@[%a =@]@\n%a@[<v 3>@,@[<v>%a@]@]@\n@\nEND"
+    print_op_decl node
+    print_vars node.n_vars
+    print_eqs node.n_eqs
+
+
+
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
@@ -94,52 +120,45 @@ let print_type ppt = function
   | NT_Base t -> print_basetype ppt t
   | NT_Array (t, expr) -> assert false (* SEQUENCES A FAIRE *)
 
-let print_pre_condition ppt (id, t, expr) =
-  fprintf ppt "%a : %a & %a"
-    print_bid id
-    print_type t
-    print_expr expr 
+let print_initialisation ppt reg_list = ()
 
-let print_then_condition ppt (id, t, expr) =
-  fprintf ppt "%a :: { %a | %a : %a & %a }"
-    print_bid id
-    print_bid id
-    print_bid id
-    print_type t
-    print_expr expr
+let print_invariant ppt reg_list = ()
 
-let rec print_prelist ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_pre_condition c
-  | c::l -> fprintf ppt "%a &@,%a" print_pre_condition c print_prelist l 
+let print_concrete_var ppt reg_list =
+  if (List.length reg_list) = 0 then () 
+  else 
+    fprintf ppt "CONCRETE_VARIABLES %s" (Utils.string_of_reglist reg_list)
 
-let rec print_thenlist ppt = function
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_then_condition c
-  | c::l -> fprintf ppt "%a@,||%a" print_then_condition c print_prelist l 
 
-let print_operation ppt node =
-  fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v> %a@]@]@\n@[<v 3> THEN@,@[<v> %a@]@]@\n END"
-    print_op_decl node
-    print_prelist node.n_pre
-    print_thenlist node.n_post
-
+(* A REFAIRE PAR RAPPORT AUX INCLUDES! *)
 (* The file list can be configured in utils.ml *)
+let print_imports ppt node =
+  if (List.length Utils.imports_list) = 0 then () 
+  else 
+    fprintf ppt "IMPORTS %s" (Utils.string_of_list Utils.imports_list)
+
 let print_sees ppt node =
   if (List.length Utils.sees_list) = 0 then () 
   else 
     fprintf ppt "SEES %s" (Utils.string_of_list Utils.sees_list)
 
-let print_id_machine ppt id =
-  fprintf ppt "MACHINE %s" (String.capitalize id)
+let print_refines ppt id =
+  fprintf ppt "REFINES %s" (String.capitalize id)
+
+let print_implementation ppt id =
+  fprintf ppt "IMPLEMENTATION %s" ((String.capitalize id)^"_i")
 
 let print_machine ppt node =
   fprintf ppt
-    "%a@\n%a@\n%a"
-    print_id_machine node.n_id
+    "%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a"
+    print_implementation node.n_id
+    print_refines node.n_id
     print_sees node
+    print_imports node
+    print_concrete_var node.n_reg
+    print_invariant node.n_reg
+    print_initialisation node.n_reg
     print_operation node
 
 let print_prog node =
-  printf "@\n@\nB Signature : @\n@\n%a@\n@." print_machine node
+  printf "@\n@\nB Implementation : @\n@\n%a@\n@." print_machine node
