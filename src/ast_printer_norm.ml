@@ -71,13 +71,30 @@ and print_unop ppt = function
   | Op_minus -> fprintf ppt "-"
 
 
+let print_reg ppt reg =
+  fprintf ppt "%a = REG(@[%a@], @[%a@]) : %a"
+    print_id reg.reg_id
+    print_expr reg.reg_ini
+    print_expr reg.reg_var
+    print_type reg.reg_type
+
+
+
 let rec print_eq_list ppt = function
   | [] -> ()
   | [eq] -> fprintf ppt "@[%a@];" print_eq eq
   | eq::l -> fprintf ppt "@[%a@];@\n%a" print_eq eq print_eq_list l 
 
 and print_eq ppt = function
-  | (lp, e) -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
+  | N_Alternative a -> 
+    fprintf ppt "IF %a THEN %a ELSE %a" 
+      print_leftpart lp 
+      print_expr e
+  | N_Fonction f -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
+  | N_Operation o ->
+  | N_Registre r ->
+
+  | (lp, e) -> 
 
 and print_leftpart ppt = function
   | NLP_Ident id -> print_id ppt id
@@ -111,18 +128,6 @@ let rec print_decl_list ppt =  function
 and print_decl ppt = function
   | (name, ty) -> fprintf ppt "%a : %a" print_id name print_type ty
 
-let rec print_reg_list ppt = function
-  | [] -> ()
-  | [r] -> fprintf ppt "%a" print_reg r
-  | r::l -> fprintf ppt "%a; %a" print_reg r print_reg_list l
-
-and print_reg ppt reg =
-  fprintf ppt "%a = REG(@[%a@], @[%a@]) : %a"
-    print_id reg.reg_id
-    print_expr reg.reg_ini
-    print_expr reg.reg_var
-    print_type reg.reg_type
-
 let rec print_cond_list ppt = function
   | [] -> ()
   | [r] -> fprintf ppt "%a" print_condition r
@@ -140,7 +145,6 @@ let print_node ppt node =
     print_decl_list node.n_vars
     print_cond_list node.n_pre
     print_eq_list node.n_eqs
-    print_reg_list node.n_reg
     print_cond_list node.n_post
 
 let print_prog node =

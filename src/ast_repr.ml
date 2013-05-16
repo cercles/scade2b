@@ -20,6 +20,7 @@ and p_array_expr =
 | PA_Caret of p_expression * p_expression (* Initialisation avec e1^ e2 (ex: false^4) *)
 | PA_Concat of p_expression * p_expression
 | PA_Slice of ident * (p_expression * p_expression) list
+| PA_Index of ident * p_expression list
 (* list pour gerer la multi dimension. slice est aussi utilisé pour l'index, dans ce cas la borne est unitaire *)
 
 type p_left_part = 

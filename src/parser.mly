@@ -9,13 +9,16 @@
     let typ = List.hd list in
     List.iter (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
     typ
-(*
-  let loc () = symbol_start_pos (), symbol_end_pos ()
-  let mk_expr e = { pexpr_desc = e; pexpr_loc = loc () }
-  (* return a Parse_ast.p_expr *)
-  let mk_patt p = { ppatt_desc = p; ppatt_loc = loc () }
-  (* return a Parse_ast.p_patt *) 
-*)  
+
+  (* Used for the distinction between Slice and Index *)
+  let handle_slice id elist =
+    if Utils.a_b_list_equals elist then 
+      let (l, _) = List.split elist in
+      PA_Index (id, l)
+    else
+      PA_Slice (id, elist)
+
+      
 %}
 
 %token NODE RETURNS LET TEL VAR CONST ASSERT
@@ -165,7 +168,7 @@ expr_list :
 
 array_expr :
  | LBRACKET expr_list RBRACKET { PA_Def $2 } /* OK POUR TABLEAU MULTI-DIM */
- | IDENT array_list { PA_Slice ($1, $2) } 
+ | IDENT array_list { handle_slice $1 $2 } 
  | expr CARET expr { PA_Caret ($1, $3) }
  | expr CONCAT expr { PA_Concat ($1, $3) }
 ;
@@ -183,63 +186,6 @@ semi_opt :
  | SEMICOL { () }
 ;
 
-
-
-
-
-
-
-
-
-
-
-
-
-/*OLD STUFF*/
-
-/*
-array_expr :
- | IDENT LBRACKET expr RBRACKET { P_Slice ($3, $3) }
- | IDENT LBRACKET expr DOTDOT expr RBRACKET { P_Slice ($3, $5) } 
- | array_expr CONCAT array_expr { P_Concat ($1, $3) }
-;
-*/
-
-/*
-array_expr :
- | LBRACKET expr_list RBRACKET { PA_Def $2 } 
- | IDENT LBRACKET expr RBRACKET { PA_Index ($1, $3) } 
- | IDENT LBRACKET expr DOTDOT expr RBRACKET { PA_Slice ($1, $3, $5) }
- | expr CARET expr { PA_Caret ($1, $3) }
- | expr CONCAT expr { PA_Concat ($1, $3) }
-;
-*/
-
-/*
-left_part : 
- | struct_item { PLP_Item $1 }
- | LPAREN struct_item COMMA struct_item_list RPAREN  { PLP_Tuple ($2::$4) }
-;
-
-struct_item_list : 
- | struct_item { [$1] }
- | struct_item COMMA struct_item_list { $1::$3 }
-;
-
-struct_item :
- | IDENT { PLP_Ident $1 }
- | IDENT LBRACKET expr RBRACKET { PLP_Array $1, $3, $3 }
- | IDENT LBRACKET expr DOTDOT expr RBRACKET { PLP_Array $1, $3, $5 }
-;
-*/
-
-
-/* pour la declaration de tableaux multi dimension */
-/*caret_list :
- | expr { [$1] }
- | expr CARET caret_list { $1::$3 } 
-;
-*/
 
 
 %%

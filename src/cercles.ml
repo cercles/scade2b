@@ -3,7 +3,6 @@
 open Lexing
 open Lexer
 open Parser
-open Ast_repr
 
 let usage = "usage: "^Sys.argv.(0)^" [options] file.lus main"
 
@@ -56,10 +55,10 @@ let () =
     if !parse_only then exit 0;
     if main_node = "" then exit 0;
     let ast_n = Normalizer.normalize ast main_node in
-    if !verbose then Ast_printer_norm.print_prog ast_n;
+    (* if !verbose then Ast_printer_norm.print_prog ast_n; *)
     if !norm_only then exit 0 ;
-    Bsig_generator.print_prog ast_n;
-    Bimpl_generator.print_prog ast_n;
+    (* Bsig_generator.print_prog ast_n; *)
+    (* Bimpl_generator.print_prog ast_n; *)
     ()
   with
   | Lexer.Lexical_error s ->
