@@ -50,7 +50,17 @@ let find_ident_in_pexpr expr =
   !id
 
 (* In B, ids must be defined by more than 1 letter, if it has only 1 letter then we double it else it doesn't change.
-   id_and_bid_list returns a pair list containing (id, b_id)
+   we add a triplet (id, bid, n_type) in an Env.t set, and we check there is no doublon
+   id_and_bid_list returns an Env.t
 *)
+
 let id_and_bid_list id_list =
-  List.map (fun (id, t) -> if (String.length id) > 1 then (id, id, t) else (id, id^id, t)) id_list 
+  let rec add_with_check s ((id, b_id, t) as elt) = 
+    if Env.mem elt s
+    then 
+      add_with_check s (id, id^b_id, t)
+    else
+      Env.add elt s
+  in
+  List.fold_left (fun s (id, t) -> if (String.length id) > 1 then add_with_check s (id, id, t) 
+		  else add_with_check s (id, id^id, t)) Env.empty id_list 

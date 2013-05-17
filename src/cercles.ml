@@ -57,8 +57,8 @@ let () =
     let ast_n = Normalizer.normalize ast main_node in
     if !verbose then Ast_printer_norm.print_prog ast_n;
     if !norm_only then exit 0 ;
-    Bsig_generator_test.print_prog ast_n;
-    (* Bimpl_generator.print_prog ast_n; *)
+    Bsig_generator.print_prog ast_n;
+    Bimpl_generator.print_prog ast_n;
     ()
   with
   | Lexer.Lexical_error s ->

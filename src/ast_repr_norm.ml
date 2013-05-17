@@ -63,7 +63,19 @@ type n_condition =
 type n_decl = 
   ident * n_type
 
-type env = (ident * ident * n_type) list
+
+
+
+(* A changer par un set pour controler les doublons *)
+
+module Env = Set.Make(
+  struct
+    type t = ident * ident * n_type
+    let compare = compare
+  end
+)
+
+type env = Env.t
 
 type n_node = 
   { n_id: ident; 

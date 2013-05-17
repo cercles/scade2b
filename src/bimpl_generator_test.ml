@@ -13,6 +13,8 @@ let print_bid env ppt id =
   in
   fprintf ppt "%s" bid
 
+let print_bid_list
+
 let print_value env ppt = function
   | Bool b -> fprintf ppt "%b" b
   | Int i -> fprintf ppt "%d" i
@@ -76,6 +78,58 @@ and print_unop ppt = function
   | Op_not -> fprintf ppt "not "
   | Op_minus -> fprintf ppt " -"
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let rec print_eqs env ppt = function
+  | [] -> ()
+  | [(lp, expr)] -> ()
+  | _ -> ()
+
+
+
+
+and print_eq ppt = function
+  | N_Alternative a -> 
+      fprintf ppt "%a =@[<v 2>@,IF%a@]@,@[<v 4>THEN@,%a@]@,@[<v 4>ELSE@,%a@]" 
+	print_leftpart a.alt_lp 
+	print_expr a.alt_cond
+	print_expr a.alt_then
+	print_expr a.alt_else
+  | N_Fonction f -> 
+      fprintf ppt "%a = @[%a(%a)@]" 
+	print_leftpart f.fun_lp 
+	print_id f.fun_id
+	print_e_list f.fun_params
+  | N_Operation o ->
+      fprintf ppt "%a = @[%a@]" 
+	print_leftpart o.op_lp
+	print_expr o.op_expr
+  | N_Registre r ->
+      fprintf ppt "%a = @[REG(%a,%a)@] : %a" 
+	print_leftpart r.reg_lp
+	print_expr r.reg_ini
+	print_expr r.reg_val
+	print_type r.reg_type
+
+
+
+let print_vars ppt var_list =
+  if (List.length var_list) = 0 then () else
+    let (id_var_list, _) = List.split var_list in
+    fprintf ppt "VAR %s IN" (Utils.string_of_list id_var_list)
+
 let rec print_declist env ppt = function
   | [] -> ()
   | [(id, _)] -> fprintf ppt "%a" (print_bid env) id
@@ -86,62 +140,64 @@ let print_op_decl env ppt node =
     (print_declist env) node.n_param_out
     node.n_id
     (print_declist env) node.n_param_in
+ 
+let print_operation ppt node =
+  fprintf ppt 
+    "OPERATIONS@\n@\n@[%a =@]@\n%a@[<v 3>@,@[<v>%a@]@]@\n@\nEND"
+    (print_op_decl node.env) node
+    (print_vars node.env) node.n_vars
+    (print_eqs node.env) node.n_eqs
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
 
-let print_type env ppt = function
+let print_type ppt = function
   | NT_Base t -> print_basetype ppt t
   | NT_Array (t, expr) -> assert false (* SEQUENCES A FAIRE *)
 
-let print_pre_condition env ppt (id, t, expr) =
-  fprintf ppt "%a : %a & %a"
-    (print_bid env) id
-    (print_type env) t
-    (print_expr env) expr 
 
-let print_then_condition env ppt (id, t, expr) =
-  fprintf ppt "%a :: { %a | %a : %a & %a }"
-    (print_bid env) id
-    (print_bid env) id
-    (print_bid env) id
-    (print_type env) t
-    (print_expr env) expr
+let print_initialisation env ppt reg_list = ()
 
-let rec print_prelist env ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" (print_pre_condition env) c
-  | c::l -> fprintf ppt "%a &@,%a" (print_pre_condition env) c (print_prelist env) l 
+let print_invariant env ppt reg_list = ()
 
-let rec print_thenlist env ppt = function
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" (print_then_condition env) c
-  | c::l -> fprintf ppt "%a@,||%a" (print_then_condition env) c (print_prelist env) l 
+let print_concrete_var env ppt reg_list =
+  if (List.length reg_list) = 0 then () 
+  else 
+    fprintf ppt "CONCRETE_VARIABLES %a" (print_bid reg_list)
 
-let print_operation env ppt node =
-  fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v> %a@]@]@\n@[<v 3> THEN@,@[<v> %a@]@]@\n END"
-    (print_op_decl env) node
-    (print_prelist env) node.n_pre
-    (print_thenlist env) node.n_post
 
+(* A REFAIRE PAR RAPPORT AUX INCLUDES! *)
 (* The file list can be configured in utils.ml *)
+let print_imports ppt node =
+  if (List.length Utils.imports_list) = 0 then () 
+  else 
+    fprintf ppt "IMPORTS %s" (Utils.string_of_list Utils.imports_list)
+
 let print_sees ppt node =
   if (List.length Utils.sees_list) = 0 then () 
   else 
     fprintf ppt "SEES %s" (Utils.string_of_list Utils.sees_list)
 
-let print_id_machine ppt id =
-  fprintf ppt "MACHINE %s" (String.capitalize id)
+let print_refines ppt id =
+  fprintf ppt "REFINES %s" (String.capitalize id)
+
+let print_implementation ppt id =
+  fprintf ppt "IMPLEMENTATION %s" ((String.capitalize id)^"_i")
 
 let print_machine ppt node =
   fprintf ppt
-    "%a@\n%a@\n%a"
-    print_id_machine node.n_id
+    "%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a"
+    print_implementation node.n_id
+    print_refines node.n_id
     print_sees node
-    (print_operation node.n_env) node
+    print_imports node
+    (print_concrete_var node.n_env) node.n_reg
+    (print_invariant node.n_env) node.n_reg
+    (print_initialisation node.n_env) node.n_reg
+    print_operation node
 
 let print_prog node =
-  printf "@\n@\nB Signature : @\n@\n%a@\n@." print_machine node
+  printf "@\n@\nB Implementation : @\n@\n%a@\n@." print_machine node
+
