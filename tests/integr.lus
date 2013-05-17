@@ -1,0 +1,15 @@
+node bound (a, x, b: int) returns (r: int);
+let
+r = if x < a then a else
+      if x > b then b else x;
+tel
+
+node integr (x: int) returns (y: int);
+var reg1, z: int;
+let
+  assert -256 <= x and x <= 255;
+  y = bound(-1024, z, 1023);
+  z = x + reg1;
+  reg1 = 0 -> (pre y);
+  assert -1024 <= y and y <= 1023;
+tel

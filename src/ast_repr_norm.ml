@@ -63,8 +63,11 @@ type n_condition =
 type n_decl = 
   ident * n_type
 
+type env = (ident * ident * n_type) list
+
 type n_node = 
   { n_id: ident; 
+    n_env: env;
     n_param_in: n_decl list; 
     n_param_out: n_decl list; 
     n_vars: n_decl list; 

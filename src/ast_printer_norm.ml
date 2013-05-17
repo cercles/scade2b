@@ -1,7 +1,7 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Format
-open Ast_norm_repr
+open Ast_repr_norm
 open Ast_base
 
 let print_id ppt id = fprintf ppt "%s" id
@@ -16,10 +16,8 @@ let rec print_expr ppt = function
   | NE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
   | NE_Value v -> print_value ppt v
   | NE_Array ar -> print_array ppt ar
-  | NE_App (id, e_list) -> fprintf ppt "%a@[(%a)@]" print_id id print_e_list e_list
   | NE_Bop (bop, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_bop bop print_expr e1 print_expr e2
   | NE_Unop (unop, e) -> fprintf ppt "%a@[(%a)@]" print_unop unop print_expr e
-  | NE_If (cond, e1, e2) -> fprintf ppt "if @[%a@] then @\n@[<v 2>%a@] @\nelse @\n@[<v 2>%a@]" print_expr cond print_expr e1 print_expr e2
   | NE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
 
 and print_array ppt = function
@@ -71,41 +69,6 @@ and print_unop ppt = function
   | Op_minus -> fprintf ppt "-"
 
 
-let print_reg ppt reg =
-  fprintf ppt "%a = REG(@[%a@], @[%a@]) : %a"
-    print_id reg.reg_id
-    print_expr reg.reg_ini
-    print_expr reg.reg_var
-    print_type reg.reg_type
-
-
-
-let rec print_eq_list ppt = function
-  | [] -> ()
-  | [eq] -> fprintf ppt "@[%a@];" print_eq eq
-  | eq::l -> fprintf ppt "@[%a@];@\n%a" print_eq eq print_eq_list l 
-
-and print_eq ppt = function
-  | N_Alternative a -> 
-    fprintf ppt "IF %a THEN %a ELSE %a" 
-      print_leftpart lp 
-      print_expr e
-  | N_Fonction f -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
-  | N_Operation o ->
-  | N_Registre r ->
-
-  | (lp, e) -> 
-
-and print_leftpart ppt = function
-  | NLP_Ident id -> print_id ppt id
-  | NLP_Tuple id_list -> print_id_list ppt id_list
-
-and print_id_list ppt = function
-  | [] -> ()
-  | [id] -> fprintf ppt "%a" print_id id
-  | id::l -> fprintf ppt "%a, %a" print_id id print_id_list l
- 
-
 let rec print_type ppt = function
   | NT_Base b -> print_base_type ppt b
   | NT_Array (t, e) -> 
@@ -119,6 +82,44 @@ and print_base_type ppt = function
   | T_Int -> fprintf ppt "int"
   | T_Float -> fprintf ppt "real"
 
+
+let rec print_eq_list ppt = function
+  | [] -> ()
+  | [eq] -> fprintf ppt "@[%a@];" print_eq eq
+  | eq::l -> fprintf ppt "@[%a@];@\n%a" print_eq eq print_eq_list l 
+
+and print_eq ppt = function
+  | N_Alternative a -> 
+      fprintf ppt "%a =@[<v 2>@,IF%a@]@,@[<v 4>THEN@,%a@]@,@[<v 4>ELSE@,%a@]" 
+	print_leftpart a.alt_lp 
+	print_expr a.alt_cond
+	print_expr a.alt_then
+	print_expr a.alt_else
+  | N_Fonction f -> 
+      fprintf ppt "%a = @[%a(%a)@]" 
+	print_leftpart f.fun_lp 
+	print_id f.fun_id
+	print_e_list f.fun_params
+  | N_Operation o ->
+      fprintf ppt "%a = @[%a@]" 
+	print_leftpart o.op_lp
+	print_expr o.op_expr
+  | N_Registre r ->
+      fprintf ppt "%a = @[REG(%a,%a)@] : %a" 
+	print_leftpart r.reg_lp
+	print_expr r.reg_ini
+	print_expr r.reg_val
+	print_type r.reg_type
+
+and print_leftpart ppt = function
+  | NLP_Ident id -> print_id ppt id
+  | NLP_Tuple id_list -> print_id_list ppt id_list
+
+and print_id_list ppt = function
+  | [] -> ()
+  | [id] -> fprintf ppt "%a" print_id id
+  | id::l -> fprintf ppt "%a, %a" print_id id print_id_list l
+ 
 
 let rec print_decl_list ppt =  function
   | [] -> ()
@@ -138,7 +139,7 @@ and print_condition ppt = function
 
 let print_node ppt node =
   fprintf ppt
-    "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\nPRE : @[%a@]@\n@[<v 2>LET @\n @[%a@] @\n @[%a @] @]@\nTEL @\nPOST : @[%a@] @]"
+    "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\nPRE : @[%a@]@\n@[<v 2>LET @\n @[%a@] @]@\nTEL @\nPOST : @[%a@] @]"
     print_id node.n_id
     print_decl_list node.n_param_in
     print_decl_list node.n_param_out

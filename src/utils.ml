@@ -2,7 +2,7 @@
 
 open Ast_repr_norm
 open Ast_repr
-
+open Ast_base
 
 (* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
 let a_b_list_equals l=
@@ -49,3 +49,8 @@ let find_ident_in_pexpr expr =
   ident_finder expr;
   !id
 
+(* In B, ids must be defined by more than 1 letter, if it has only 1 letter then we double it else it doesn't change.
+   id_and_bid_list returns a pair list containing (id, b_id)
+*)
+let id_and_bid_list id_list =
+  List.map (fun (id, t) -> if (String.length id) > 1 then (id, id, t) else (id, id^id, t)) id_list 
