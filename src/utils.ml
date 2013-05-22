@@ -68,7 +68,7 @@ let find_ident_in_pexpr expr =
 
 
 let make_n_env id_type_list =
-  List.fold_left (fun s elt -> if N_Env.mem elt 
+  List.fold_left (fun s elt -> if N_Env.mem elt s
     then failwith "two elements have same id" 
     else N_Env.add elt s) N_Env.empty id_type_list
 

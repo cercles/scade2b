@@ -86,9 +86,6 @@ type b_impl =
     operations: operations;
   }
 
-type decl = 
-  ident * b_type
-
 type condition = 
   ident * b_type * expression
 
