@@ -91,25 +91,25 @@ let rec print_eq_list ppt = function
 and print_eq ppt = function
   | N_Alternative a -> 
       fprintf ppt "%a =@[<v 2>@,IF%a@]@,@[<v 4>THEN@,%a@]@,@[<v 4>ELSE@,%a@]" 
-	print_leftpart a.alt_lp 
-	print_expr a.alt_cond
-	print_expr a.alt_then
-	print_expr a.alt_else
+	print_leftpart a.n_alt_lp 
+	print_expr a.n_alt_cond
+	print_expr a.n_alt_then
+	print_expr a.n_alt_else
   | N_Fonction f -> 
       fprintf ppt "%a = @[%a(%a)@]" 
-	print_leftpart f.fun_lp 
-	print_id f.fun_id
-	print_e_list f.fun_params
+	print_leftpart f.n_fun_lp 
+	print_id f.n_fun_id
+	print_e_list f.n_fun_params
   | N_Operation o ->
       fprintf ppt "%a = @[%a@]" 
-	print_leftpart o.op_lp
-	print_expr o.op_expr
+	print_leftpart o.n_op_lp
+	print_expr o.n_op_expr
   | N_Registre r ->
       fprintf ppt "%a = @[REG(%a,%a)@] : %a" 
-	print_leftpart r.reg_lp
-	print_expr r.reg_ini
-	print_expr r.reg_val
-	print_type r.reg_type
+	print_leftpart r.n_reg_lp
+	print_expr r.n_reg_ini
+	print_expr r.n_reg_val
+	print_type r.n_reg_type
 
 and print_leftpart ppt = function
   | NLP_Ident id -> print_id ppt id

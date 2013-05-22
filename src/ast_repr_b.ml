@@ -44,53 +44,73 @@ type operation =
     op_expr: expression;
   }
 
-
 (* séparer les registres tuples en plusieurs registres? *)
 type registre = 
   { reg_lp: left_part;
-    reg_ini: expression;
     reg_val: expression;
-    reg_type: b_type;
   }
  
 type equation = 
   Alternative of alternative
 | Fonction of fonction
 | Operation of operation
-| Registre of registre
 
-type condition = 
-  ident * b_type * expression
+type initialisation = 
+  ident * expression
+
+(* AJOUTER CONTRAINTES DE B (voir poly) *)
+type invariant = 
+  ident * b_type
+
+type op_decl =
+  { id: ident;
+    param_in: ident list;
+    param_out: ident list;
+  }
+
+type operations =
+  { op_decl: op_decl;
+    vars: ident list;
+    op_1: equation list;
+    op_2: registre list;
+  }
+
+type b_impl =
+  { name: ident; 
+    refines: ident; 
+    sees: ident list;
+    imports: ident list;
+    concrete_variables: ident list;
+    invariant: invariant list;
+    initialisation: initialisation list;
+    operations: operations;
+  }
 
 type decl = 
   ident * b_type
 
-type b_impl =
-    { implementation: ident; 
-      refines: ident; 
-      sees: ident list;
-      imports: ident list;
-      concrete_variables: ident list;
-      invariant: registre list;
-      initialisation: registre list;
-      operations: ident list * equation list; 
-    }
+type condition = 
+  ident * b_type * expression
 
 type b_sig =
-    { machine: ident;
-      sees: ident list;
-      op_decl: decl list * ident * decl list
-      op_pre: condition list;
-      op_post: condition list;
+  { machine: ident;
+    sig_sees: ident list;
+    sigop_decl: op_decl;
+    sigop_pre: condition list;
+    sigop_post: condition list;
   }
 
-module Env = Map.Make(String);
+module Env = Map.Make(  
+  struct
+    type t = ident
+    let compare = compare
+  end
+)
 
-type env = Env.t
-
+type env = (ident * b_type * ident) Env.t 
+  
 type prog =
-  {
-     env: env;
-     signature: b_sig;
-     implementation: b_impl;
+  { env: env;
+    signature: b_sig;
+    implementation: b_impl;
   }

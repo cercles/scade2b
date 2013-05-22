@@ -27,30 +27,30 @@ type n_left_part =
 | NLP_Tuple of ident list
 
 type n_alternative =
-  { alt_lp: n_left_part;
-    alt_cond: n_expression;
-    alt_then: n_expression;
-    alt_else: n_expression;
+  { n_alt_lp: n_left_part;
+    n_alt_cond: n_expression;
+    n_alt_then: n_expression;
+    n_alt_else: n_expression;
   }
 
 type n_fonction =
-  { fun_lp: n_left_part;
-    fun_id: ident;
-    fun_params: n_expression list;
+  { n_fun_lp: n_left_part;
+    n_fun_id: ident;
+    n_fun_params: n_expression list;
   }
 
 type n_operation =
-  { op_lp: n_left_part;
-    op_expr: n_expression;
+  { n_op_lp: n_left_part;
+    n_op_expr: n_expression;
   }
 
 
 (* séparer les registres tuples en plusieurs registres? *)
 type n_registre = 
-  { reg_lp: n_left_part;
-    reg_ini: n_expression;
-    reg_val: n_expression;
-    reg_type: n_type;
+  { n_reg_lp: n_left_part;
+    n_reg_ini: n_expression;
+    n_reg_val: n_expression;
+    n_reg_type: n_type;
   }
  
 type n_equation = 

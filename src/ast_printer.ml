@@ -28,7 +28,8 @@ and print_array ppt = function
   | PA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
   | PA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
   | PA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
-  | PA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_id id print_slice_list e_list
+  | PA_Slice (id, e_list) -> fprintf ppt "%a%a" print_id id print_slice_list e_list
+  | PA_Index (id, e_list) -> fprintf ppt "%a%a" print_id id print_index_list e_list
 
 and print_e_list ppt = function 
   | [] -> ()
@@ -39,6 +40,11 @@ and print_slice_list ppt = function
   | [] -> ()
   | [(e1, e2)] -> fprintf ppt "[%a .. %a]" print_expr e1 print_expr e2
   | (e1, e2)::l -> fprintf ppt "[%a .. %a]%a" print_expr e1 print_expr e2 print_slice_list l
+
+and print_index_list ppt = function
+  | [] -> ()
+  | [e] -> fprintf ppt "[%a]" print_expr e
+  | e::l -> fprintf ppt "[%a]%a" print_expr e print_index_list l
 
 and print_bop ppt = function
   | Op_eq -> fprintf ppt "eq"

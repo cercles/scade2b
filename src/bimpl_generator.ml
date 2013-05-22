@@ -1,42 +1,45 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Format
-open Ast_norm_repr
+open Ast_repr_b
 open Ast_base
 
 (* A CHANGER, CREER UN ENVIRONNEMENT DANS UTILS POUR FAIRE LA CORRESPONDANCE ENTRE L'ID SCADE ET L'ID B. *)
 let print_bid ppt id =
-  let bid = if (String.length id) > 1 then id else id^id in
-  fprintf ppt "%s" bid
+  fprintf ppt "%s" id
+
+let rec print_idlist_comma ppt = function
+  | [] -> ()
+  | [id] -> fprintf ppt "%a" print_bid id
+  | id::l -> fprintf ppt "%a, %a" print_bid id print_idlist_comma l
 
 let print_value ppt = function
   | Bool b -> fprintf ppt "%b" b
   | Int i -> fprintf ppt "%d" i
   | Float f -> fprintf ppt "%f" f
 
-let rec print_expr ppt = function
-  | NE_Ident id -> print_bid ppt id
-  | NE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
-  | NE_Value v -> print_value ppt v
-  | NE_Array ar -> print_array ppt ar
-  | NE_App (id, e_list) -> fprintf ppt "%a@[(%a)@]" print_bid id print_e_list e_list
-  | NE_Bop (bop, e1, e2) -> fprintf ppt "%a %a %a" print_expr e1 print_bop bop print_expr e2
-  | NE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
-  | NE_If (cond, e1, e2) -> fprintf ppt "IF @[%a@] THEN @\n@[<v 2>%a@] @\nELSE @\n@[<v 2>%a@]" print_expr cond print_expr e1 print_expr e2
-  | NE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTION *)
 
-(* A FAIRE! *)
-and print_array ppt = function 
-  | NA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
-  | NA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
-  | NA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
-  | NA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_slice_list e_list
-  | NA_Index (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_index_list e_list
-
-and print_e_list ppt = function 
+let rec print_e_list ppt = function 
   | [] -> ()
   | [v] -> fprintf ppt "%a" print_expr v
   | v::l -> fprintf ppt "%a, %a" print_expr v print_e_list l
+
+and print_expr ppt = function
+  | BE_Ident id -> print_bid ppt id
+  | BE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
+  | BE_Value v -> print_value ppt v
+  | BE_Array ar -> print_array ppt ar
+  | BE_Bop (bop, e1, e2) -> fprintf ppt "%a %a %a" print_expr e1 print_bop bop print_expr e2
+  | BE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
+  | BE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTIOB *)
+
+(* A FAIRE! *)
+and print_array ppt = function 
+  | BA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
+  | BA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
+  | BA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
+  | BA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_slice_list e_list
+  | BA_Index (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_index_list e_list
 
 and print_slice_list ppt = function
   | [] -> ()
@@ -74,42 +77,72 @@ and print_unop ppt = function
   | Op_not -> fprintf ppt "not "
   | Op_minus -> fprintf ppt " -"
 
+let print_lp ppt = function
+  | BLP_Ident id -> print_bid ppt id
+  | BLP_Tuple id_list -> print_idlist_comma ppt id_list
 
 
-(*                *              *STAND_BY REFACTORING AST*                  *                   *)
+let print_alternative ppt a =
+  fprintf ppt "IF %a THEN %a := %a ELSE %a := %a" 
+    print_expr a.alt_cond
+    print_lp a.alt_lp
+    print_expr a.alt_then     
+    print_lp a.alt_lp
+    print_expr a.alt_else
 
-let rec print_eqs ppt = function
+let print_function ppt f =
+  fprintf ppt "%a <-- %s(%a)"
+    print_lp f.fun_lp
+    f.fun_id
+    print_e_list f.fun_params
+    
+let print_op ppt o =
+  fprintf ppt "%a := %a"
+    print_lp o.op_lp
+    print_expr o.op_expr
+  
+let print_eq ppt = function
+  | Alternative a -> fprintf ppt "%a" print_alternative a
+  | Fonction f -> fprintf ppt "%a" print_function f
+  | Operation o -> fprintf ppt "%a" print_op o
+
+let rec print_eq_list ppt = function
   | [] -> ()
-  | [(lp, expr)] -> ()
-  | _ -> ()
+  | [eq] -> fprintf ppt "%a" print_eq eq
+  | eq::l -> fprintf ppt "%a; %a" print_eq eq print_eq_list l 
 
+  
+let print_registre ppt r =
+  fprintf ppt "%a := %a"
+    print_lp r.reg_lp
+    print_expr r.reg_val
+  
+let rec print_reg_list ppt = function
+  | [] -> ()
+  | [r] -> fprintf ppt "%a" print_registre r
+  | r::l -> fprintf ppt "%a; %a" print_registre r print_reg_list l 
 
 
 let print_vars ppt var_list =
-  if (List.length var_list) = 0 then () else
-    let (id_var_list, _) = List.split var_list in
-    fprintf ppt "VAR %s IN" (Utils.string_of_list id_var_list)
+  if (List.length var_list) = 0 then () 
+  else
+    fprintf ppt "VAR %a IN" print_idlist_comma var_list
 
-let rec print_declist ppt = function
-  | [] -> ()
-  | [(id, _)] -> fprintf ppt "%a" print_bid id
-  | (id, _)::l -> fprintf ppt "%a, %a" print_bid id print_declist l 
-
-let print_op_decl ppt node =
+let print_op_decl ppt op_decl =
   fprintf ppt "%a <-- %s(%a)"
-    print_declist node.n_param_out
-    node.n_id
-    print_declist node.n_param_in
+    print_idlist_comma op_decl.param_out
+    op_decl.id
+    print_idlist_comma op_decl.param_in
  
-let print_operation ppt node =
+let print_operation ppt operations =
+  let sep = if (List.length operations.op_2) > 0 then ";" else "" in
   fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n%a@[<v 3>@,@[<v>%a@]@]@\n@\nEND"
-    print_op_decl node
-    print_vars node.n_vars
-    print_eqs node.n_eqs
-
-
-
+    "OPERATIONS@\n@\n@[%a =@]@\n%a@[<v 3>@,@[<v>%a%s@]@,@[<v>%a@]@]@\n@\nEND"
+    print_op_decl operations.op_decl
+    print_vars operations.vars
+    print_eq_list operations.op_1
+    sep
+    print_reg_list operations.op_2
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
@@ -117,48 +150,68 @@ let print_basetype ppt = function
   | T_Float -> fprintf ppt "%s" "REAL"
 
 let print_type ppt = function
-  | NT_Base t -> print_basetype ppt t
-  | NT_Array (t, expr) -> assert false (* SEQUENCES A FAIRE *)
+  | BT_Base t -> print_basetype ppt t
+  | BT_Array (t, expr) -> assert false (* SEQUENCES A FAIRE *)
 
-let print_initialisation ppt reg_list = ()
 
-let print_invariant ppt reg_list = ()
+let rec print_initialisation_list ppt = function
+  | [] -> ()
+  | [(id, e)] -> fprintf ppt "%a := %a" print_bid id print_expr e
+  | (id, e)::l -> fprintf ppt "%a := %a ; %a" print_bid id print_expr e print_initialisation_list l 
+
+let print_initialisation ppt ini_list = 
+  if (List.length ini_list) = 0 then () 
+  else 
+    fprintf ppt "INITIALISATION %a" print_initialisation_list ini_list 
+
+let rec print_invariant_list ppt = function
+  | [] -> ()
+  | [(id, t)] -> fprintf ppt "%a : %a" print_bid id print_type t
+  | (id, t)::l -> fprintf ppt "%a : %a & %a" print_bid id print_type t print_invariant_list l 
+
+let print_invariant ppt inv_list = 
+  if (List.length inv_list) = 0 then () 
+  else 
+    fprintf ppt "INVARIANT %a" print_invariant_list inv_list 
+
 
 let print_concrete_var ppt reg_list =
   if (List.length reg_list) = 0 then () 
   else 
-    fprintf ppt "CONCRETE_VARIABLES %s" (Utils.string_of_reglist reg_list)
+    fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
 
-(* A REFAIRE PAR RAPPORT AUX INCLUDES! *)
-(* The file list can be configured in utils.ml *)
-let print_imports ppt node =
-  if (List.length Utils.imports_list) = 0 then () 
+let print_imports ppt mach_list =
+  if (List.length mach_list) = 0 then () 
   else 
-    fprintf ppt "IMPORTS %s" (Utils.string_of_list Utils.imports_list)
+    fprintf ppt "IMPORTS %a" print_idlist_comma mach_list
 
-let print_sees ppt node =
-  if (List.length Utils.sees_list) = 0 then () 
+
+let print_sees ppt mach_list =
+  if (List.length mach_list) = 0 then () 
   else 
-    fprintf ppt "SEES %s" (Utils.string_of_list Utils.sees_list)
+    fprintf ppt "SEES %a" print_idlist_comma mach_list
+
 
 let print_refines ppt id =
-  fprintf ppt "REFINES %s" (String.capitalize id)
+  fprintf ppt "REFINES %s" id
 
-let print_implementation ppt id =
-  fprintf ppt "IMPLEMENTATION %s" ((String.capitalize id)^"_i")
 
-let print_machine ppt node =
+let print_implementation ppt impl_name =
+  fprintf ppt "IMPLEMENTATION %s" impl_name
+
+
+let print_machine ppt b_impl =
   fprintf ppt
     "%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a"
-    print_implementation node.n_id
-    print_refines node.n_id
-    print_sees node
-    print_imports node
-    print_concrete_var node.n_reg
-    print_invariant node.n_reg
-    print_initialisation node.n_reg
-    print_operation node
+    print_implementation b_impl.name
+    print_refines b_impl.refines
+    print_sees b_impl.sees
+    print_imports b_impl.imports
+    print_concrete_var b_impl.concrete_variables
+    print_invariant b_impl.invariant
+    print_initialisation b_impl.initialisation
+    print_operation b_impl.operations
 
-let print_prog node =
-  printf "@\n@\nB Implementation : @\n@\n%a@\n@." print_machine node
+let print_prog b_impl =
+  printf "@\n@\nB Implementation : @\n@\n%a@\n@." print_machine b_impl

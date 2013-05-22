@@ -49,15 +49,15 @@ let ident_of_left = function
 let ident_of_eq = function
   | N_Alternative a ->
     let ident_expr = 
-      L.union (L.union (ident_of_expr a.alt_cond) (ident_of_expr a.alt_then)) (ident_of_expr a.alt_else)
+      L.union (L.union (ident_of_expr a.n_alt_cond) (ident_of_expr a.n_alt_then)) (ident_of_expr a.n_alt_else)
     in
-    (ident_of_left a.alt_lp, ident_expr)
+    (ident_of_left a.n_alt_lp, ident_expr)
   | N_Registre r ->
-    (ident_of_left r.reg_lp, L.empty)
+    (ident_of_left r.n_reg_lp, L.empty)
   | N_Fonction f ->
-    (ident_of_left f.fun_lp, List.fold_left (fun set e -> L.union set (ident_of_expr e)) L.empty f.fun_params)
+    (ident_of_left f.n_fun_lp, List.fold_left (fun set e -> L.union set (ident_of_expr e)) L.empty f.n_fun_params)
   | N_Operation o ->
-    (ident_of_left o.op_lp, ident_of_expr o.op_expr)
+    (ident_of_left o.n_op_lp, ident_of_expr o.n_op_expr)
 
 
 

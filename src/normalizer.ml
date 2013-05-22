@@ -73,38 +73,36 @@ let handle_reg node = function
       | Some typ -> typ
       | None -> raise Register_error
     in
-    N_Registre { reg_lp = plp_to_nlp lp;
-		 reg_ini = p_expr_to_n_expr ini;
-		 reg_type = p_type_to_n_type typ;
-		 reg_val = (NE_Ident id);
+    N_Registre { n_reg_lp = plp_to_nlp lp;
+		 n_reg_ini = p_expr_to_n_expr ini;
+		 n_reg_type = p_type_to_n_type typ;
+		 n_reg_val = (NE_Ident id);
 	       } 
   | _ -> raise Register_error
   
 let handle_alt = function
   | P_Eq (lp, PE_If (c, e1, e2)) -> 
-    N_Alternative { alt_lp = plp_to_nlp lp;
-		    alt_cond = p_expr_to_n_expr c;
-		    alt_then = p_expr_to_n_expr e1;
-		    alt_else = p_expr_to_n_expr e2;
+    N_Alternative { n_alt_lp = plp_to_nlp lp;
+		    n_alt_cond = p_expr_to_n_expr c;
+		    n_alt_then = p_expr_to_n_expr e1;
+		    n_alt_else = p_expr_to_n_expr e2;
 		  }
   | _ -> assert false
 
 let handle_app = function
   | P_Eq (lp, PE_App (id_app, elist)) -> 
-    N_Fonction { fun_lp = plp_to_nlp lp;
-		 fun_id = id_app;
-		 fun_params = List.map p_expr_to_n_expr elist;
+    N_Fonction { n_fun_lp = plp_to_nlp lp;
+		 n_fun_id = id_app;
+		 n_fun_params = List.map p_expr_to_n_expr elist;
 	       }
   | _ -> assert false
 
 let handle_op = function
   | P_Eq (lp, expr) ->
-    N_Operation { op_lp = plp_to_nlp lp;
-		  op_expr =  p_expr_to_n_expr expr;
+    N_Operation { n_op_lp = plp_to_nlp lp;
+		  n_op_expr =  p_expr_to_n_expr expr;
 		}
   | _ -> assert false
-
-
 
 
 
