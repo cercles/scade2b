@@ -4,6 +4,24 @@ open Ast_repr_b
 open Ast_repr_norm
 open Utils
 
+
+
+
+(*
+  TODO : 
+
+  ecrire translator (passer de ast_n a ast_b
+  retrieve_vars
+  make_env dans utils
+  bsig_translator
+  ast_printer_norm avec le nouvel env 
+  modifier normalizer en ajoutant 'n_' devant les structures qui n'en ont pas
+  bsig_translator
+  bsig_printer
+  bimpl_printer
+ *)
+
+
 let bimpl_translator env node =
   let implementation = node.n_id ^ "_i" in
   let refines = node.n_id in
