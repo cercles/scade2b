@@ -44,6 +44,8 @@ type n_operation =
     op_expr: n_expression;
   }
 
+
+(* séparer les registres tuples en plusieurs registres? *)
 type n_registre = 
   { reg_lp: n_left_part;
     reg_ini: n_expression;
@@ -64,22 +66,18 @@ type n_decl =
   ident * n_type
 
 
-
-
-(* A changer par un set pour controler les doublons *)
-
-module Env = Set.Make(
+module N_Env = Set.Make(
   struct
-    type t = ident * ident * n_type
+    type t = ident * n_type
     let compare = compare
   end
 )
 
-type env = Env.t
+type n_env = N_Env.t
 
 type n_node = 
   { n_id: ident; 
-    n_env: env;
+    n_env: n_env;
     n_param_in: n_decl list; 
     n_param_out: n_decl list; 
     n_vars: n_decl list; 
@@ -87,3 +85,4 @@ type n_node =
     n_post: n_condition list;
     n_eqs: n_equation list; 
   }
+

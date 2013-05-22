@@ -106,8 +106,6 @@ let handle_op = function
 
 
 
-(* pour scheduler *)
-
 
 
 let normalize_node main_node = 
@@ -136,7 +134,7 @@ let normalize_node main_node =
   in
   let scheduled_eqs = scheduled_eqs in
   { n_id = main_node.p_id;
-    n_env =  Utils.id_and_bid_list (inputs@outputs@vars); 
+    n_env =  Utils.make_n_env (inputs@outputs@vars);
     n_param_in = inputs;
     n_param_out = outputs; 
     n_vars = vars;

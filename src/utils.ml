@@ -1,5 +1,6 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
+open Ast_repr_b
 open Ast_repr_norm
 open Ast_repr
 open Ast_base
@@ -64,3 +65,7 @@ let id_and_bid_list id_list =
   in
   List.fold_left (fun s (id, t) -> if (String.length id) > 1 then add_with_check s (id, id, t) 
 		  else add_with_check s (id, id^id, t)) Env.empty id_list 
+
+
+let make_n_env id_type_list =
+  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_list
