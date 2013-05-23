@@ -59,7 +59,7 @@ let () =
     if !verbose then Ast_printer_norm.print_prog ast_n;
     if !norm_only then exit 0 ;
     let ast_b = Trad.translate ast_n in
-    (* Bsig_generator.print_prog ast_n; *)
+    Bsig_generator.print_prog ast_b.signature;
     Bimpl_generator.print_prog ast_b.implementation;
     ()
   with

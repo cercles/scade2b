@@ -4,7 +4,6 @@ open Format
 open Ast_repr_b
 open Ast_base
 
-(* A CHANGER, CREER UN ENVIRONNEMENT DANS UTILS POUR FAIRE LA CORRESPONDANCE ENTRE L'ID SCADE ET L'ID B. *)
 let print_bid ppt id =
   fprintf ppt "%s" id
 
@@ -31,7 +30,7 @@ and print_expr ppt = function
   | BE_Array ar -> print_array ppt ar
   | BE_Bop (bop, e1, e2) -> fprintf ppt "%a %a %a" print_expr e1 print_bop bop print_expr e2
   | BE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
-  | BE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTIOB *)
+  | BE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTION *)
 
 (* A FAIRE! *)
 and print_array ppt = function 
@@ -75,7 +74,7 @@ and print_bop ppt = function
 
 and print_unop ppt = function 
   | Op_not -> fprintf ppt "not "
-  | Op_minus -> fprintf ppt " -"
+  | Op_minus -> fprintf ppt "-"
 
 let print_lp ppt = function
   | BLP_Ident id -> print_bid ppt id

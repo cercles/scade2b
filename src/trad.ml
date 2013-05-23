@@ -140,12 +140,15 @@ let bsig_translator env node =
 		   } in 
   let sigop_pre = trad_list env n_condition_to_condition node.n_pre in
   let sigop_post = trad_list env n_condition_to_condition node.n_post in
+  let sig_operation = { sigop_decl = sigop_decl;
+			sigop_pre = sigop_pre;
+			sigop_post = sigop_post;
+		      } in
   { machine = machine;
     sig_sees = sees;
-    sigop_decl = sigop_decl;
-    sigop_pre = sigop_pre;
-    sigop_post = sigop_post;
+    sig_operation = sig_operation;
   }
+    
 
 let translate node =
   let env = Utils.make_env (N_Env.elements node.n_env) in

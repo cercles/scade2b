@@ -89,12 +89,16 @@ type b_impl =
 type condition = 
   ident * b_type * expression
 
+type sig_operation =
+  { sigop_decl: op_decl;
+    sigop_pre: condition list;
+    sigop_post: condition list;
+  }
+
 type b_sig =
   { machine: ident;
     sig_sees: ident list;
-    sigop_decl: op_decl;
-    sigop_pre: condition list;
-    sigop_post: condition list;
+    sig_operation: sig_operation;
   }
 
 module Env = Map.Make(  
