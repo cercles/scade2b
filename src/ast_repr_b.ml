@@ -46,7 +46,7 @@ type operation =
 
 (* séparer les registres tuples en plusieurs registres? *)
 type registre = 
-  { reg_lp: left_part;
+  { reg_lpid: ident;
     reg_val: expression;
   }
  
@@ -104,7 +104,7 @@ module Env = Map.Make(
   end
 )
 
-type env = (ident * b_type * ident) Env.t 
+type env = ident Env.t 
   
 type prog =
   { env: env;

@@ -106,7 +106,7 @@ and print_eq ppt = function
 	print_expr o.n_op_expr
   | N_Registre r ->
       fprintf ppt "%a = @[REG(%a,%a)@] : %a" 
-	print_leftpart r.n_reg_lp
+	print_id r.n_reg_lpid
 	print_expr r.n_reg_ini
 	print_expr r.n_reg_val
 	print_type r.n_reg_type

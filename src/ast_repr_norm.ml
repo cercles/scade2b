@@ -44,10 +44,8 @@ type n_operation =
     n_op_expr: n_expression;
   }
 
-
-(* séparer les registres tuples en plusieurs registres? *)
 type n_registre = 
-  { n_reg_lp: n_left_part;
+  { n_reg_lpid: ident;
     n_reg_ini: n_expression;
     n_reg_val: n_expression;
     n_reg_type: n_type;

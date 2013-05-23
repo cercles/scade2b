@@ -66,19 +66,64 @@ let handle_assert main_node asser =
     | None -> raise (Assert_id_error id)
 
 
+(* MODIFIER PAR UN SCAN_FOR_TUPLE_IN_EXPR
+   faire le scan après passage du parseur, pour vérifier que les équations sont toutes atomiques.
+   Seuls les tuples à gauche sont autorisés pour les retours de fonctions.
+   
+ *)
 
-let handle_reg node = function
-  | P_Eq (lp, PE_Fby (ini, PE_Pre (PE_Ident id))) ->
+
+let rec get_atomic_reg lp_list ini_list expr_list node =
+  match lp_list, ini_list, expr_list with
+  | [],[],[] -> []
+  | lp_id::l1, ini::l2, e::l3 ->
+    let id = match e with
+	PE_Ident id -> id
+      | _ -> raise Register_error
+    in
     let typ = match find_type id (node.p_param_in@node.p_param_out@node.p_vars) with
       | Some typ -> typ
       | None -> raise Register_error
     in
-    N_Registre { n_reg_lp = plp_to_nlp lp;
+    N_Registre { n_reg_lpid = lp_id;
 		 n_reg_ini = p_expr_to_n_expr ini;
 		 n_reg_type = p_type_to_n_type typ;
 		 n_reg_val = (NE_Ident id);
-	       } 
+	       }::(get_atomic_reg l1 l2 l3 node)
   | _ -> raise Register_error
+      
+let handle_reg node = function
+  | P_Eq (PLP_Ident lp_id, PE_Fby (ini, PE_Pre pre_expr)) -> 
+    let id = (match pre_expr with
+	PE_Ident id -> id
+      | _ -> raise Register_error
+    ) in
+    let typ = match find_type id (node.p_param_in@node.p_param_out@node.p_vars) with
+      | Some typ -> typ
+      | None -> raise Register_error
+    in
+    [ N_Registre { n_reg_lpid = lp_id;
+		   n_reg_ini = p_expr_to_n_expr ini;
+		   n_reg_type = p_type_to_n_type typ;
+		   n_reg_val = (NE_Ident id);
+		 } ]
+  | P_Eq (PLP_Tuple id_list, PE_Fby (PE_Tuple ini_list, PE_Pre (PE_Tuple pre_expr_list))) ->
+    get_atomic_reg id_list ini_list pre_expr_list node
+  | _ -> raise Register_error
+
+(* DEPRECATED *)
+(* let handle_reg node = function *)
+(*   | P_Eq (lp, PE_Fby (ini, PE_Pre (PE_Ident id))) -> *)
+(*     let typ = match find_type id (node.p_param_in@node.p_param_out@node.p_vars) with *)
+(*       | Some typ -> typ *)
+(*       | None -> raise Register_error *)
+(*     in *)
+(*     N_Registre { n_reg_lp = plp_to_nlp lp; *)
+(* 		 n_reg_ini = p_expr_to_n_expr ini; *)
+(* 		 n_reg_type = p_type_to_n_type typ; *)
+(* 		 n_reg_val = (NE_Ident id); *)
+(* 	       }  *)
+(*   | _ -> raise Register_error *)
   
 let handle_alt = function
   | P_Eq (lp, PE_If (c, e1, e2)) -> 
@@ -112,7 +157,7 @@ let normalize_node main_node =
   let normalize_eq res = function
     | P_Eq (lp, expr) as eq -> (
       match expr with
-      | PE_Fby _ -> (handle_reg main_node eq)::res
+      | PE_Fby _ -> (handle_reg main_node eq)@res
       | PE_If _ -> (handle_alt eq)::res
       | PE_App _ -> (handle_app eq)::res
       | _ -> (handle_op eq)::res

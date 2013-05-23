@@ -114,7 +114,7 @@ let rec print_eq_list ppt = function
   
 let print_registre ppt r =
   fprintf ppt "%a := %a"
-    print_lp r.reg_lp
+    print_bid r.reg_lpid
     print_expr r.reg_val
   
 let rec print_reg_list ppt = function

@@ -74,4 +74,4 @@ let make_n_env id_type_list =
 
 let make_env id_type_list =
   let rec make_b_id env id = if Env.mem (id^id) env then make_b_id env (id^id) else (id^id) in
-  List.fold_left (fun env (id,t) -> Env.add id (id,t,(make_b_id env id)) env) Env.empty id_type_list
+  List.fold_left (fun env (id,_) -> Env.add id (make_b_id env id) env) Env.empty id_type_list

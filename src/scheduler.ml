@@ -53,7 +53,7 @@ let ident_of_eq = function
     in
     (ident_of_left a.n_alt_lp, ident_expr)
   | N_Registre r ->
-    (ident_of_left r.n_reg_lp, L.empty)
+    (L.add r.n_reg_lpid L.empty, L.empty)
   | N_Fonction f ->
     (ident_of_left f.n_fun_lp, List.fold_left (fun set e -> L.union set (ident_of_expr e)) L.empty f.n_fun_params)
   | N_Operation o ->
