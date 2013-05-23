@@ -212,5 +212,5 @@ let print_machine ppt b_impl =
     print_initialisation b_impl.initialisation
     print_operation b_impl.operations
 
-let print_prog b_impl =
-  printf "@\n@\nB Implementation : @\n@\n%a@\n@." print_machine b_impl
+let print_prog b_impl file =
+  fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl

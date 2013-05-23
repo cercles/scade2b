@@ -59,8 +59,10 @@ let () =
     if !verbose then Ast_printer_norm.print_prog ast_n;
     if !norm_only then exit 0 ;
     let ast_b = Trad.translate ast_n in
-    Bsig_generator.print_prog ast_b.signature;
-    Bimpl_generator.print_prog ast_b.implementation;
+    let bsig_file = open_out ((Filename.chop_extension file)^".mch") in
+    Bsig_generator.print_prog ast_b.signature bsig_file;
+    let bimpl_file = open_out ((Filename.chop_extension file)^"_i.imp") in
+    Bimpl_generator.print_prog ast_b.implementation bimpl_file;
     ()
   with
   | Lexer.Lexical_error s ->

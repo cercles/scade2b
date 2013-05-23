@@ -73,5 +73,7 @@ let make_n_env id_type_list =
     else N_Env.add elt s) N_Env.empty id_type_list
 
 let make_env id_type_list =
-  let rec make_b_id env id = if Env.mem (id^id) env then make_b_id env (id^id) else (id^id) in
+  let rec make_b_id env id = 
+    if (String.length id) > 1 && not(Env.exists (fun _ bid -> id = bid) env) then id else
+      if Env.exists (fun _ bid -> (id^id) = bid) env then make_b_id env (id^id) else (id^id) in
   List.fold_left (fun env (id,_) -> Env.add id (make_b_id env id) env) Env.empty id_type_list

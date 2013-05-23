@@ -137,5 +137,5 @@ let print_machine ppt b_sig =
     print_sees b_sig.sig_sees
     print_operation b_sig.sig_operation
 
-let print_prog b_sig =
-  printf "@\n@\nB Signature : @\n@\n%a@\n@." print_machine b_sig
+let print_prog b_sig file =
+  fprintf (formatter_of_out_channel file) "%a@." print_machine b_sig
