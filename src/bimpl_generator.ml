@@ -165,8 +165,9 @@ let print_initialisation ppt ini_list =
 
 let rec print_invariant_list ppt = function
   | [] -> ()
-  | [(id, t)] -> fprintf ppt "%a : %a" print_bid id print_type t
-  | (id, t)::l -> fprintf ppt "%a : %a & %a" print_bid id print_type t print_invariant_list l 
+  | [(id, t, cond)] -> fprintf ppt "%a : %a & %a" print_bid id print_type t print_expr cond
+  | (id, t, cond)::l -> fprintf ppt "%a : %a & %a &@,%a" 
+      print_bid id print_type t print_expr cond print_invariant_list l 
 
 let print_invariant ppt inv_list = 
   if (List.length inv_list) = 0 then () 

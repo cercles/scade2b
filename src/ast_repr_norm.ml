@@ -66,7 +66,7 @@ type n_decl =
 
 module N_Env = Set.Make(
   struct
-    type t = ident * n_type
+    type t = ident * n_type * n_expression option
     let compare = compare
   end
 )

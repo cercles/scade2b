@@ -67,13 +67,11 @@ let find_ident_in_pexpr expr =
 (* 		  else add_with_check s (id, id^id, t)) Env.empty id_list  *)
 
 
-let make_n_env id_type_list =
-  List.fold_left (fun s elt -> if N_Env.mem elt s
-    then failwith "two elements have same id" 
-    else N_Env.add elt s) N_Env.empty id_type_list
+let make_n_env id_type_cond_list =
+  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list
 
-let make_env id_type_list =
+let make_env id_type_cond_list =
   let rec make_b_id env id = 
-    if (String.length id) > 1 && not(Env.exists (fun _ bid -> id = bid) env) then id else
-      if Env.exists (fun _ bid -> (id^id) = bid) env then make_b_id env (id^id) else (id^id) in
-  List.fold_left (fun env (id,_) -> Env.add id (make_b_id env id) env) Env.empty id_type_list
+    if (String.length id) > 1 && not(Env.exists (fun _ (bid, _) -> id = bid) env) then id else
+      if Env.exists (fun _ (bid, _) -> (id^id) = bid) env then make_b_id env (id^id) else (id^id) in
+  List.fold_left (fun env (id, _, c) -> Env.add id ((make_b_id env id), c) env) Env.empty id_type_cond_list

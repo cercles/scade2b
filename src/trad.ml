@@ -5,19 +5,8 @@ open Ast_repr_norm
 open Utils
 
 
-
-
-(*
-  TODO : 
-
-  ecrire translator (passer de ast_n a ast_b
-  retrieve_vars
-  bimpl_translator
-  bsig_printer
-*)
-
 let id_to_bid env id =
-  let bid = Env.find id env in bid
+  let bid, _ = Env.find id env in bid
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
@@ -57,8 +46,41 @@ let rec trad_list env to_call = function
 let get_concrete_vars env reg =
   id_to_bid env reg.n_reg_lpid
 
+(* EN COURS TRANSITIVITE DE LA CONDITION SUR LES REGISTRES -> A REVOIR *)
+
+let rec change_id_expr ident =function
+  | BE_Ident _ -> BE_Ident ident
+  | BE_Tuple e_list -> BE_Tuple (List.map (change_id_expr ident) e_list)
+  | BE_Value v -> BE_Value v
+  | BE_Array ar -> BE_Array (change_id_array ident ar)
+  | BE_Bop (bop, e1, e2) -> BE_Bop (bop, change_id_expr ident e1, change_id_expr ident e2)
+  | BE_Unop (unop, e) -> BE_Unop (unop, change_id_expr ident e)
+  | BE_Sharp e_list -> BE_Sharp (List.map (change_id_expr ident) e_list)
+
+and change_id_array ident = function 
+  | BA_Def e_list -> BA_Def (List.map (change_id_expr ident) e_list)
+  | BA_Caret (e1, e2) -> BA_Caret (change_id_expr ident e1, change_id_expr ident e2)
+  | BA_Concat (e1, e2) -> BA_Concat (change_id_expr ident e1, change_id_expr ident e2)
+  | BA_Slice (_, e_list) -> BA_Slice 
+    (ident, (List.map (fun (e1, e2) -> (change_id_expr ident e1, change_id_expr ident e2)) e_list))
+  | BA_Index (_, e_list) -> BA_Index (ident, (List.map (change_id_expr ident) e_list))
+
+  
+
+let retrieve_cond_expr env reg = 
+  let id_val = match reg.n_reg_val with
+    | NE_Ident i -> i
+    | _ -> assert false
+  in 
+  let cond_expr = match Env.find id_val env with 
+    | _, Some c -> c
+    | _, None -> assert false
+  in 
+  let b_expr = n_expr_to_b_expr env cond_expr in
+  change_id_expr (id_to_bid env reg.n_reg_lpid) b_expr
+
 let get_invariant env reg =
-  (id_to_bid env reg.n_reg_lpid, n_type_to_b_type env reg.n_reg_type)
+  (id_to_bid env reg.n_reg_lpid, n_type_to_b_type env reg.n_reg_type, retrieve_cond_expr env reg)
 
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)

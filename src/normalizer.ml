@@ -149,9 +149,15 @@ let handle_op = function
 		}
   | _ -> assert false
 
+let get_env vars pre post =
+  let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
+  let inputs_cond = List.map (fun (id, t, cond) -> (id, t, Some cond)) pre in
+  let outputs_cond = List.map (fun (id, t, cond) -> (id, t, Some cond)) post in  
+  Utils.make_n_env (inputs_cond@outputs_cond@vars_cond)
 
+(* VERIFIER QU'IL Y A AUTANT DE ASSUME QUE DE INPUTS (pareil pour outputs-guarantee) *)
 
-let normalize_node main_node = 
+let normalize_node main_node =
   let pre = ref [] in
   let post = ref [] in
   let normalize_eq res = function
@@ -176,8 +182,9 @@ let normalize_node main_node =
     Scheduler.scheduler eqs (id_inputs)
   in
   let scheduled_eqs = scheduled_eqs in
+  let env = get_env vars !pre !post in
   { n_id = main_node.p_id;
-    n_env =  Utils.make_n_env (inputs@outputs@vars);
+    n_env = env;
     n_param_in = inputs;
     n_param_out = outputs; 
     n_vars = vars;

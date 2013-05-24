@@ -58,9 +58,8 @@ type equation =
 type initialisation = 
   ident * expression
 
-(* AJOUTER CONTRAINTES DE B (voir poly) *)
-type invariant = 
-  ident * b_type
+type condition = 
+  ident * b_type * expression
 
 type op_decl =
   { id: ident;
@@ -81,13 +80,10 @@ type b_impl =
     sees: ident list;
     imports: ident list;
     concrete_variables: ident list;
-    invariant: invariant list;
+    invariant: condition list;
     initialisation: initialisation list;
     operations: operations;
   }
-
-type condition = 
-  ident * b_type * expression
 
 type sig_operation =
   { sigop_decl: op_decl;
@@ -108,7 +104,8 @@ module Env = Map.Make(
   end
 )
 
-type env = ident Env.t 
+(* A MODIFIER *)
+type env = (ident * Ast_repr_norm.n_expression option) Env.t 
   
 type prog =
   { env: env;

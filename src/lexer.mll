@@ -43,8 +43,11 @@ rule token = parse
 	  | "var"     { VAR }
 	  | "const"   { CONST }
 	  | "assert"  { ASSERT }
+	  | "assume"  { ASSUME }
+	  | "guarantee" { GUARANTEE }
+	  | "include" { INCLUDE }
 
-	  | "bool" { T_BOOL }
+	  | "bool" { T_BOOL } 
 	  | "int"  { T_INT }
 	  | "real" { T_REAL }
 

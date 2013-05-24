@@ -17,11 +17,9 @@
       PA_Index (id, l)
     else
       PA_Slice (id, elist)
-
-      
 %}
 
-%token NODE RETURNS LET TEL VAR CONST ASSERT
+%token NODE RETURNS LET TEL VAR CONST ASSERT ASSUME GUARANTEE INCLUDE
 %token IF THEN ELSE
 %token PRE FBY 
 %token PLUS MINUS MULT DIV DIV_INT MOD 
@@ -35,8 +33,9 @@
 %token <string> IDENT
 %token EOF
 
-
-
+%nonassoc uminus
+%nonassoc THEN
+%nonassoc ELSE
 %left DOTDOT
 %left FBY
 %left OR XOR
@@ -46,12 +45,6 @@
 %left MULT DIV DIV_INT MOD
 %nonassoc NOT PRE
 %left CARET CONCAT
-%nonassoc uminus
-%nonassoc THEN
-%nonassoc ELSE
-
-
-
 
 %start prog
 %type <Ast_repr.prog> prog
@@ -185,7 +178,5 @@ semi_opt :
  |   { () }
  | SEMICOL { () }
 ;
-
-
 
 %%
