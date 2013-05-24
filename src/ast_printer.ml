@@ -112,7 +112,6 @@ let rec print_decl_list ppt =  function
 and print_decl ppt = function
   | (name, ty) -> fprintf ppt "%a : %a" print_id name print_type ty
 
-
 let print_node ppt node =
   fprintf ppt
     "@[NODE %a (@[%a@]) RETURNS (@[%a@]) @\nVAR @[%a;@] @\n@[<v 2>LET @ @[%a @] @]@\nTEL @]"
@@ -123,4 +122,4 @@ let print_node ppt node =
     print_eq_list node.p_eqs
 
 let print_prog prog =
-  List.iter (fun node -> Format.printf "@\n@\n%a@\n@\n@." print_node node) prog
+  Format.printf "@\nProgram Parsed :@\n%a@\n@." print_node prog.p_node

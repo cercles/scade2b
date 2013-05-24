@@ -85,9 +85,12 @@ rule token = parse
 	  | ':'  { COLON }
 	  | ';'  { SEMICOL }
 	  | ','  { COMMA }
+	  | '"'  { QUOTES }
 	  | ".." { DOTDOT }
+	  | '.'  { DOT }
 	  | '^'  { CARET }    
-	  | '|'  { CONCAT }
+	  | '|'  { CONCAT }   
+
 
 	  | "true"      { BOOL (true) }
 	  | "false"     { BOOL (false) }

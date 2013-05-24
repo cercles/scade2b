@@ -40,21 +40,18 @@ type p_type =
 
 type p_decl = ident * p_type
 
+type p_condition = ident * p_expression
+
 type p_node = 
   {  p_id: ident; 
      p_param_in: p_decl list; 
      p_param_out: p_decl list; 
+     p_assumes: p_condition list;
+     p_guarantees: p_condition list;
      p_vars: p_decl list; 
      p_eqs: p_equation list; }
     
-type prog = p_node list
-
-
-
-(* type plp_item = *)
-(*   PLP_Ident of ident *)
-(* | PLP_Array of ident * p_expression * p_expression (\* Array of ident * array_smthg *\) *)
- 
-(* type p_left_part =  *)
-(*   PLP_Item of plp_item *)
-(* | PLP_Tuple of plp_item list *)
+type p_prog = 
+  { p_includes: ident list;
+    p_node: p_node;
+  }

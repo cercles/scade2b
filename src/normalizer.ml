@@ -53,15 +53,15 @@ let rec find_type id declist =
   | (ident, typ)::l -> if ident = id then Some typ else find_type id l
 
 (* Transform an assert into a pre/post condition *)
-let handle_assert main_node asser = 
+let handle_assert node asser = 
   let id = 
     try 
       Utils.find_ident_in_pexpr asser 
     with Two_ident (id1, id2) -> raise (Assert_id_error id1) (* A CHANGER *)
   in
-  match find_type id main_node.p_param_in with
+  match find_type id node.p_param_in with
   | Some typ -> Pre (id, p_type_to_n_type typ, p_expr_to_n_expr asser)
-  | None -> match find_type id main_node.p_param_out with
+  | None -> match find_type id node.p_param_out with
     | Some typ -> Post (id, p_type_to_n_type typ, p_expr_to_n_expr asser)
     | None -> raise (Assert_id_error id)
 
@@ -157,33 +157,33 @@ let get_env vars pre post =
 
 (* VERIFIER QU'IL Y A AUTANT DE ASSUME QUE DE INPUTS (pareil pour outputs-guarantee) *)
 
-let normalize_node main_node =
+let normalize_node node =
   let pre = ref [] in
   let post = ref [] in
   let normalize_eq res = function
     | P_Eq (lp, expr) as eq -> (
       match expr with
-      | PE_Fby _ -> (handle_reg main_node eq)@res
+      | PE_Fby _ -> (handle_reg node eq)@res
       | PE_If _ -> (handle_alt eq)::res
       | PE_App _ -> (handle_app eq)::res
       | _ -> (handle_op eq)::res
     )
     | P_Assert expr ->
-      match (handle_assert main_node expr) with
+      match (handle_assert node expr) with
       | Post (id, typ, e) -> post := (id, typ, e):: !post; res
       | Pre (id, typ, e) -> pre := (id, typ, e):: !pre; res
   in
-  let eqs = List.fold_left normalize_eq [] main_node.p_eqs in
-  let inputs = p_decl_to_n_decl main_node.p_param_in in
-  let outputs = p_decl_to_n_decl main_node.p_param_out in
-  let vars = p_decl_to_n_decl main_node.p_vars in
+  let eqs = List.fold_left normalize_eq [] node.p_eqs in
+  let inputs = p_decl_to_n_decl node.p_param_in in
+  let outputs = p_decl_to_n_decl node.p_param_out in
+  let vars = p_decl_to_n_decl node.p_vars in
   let scheduled_eqs = 
     let (id_inputs, _) = List.split inputs in
     Scheduler.scheduler eqs (id_inputs)
   in
   let scheduled_eqs = scheduled_eqs in
   let env = get_env vars !pre !post in
-  { n_id = main_node.p_id;
+  { n_id = node.p_id;
     n_env = env;
     n_param_in = inputs;
     n_param_out = outputs; 
@@ -192,10 +192,7 @@ let normalize_node main_node =
     n_post = !post;
     n_eqs = scheduled_eqs; } 
     
-let normalize (ast:prog) main =
-  let main_node =
-    try 
-      List.find (fun node -> node.p_id = main) ast
-    with Not_found -> assert false
-  in
-  normalize_node main_node
+let normalize prog =
+  { n_node = normalize_node prog.p_node;
+    n_includes = prog.p_includes;
+  }

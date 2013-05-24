@@ -84,3 +84,7 @@ type n_node =
     n_eqs: n_equation list; 
   }
 
+type n_prog =
+  { n_node: n_node;
+    n_includes: ident list;
+  }

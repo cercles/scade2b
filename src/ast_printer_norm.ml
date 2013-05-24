@@ -90,7 +90,7 @@ let rec print_eq_list ppt = function
 
 and print_eq ppt = function
   | N_Alternative a -> 
-      fprintf ppt "%a =@[<v 2>@,IF%a@]@,@[<v 4>THEN@,%a@]@,@[<v 4>ELSE@,%a@]" 
+      fprintf ppt "%a = IF %a @,@[<v 4>THEN %a @]@,@[<v 4>ELSE %a @]" 
 	print_leftpart a.n_alt_lp 
 	print_expr a.n_alt_cond
 	print_expr a.n_alt_then
@@ -148,5 +148,5 @@ let print_node ppt node =
     print_eq_list node.n_eqs
     print_cond_list node.n_post
 
-let print_prog node =
-  Format.printf "Program normalized : @\n@\n%a@\n@." print_node node
+let print_prog prog =
+  Format.printf "Program normalized : @\n%a@\n@." print_node prog.n_node

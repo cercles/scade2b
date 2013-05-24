@@ -7,7 +7,8 @@
   (* Check if all the types in the list are the same. Used to check array coherence *)
   let check_type list =
     let typ = List.hd list in
-    List.iter (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
+    List.iter 
+      (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
     typ
 
   (* Used for the distinction between Slice and Index *)
@@ -25,7 +26,9 @@
 %token PLUS MINUS MULT DIV DIV_INT MOD 
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
-%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOTDOT CARET CONCAT  /* these three last are array ops */
+%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA QUOTES DOT 
+/* these three are array ops */
+%token DOTDOT CARET CONCAT  
 %token T_BOOL T_INT T_REAL
 %token <bool> BOOL
 %token <int> INT
@@ -47,24 +50,30 @@
 %left CARET CONCAT
 
 %start prog
-%type <Ast_repr.prog> prog
+%type <Ast_repr.p_prog> prog
 
 %%
 
 prog : 
- | node_list EOF { $1 }
+ | package_list node EOF { { p_includes = $1; p_node = $2 } }
 ;
 
-node_list :
+package_list :
  |   { [] }
- | node node_list { $1::$2 }
+ | INCLUDE QUOTES IDENT DOT IDENT QUOTES SEMICOL package_list { $3 :: $8 }
 ;
 
 node :
  | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL 
    var_decl 
-   LET eq_list TEL semi_opt
-   { { p_id = $2; p_param_in = $4; p_param_out = $8; p_vars = $11; p_eqs = $13; } }
+   LET assume_list eq_list guarantee_list TEL semi_opt
+   { { p_id = $2; 
+       p_param_in = $4; 
+       p_param_out = $8; 
+       p_vars = $11; 
+       p_assumes = $13; 
+       p_eqs = $14; 
+       p_guarantees = $15; } }
 ;
 
 var_decl :
@@ -81,7 +90,7 @@ decl :
 
 id_list :
  | IDENT { [$1] }
- | IDENT COMMA id_list { $1::$3 }
+ | IDENT COMMA id_list { $1 :: $3 }
 ;
 
 typ :
@@ -104,20 +113,30 @@ array_type : /* 2 facons de déclarer un tableau apparement (a verifier, la premi
 
 typ_list :
  | typ { [$1] }
- | typ COMMA typ_list { $1::$3 }
+ | typ COMMA typ_list { $1 :: $3 }
+;
+
+assume_list :
+ |   { [] }
+ | ASSUME IDENT COLON expr SEMICOL assume_list { ($2, $4) :: $6 }
+;
+ 
+guarantee_list :
+ |   { [] }
+ | GUARANTEE IDENT COLON expr SEMICOL guarantee_list { ($2, $4) :: $6 }
 ;
 
 eq_list :
  | ASSERT expr SEMICOL { [P_Assert $2] }
- | ASSERT expr SEMICOL eq_list { (P_Assert $2)::$4 }
+ | ASSERT expr SEMICOL eq_list { (P_Assert $2) :: $4 }
  | left_part EQ expr SEMICOL { [P_Eq ($1, $3)] }
- | left_part EQ expr SEMICOL eq_list { (P_Eq ($1, $3))::$5 }
+ | left_part EQ expr SEMICOL eq_list { (P_Eq ($1, $3)) :: $5 }
 ;
 
 left_part :
  | IDENT { PLP_Ident $1 }
- | LPAREN IDENT COMMA id_list RPAREN { PLP_Tuple ($2::$4) }
- | IDENT COMMA id_list { PLP_Tuple ($1::$3) }
+ | LPAREN IDENT COMMA id_list RPAREN { PLP_Tuple ($2 :: $4) }
+ | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
 ;
 
 expr : 
@@ -146,17 +165,17 @@ expr :
  | PRE expr { PE_Pre $2 }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
  | IDENT LPAREN expr_list RPAREN { PE_App ($1, $3) }
- | LPAREN expr COMMA expr_list RPAREN { PE_Tuple ($2::$4) }
+ | LPAREN expr COMMA expr_list RPAREN { PE_Tuple ($2 :: $4) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 } 
- | SHARP LPAREN expr COMMA expr_list RPAREN{ PE_Sharp ($3::$5) }
+ | SHARP LPAREN expr COMMA expr_list RPAREN{ PE_Sharp ($3 :: $5) }
 ;
 
 /* For Call & Tuple */
 expr_list :
  |   { [] }
  | expr { [$1] }
- | expr COMMA expr_list { $1::$3 }
+ | expr COMMA expr_list { $1 :: $3 }
 ;
 
 array_expr :
@@ -169,8 +188,8 @@ array_expr :
 array_list :
  | LBRACKET expr RBRACKET { [($2, $2)] }
  | LBRACKET expr DOTDOT expr RBRACKET { [($2, $4)] }
- | LBRACKET expr RBRACKET array_list { ($2, $2)::$4 }
- | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4)::$6 }
+ | LBRACKET expr RBRACKET array_list { ($2, $2) :: $4 }
+ | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4) :: $6 }
 ;
 
 /* In decl */

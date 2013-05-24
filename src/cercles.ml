@@ -23,28 +23,22 @@ let spec =
    "-v", Arg.Set verbose, "print intermediate transformations";
   ]
 
-let file, main_node =
+let file =
   let file = ref None in
-  let main = ref None in
   let set_file s =
     if not (Filename.check_suffix s ".lus") then
       raise (Arg.Bad "no .lus extension");
     file := Some s
-  in
-  let set_main s =
-    main := Some s
   in
   let cpt = ref 0 in
   let set s =
     incr cpt;
     match !cpt with
     | 1 -> set_file s
-    | 2 -> set_main s
     | _ -> raise (Arg.Bad "Too many arguments")
   in
   Arg.parse spec set usage;
-  (match !file with Some f -> f | None -> Arg.usage spec usage; exit 1),
-  (match !main with Some n -> n | None -> Arg.usage spec usage; exit 1)
+  (match !file with Some f -> f | None -> Arg.usage spec usage; exit 1)
 
 let () =
   let channel = open_in file in
@@ -54,8 +48,7 @@ let () =
     close_in channel;
     if !verbose then Ast_printer.print_prog ast;
     if !parse_only then exit 0;
-    if main_node = "" then exit 0;
-    let ast_n = Normalizer.normalize ast main_node in
+    let ast_n = Normalizer.normalize ast in
     if !verbose then Ast_printer_norm.print_prog ast_n;
     if !norm_only then exit 0 ;
     let ast_b = Trad.translate ast_n in
@@ -63,6 +56,8 @@ let () =
     Bsig_generator.print_prog ast_b.signature bsig_file;
     let bimpl_file = open_out ((Filename.chop_extension file)^"_i.imp") in
     Bimpl_generator.print_prog ast_b.implementation bimpl_file;
+    close_out bsig_file;
+    close_out bimpl_file;
     ()
   with
   | Lexer.Lexical_error s ->

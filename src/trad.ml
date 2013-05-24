@@ -46,6 +46,8 @@ let rec trad_list env to_call = function
 let get_concrete_vars env reg =
   id_to_bid env reg.n_reg_lpid
 
+
+
 (* EN COURS TRANSITIVITE DE LA CONDITION SUR LES REGISTRES -> A REVOIR *)
 
 let rec change_id_expr ident =function
@@ -65,8 +67,6 @@ and change_id_array ident = function
     (ident, (List.map (fun (e1, e2) -> (change_id_expr ident e1, change_id_expr ident e2)) e_list))
   | BA_Index (_, e_list) -> BA_Index (ident, (List.map (change_id_expr ident) e_list))
 
-  
-
 let retrieve_cond_expr env reg = 
   let id_val = match reg.n_reg_val with
     | NE_Ident i -> i
@@ -85,11 +85,11 @@ let get_invariant env reg =
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 
-let bimpl_translator env node =
+let bimpl_translator env node includes =
   let implem_name = String.capitalize (node.n_id ^ "_i") in
   let refines = String.capitalize (node.n_id) in
   let sees = Utils.sees_list in
-  let imports = Utils.imports_list in
+  let imports = List.map String.capitalize includes in
   let concrete_vars = ref [] in
   let invariant = ref [] in 
   let initialisation = ref [] in
@@ -172,10 +172,11 @@ let bsig_translator env node =
   }
     
 
-let translate node =
+let translate prog =
+  let node = prog.n_node in
   let env = Utils.make_env (N_Env.elements node.n_env) in
   let bsig = bsig_translator env node in
-  let bimpl = bimpl_translator env node in
+  let bimpl = bimpl_translator env node prog.n_includes in
   { env = env;
     signature = bsig;
     implementation = bimpl;
