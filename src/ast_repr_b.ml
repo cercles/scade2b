@@ -11,7 +11,7 @@ type expression =
 | BE_Sharp of expression list
 | BE_Array of array_expr
 
-and array_expr = 
+and array_expr =
   BA_Def of expression list
 | BA_Caret of expression * expression
 | BA_Concat of expression * expression
@@ -21,8 +21,8 @@ and array_expr =
 type b_type =
   BT_Base of base_type
 | BT_Array of b_type * expression
- 
-type left_part = 
+
+type left_part =
   BLP_Ident of ident
 | BLP_Tuple of ident list
 
@@ -44,21 +44,20 @@ type operation =
     op_expr: expression;
   }
 
-(* séparer les registres tuples en plusieurs registres? *)
-type registre = 
+type registre =
   { reg_lpid: ident;
     reg_val: expression;
   }
- 
-type equation = 
+
+type equation =
   Alternative of alternative
 | Fonction of fonction
 | Operation of operation
 
-type initialisation = 
+type initialisation =
   ident * expression
 
-type condition = 
+type condition =
   ident * b_type * expression
 
 type op_decl =
@@ -75,8 +74,8 @@ type operations =
   }
 
 type b_impl =
-  { name: ident; 
-    refines: ident; 
+  { name: ident;
+    refines: ident;
     sees: ident list;
     imports: ident list;
     concrete_variables: ident list;
@@ -97,16 +96,15 @@ type b_sig =
     sig_operation: sig_operation;
   }
 
-module Env = Map.Make(  
+module Env = Map.Make(
   struct
     type t = ident
     let compare = compare
   end
 )
 
-(* A MODIFIER *)
-type env = (ident * Ast_repr_norm.n_expression option) Env.t 
-  
+type env = (ident * Ast_repr_norm.n_expression option) Env.t
+
 type prog =
   { env: env;
     signature: b_sig;

@@ -10,32 +10,28 @@
     let pos = lexbuf.lex_curr_p in
     lexbuf.lex_curr_p <-
     { pos with pos_lnum = pos.pos_lnum + 1; pos_bol = pos.pos_cnum }
-      
 }
 
 let line_cmt = "--" [^'\n']* ['\n']
 let sep = ['\t' '\r' ' ' ]+
 
-let digit = ['0'-'9'] 
+let digit = ['0'-'9']
 let exponent = ('e' | 'E') ('+' | '-')? digit+
 let real = digit+ '.' digit+ exponent?
   | digit* '.' digit+ exponent?
   | digit+ exponent
 let alpha = ['a'-'z''A'-'Z''_']
 let ident = alpha (digit|alpha)*
-  
-
-
 
 rule token = parse
-	  | sep  { token lexbuf }
+          | sep  { token lexbuf }
 	  | '\n' { newline lexbuf;
 		   token lexbuf } 
 	  | line_cmt { newline lexbuf;
 		       token lexbuf }
-	  | "/*"     { comment lexbuf; 
+	  | "/*"     { comment lexbuf;
 		       token lexbuf }
-	      
+
 	  | "node"    { NODE }
 	  | "returns" { RETURNS }
 	  | "let"     { LET }
@@ -47,7 +43,7 @@ rule token = parse
 	  | "guarantee" { GUARANTEE }
 	  | "include" { INCLUDE }
 
-	  | "bool" { T_BOOL } 
+	  | "bool" { T_BOOL }
 	  | "int"  { T_INT }
 	  | "real" { T_REAL }
 
@@ -57,13 +53,13 @@ rule token = parse
 
 	  | "pre" { PRE }
 	  | "->"  { FBY }
-	      
+
 	  | '+'   { PLUS }
 	  | '-'   { MINUS }
 	  | '*'   { MULT }
-	  | '/'   { DIV }      
-	  | "div" { DIV_INT } 
-	  | "mod" { MOD }     
+	  | '/'   { DIV }    
+	  | "div" { DIV_INT }
+	  | "mod" { MOD } 
 
 	  | '='  { EQ }
 	  | "<>" { NEQ }
@@ -71,7 +67,7 @@ rule token = parse
 	  | "<=" { INFEQ }
 	  | '>'  { SUP }
 	  | ">=" { SUPEQ }
-	      
+
 	  | "and" { AND }
 	  | "or"  { OR }
 	  | "not" { NOT }
@@ -88,9 +84,8 @@ rule token = parse
 	  | '"'  { QUOTES }
 	  | ".." { DOTDOT }
 	  | '.'  { DOT }
-	  | '^'  { CARET }    
-	  | '|'  { CONCAT }   
-
+	  | '^'  { CARET }
+	  | '|'  { CONCAT } 
 
 	  | "true"      { BOOL (true) }
 	  | "false"     { BOOL (false) }
@@ -106,8 +101,6 @@ and comment = parse
     | '\n' { Lexing.new_line lexbuf; comment lexbuf }
     | _    { comment lexbuf }
     | eof  { raise (Lexical_error "unterminated comment") }
-
-
 
 {
 }

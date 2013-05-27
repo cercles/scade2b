@@ -17,13 +17,16 @@ let rec n_expr_to_b_expr env = function
   | NE_Unop (unop, e) -> BE_Unop (unop, n_expr_to_b_expr env e)
   | NE_Sharp e_list -> BE_Sharp (List.map (n_expr_to_b_expr env) e_list)
 
-and n_array_to_b_array env = function 
+and n_array_to_b_array env = function
   | NA_Def e_list -> BA_Def (List.map (n_expr_to_b_expr env) e_list)
   | NA_Caret (e1, e2) -> BA_Caret (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
   | NA_Concat (e1, e2) -> BA_Concat (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
-  | NA_Slice (id, e_list) -> BA_Slice 
-    (id_to_bid env id, (List.map (fun (e1, e2) -> (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)) e_list))
-  | NA_Index (id, e_list) -> BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
+  | NA_Slice (id, e_list) -> 
+    BA_Slice (id_to_bid env id, 
+	      (List.map (fun (e1, e2) -> 
+		(n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)) e_list))
+  | NA_Index (id, e_list) -> 
+    BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
 
 let rec n_type_to_b_type env = function
   | NT_Base b -> BT_Base b
@@ -48,7 +51,9 @@ let get_concrete_vars env reg =
 
 
 
-(* EN COURS TRANSITIVITE DE LA CONDITION SUR LES REGISTRES -> A REVOIR *)
+(* EN COURS TRANSITIVITE DE LA CONDITION SUR LES REGISTRES -> A REVOIR 
+   AJOUTER LES CONDITIONS VIDES POUR LES REGISTRES DE VAR LOCALES
+*)
 
 let rec change_id_expr ident =function
   | BE_Ident _ -> BE_Ident ident
@@ -59,28 +64,32 @@ let rec change_id_expr ident =function
   | BE_Unop (unop, e) -> BE_Unop (unop, change_id_expr ident e)
   | BE_Sharp e_list -> BE_Sharp (List.map (change_id_expr ident) e_list)
 
-and change_id_array ident = function 
+and change_id_array ident = function
   | BA_Def e_list -> BA_Def (List.map (change_id_expr ident) e_list)
   | BA_Caret (e1, e2) -> BA_Caret (change_id_expr ident e1, change_id_expr ident e2)
   | BA_Concat (e1, e2) -> BA_Concat (change_id_expr ident e1, change_id_expr ident e2)
-  | BA_Slice (_, e_list) -> BA_Slice 
-    (ident, (List.map (fun (e1, e2) -> (change_id_expr ident e1, change_id_expr ident e2)) e_list))
-  | BA_Index (_, e_list) -> BA_Index (ident, (List.map (change_id_expr ident) e_list))
+  | BA_Slice (_, e_list) -> 
+    BA_Slice (ident,
+	      (List.map (fun (e1, e2) ->
+		(change_id_expr ident e1, change_id_expr ident e2)) e_list))
+  | BA_Index (_, e_list) ->
+    BA_Index (ident, (List.map (change_id_expr ident) e_list))
 
-let retrieve_cond_expr env reg = 
+let retrieve_cond_expr env reg =
   let id_val = match reg.n_reg_val with
     | NE_Ident i -> i
     | _ -> assert false
-  in 
-  let cond_expr = match Env.find id_val env with 
+  in
+  let cond_expr = match Env.find id_val env with
     | _, Some c -> c
     | _, None -> assert false
-  in 
+  in
   let b_expr = n_expr_to_b_expr env cond_expr in
   change_id_expr (id_to_bid env reg.n_reg_lpid) b_expr
 
 let get_invariant env reg =
-  (id_to_bid env reg.n_reg_lpid, n_type_to_b_type env reg.n_reg_type, retrieve_cond_expr env reg)
+  (id_to_bid env reg.n_reg_lpid, n_type_to_b_type env reg.n_reg_type,
+   retrieve_cond_expr env reg)
 
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
@@ -91,21 +100,21 @@ let bimpl_translator env node includes =
   let sees = Utils.sees_list in
   let imports = List.map String.capitalize includes in
   let concrete_vars = ref [] in
-  let invariant = ref [] in 
+  let invariant = ref [] in
   let initialisation = ref [] in
-  let translate_eqs env eqs = 
+  let translate_eqs env eqs =
     let translator = function
-      | N_Alternative a -> 
+      | N_Alternative a ->
 	Alternative { alt_lp = nlp_to_blp env a.n_alt_lp;
 		      alt_cond = n_expr_to_b_expr env a.n_alt_cond;
 		      alt_then = n_expr_to_b_expr env a.n_alt_then;
 		      alt_else = n_expr_to_b_expr env a.n_alt_else;
     		    }
-      | N_Fonction f -> 
+      | N_Fonction f ->
 	Fonction { fun_lp = nlp_to_blp env f.n_fun_lp;
 		   fun_id = f.n_fun_id;
 		   fun_params = List.map (n_expr_to_b_expr env) f.n_fun_params;
-		 } 
+		 }
       | N_Operation o ->
 	Operation { op_lp = nlp_to_blp env o.n_op_lp;
 		    op_expr = n_expr_to_b_expr env o.n_op_expr;
@@ -130,8 +139,9 @@ let bimpl_translator env node includes =
   let op_decl = { id = node.n_id;
 		  param_in = trad_list env n_decl_to_decl node.n_param_in;
 		  param_out = trad_list env n_decl_to_decl node.n_param_out;
-		} in 
-  let (eqs, regs) = List.partition (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
+		} in
+  let (eqs, regs) = List.partition
+    (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
   let reg_ids = !concrete_vars in
@@ -170,7 +180,6 @@ let bsig_translator env node =
     sig_sees = sees;
     sig_operation = sig_operation;
   }
-    
 
 let translate prog =
   let node = prog.n_node in

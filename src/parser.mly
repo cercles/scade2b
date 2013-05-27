@@ -7,13 +7,13 @@
   (* Check if all the types in the list are the same. Used to check array coherence *)
   let check_type list =
     let typ = List.hd list in
-    List.iter 
+    List.iter
       (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
     typ
 
   (* Used for the distinction between Slice and Index *)
   let handle_slice id elist =
-    if Utils.a_b_list_equals elist then 
+    if Utils.a_b_list_equals elist then
       let (l, _) = List.split elist in
       PA_Index (id, l)
     else
@@ -23,12 +23,12 @@
 %token NODE RETURNS LET TEL VAR CONST ASSERT ASSUME GUARANTEE INCLUDE
 %token IF THEN ELSE
 %token PRE FBY 
-%token PLUS MINUS MULT DIV DIV_INT MOD 
+%token PLUS MINUS MULT DIV DIV_INT MOD
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
-%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA QUOTES DOT 
+%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA QUOTES DOT
 /* these three are array ops */
-%token DOTDOT CARET CONCAT  
+%token DOTDOT CARET CONCAT
 %token T_BOOL T_INT T_REAL
 %token <bool> BOOL
 %token <int> INT
@@ -43,7 +43,7 @@
 %left FBY
 %left OR XOR
 %left AND
-%left EQ NEQ INF INFEQ SUP SUPEQ 
+%left EQ NEQ INF INFEQ SUP SUPEQ
 %left PLUS MINUS
 %left MULT DIV DIV_INT MOD
 %nonassoc NOT PRE
@@ -54,7 +54,7 @@
 
 %%
 
-prog : 
+prog :
  | package_list node EOF { { p_includes = $1; p_node = $2 } }
 ;
 
@@ -64,20 +64,20 @@ package_list :
 ;
 
 node :
- | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL 
-   var_decl 
+ | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL
+   var_decl
    LET assume_list eq_list guarantee_list TEL semi_opt
-   { { p_id = $2; 
-       p_param_in = $4; 
-       p_param_out = $8; 
-       p_vars = $11; 
-       p_assumes = $13; 
-       p_eqs = $14; 
+   { { p_id = $2;
+       p_param_in = $4;
+       p_param_out = $8;
+       p_vars = $11;
+       p_assumes = $13;
+       p_eqs = $14;
        p_guarantees = $15; } }
 ;
 
 var_decl :
- |   { [] } 
+ |   { [] }
  | VAR decl { $2 }
 ;
 
@@ -100,11 +100,13 @@ typ :
 
 base_type :
  | T_BOOL { T_Bool }
- | T_INT { T_Int } 
+ | T_INT { T_Int }
  | T_REAL { T_Float }
 ;
 
-array_type : /* 2 facons de déclarer un tableau apparement (a verifier, la premiere semble un peu maladroite) */
+/* 2 facons de déclarer un tableau apparement 
+  (a verifier, la premiere semble un peu maladroite) */
+array_type :
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
 				PT_Array (typ, PE_Value (Int (List.length type_list))) }
@@ -120,7 +122,7 @@ assume_list :
  |   { [] }
  | ASSUME IDENT COLON expr SEMICOL assume_list { ($2, $4) :: $6 }
 ;
- 
+
 guarantee_list :
  |   { [] }
  | GUARANTEE IDENT COLON expr SEMICOL guarantee_list { ($2, $4) :: $6 }
@@ -139,10 +141,10 @@ left_part :
  | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
 ;
 
-expr : 
+expr :
  | IDENT { PE_Ident $1 }
  | INT { PE_Value (Int $1) }
- | BOOL { PE_Value (Bool $1) } 
+ | BOOL { PE_Value (Bool $1) }
  | REAL { PE_Value (Float $1) }
  | expr PLUS expr { PE_Bop (Op_add, $1, $3) }
  | expr MINUS expr { PE_Bop (Op_sub, $1, $3) }
@@ -167,7 +169,7 @@ expr :
  | IDENT LPAREN expr_list RPAREN { PE_App ($1, $3) }
  | LPAREN expr COMMA expr_list RPAREN { PE_Tuple ($2 :: $4) }
  | LPAREN expr RPAREN { $2 }
- | array_expr { PE_Array $1 } 
+ | array_expr { PE_Array $1 }
  | SHARP LPAREN expr COMMA expr_list RPAREN{ PE_Sharp ($3 :: $5) }
 ;
 
@@ -180,7 +182,7 @@ expr_list :
 
 array_expr :
  | LBRACKET expr_list RBRACKET { PA_Def $2 } /* OK POUR TABLEAU MULTI-DIM */
- | IDENT array_list { handle_slice $1 $2 } 
+ | IDENT array_list { handle_slice $1 $2 }
  | expr CARET expr { PA_Caret ($1, $3) }
  | expr CONCAT expr { PA_Concat ($1, $3) }
 ;
@@ -199,3 +201,4 @@ semi_opt :
 ;
 
 %%
+

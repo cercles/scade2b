@@ -11,7 +11,7 @@ type n_expression =
 | NE_Sharp of n_expression list
 | NE_Array of n_array_expr
 
-and n_array_expr = 
+and n_array_expr =
   NA_Def of n_expression list
 | NA_Caret of n_expression * n_expression
 | NA_Concat of n_expression * n_expression
@@ -21,8 +21,8 @@ and n_array_expr =
 type n_type =
   NT_Base of base_type
 | NT_Array of n_type * n_expression
- 
-type n_left_part = 
+
+type n_left_part =
   NLP_Ident of ident
 | NLP_Tuple of ident list
 
@@ -44,23 +44,23 @@ type n_operation =
     n_op_expr: n_expression;
   }
 
-type n_registre = 
+type n_registre =
   { n_reg_lpid: ident;
     n_reg_ini: n_expression;
     n_reg_val: n_expression;
     n_reg_type: n_type;
   }
- 
-type n_equation = 
+
+type n_equation =
   N_Alternative of n_alternative
 | N_Fonction of n_fonction
 | N_Operation of n_operation
 | N_Registre of n_registre
 
-type n_condition = 
+type n_condition =
   ident * n_type * n_expression
 
-type n_decl = 
+type n_decl =
   ident * n_type
 
 
@@ -73,15 +73,15 @@ module N_Env = Set.Make(
 
 type n_env = N_Env.t
 
-type n_node = 
-  { n_id: ident; 
+type n_node =
+  { n_id: ident;
     n_env: n_env;
-    n_param_in: n_decl list; 
-    n_param_out: n_decl list; 
-    n_vars: n_decl list; 
+    n_param_in: n_decl list;
+    n_param_out: n_decl list;
+    n_vars: n_decl list;
     n_pre: n_condition list;
     n_post: n_condition list;
-    n_eqs: n_equation list; 
+    n_eqs: n_equation list;
   }
 
 type n_prog =

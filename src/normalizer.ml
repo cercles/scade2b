@@ -38,7 +38,7 @@ let rec p_type_to_n_type = function
   | PT_Base b -> NT_Base b
   | PT_Array (t, e) -> NT_Array (p_type_to_n_type t, p_expr_to_n_expr e)
 
-let p_decl_to_n_decl declist = 
+let p_decl_to_n_decl declist =
   List.map (fun (id, p_type) -> (id, p_type_to_n_type p_type)) declist
 
 
@@ -53,10 +53,10 @@ let rec find_type id declist =
   | (ident, typ)::l -> if ident = id then Some typ else find_type id l
 
 (* Transform an assert into a pre/post condition *)
-let handle_assert node asser = 
-  let id = 
-    try 
-      Utils.find_ident_in_pexpr asser 
+let handle_assert node asser =
+  let id =
+    try
+      Utils.find_ident_in_pexpr asser
     with Two_ident (id1, id2) -> raise (Assert_id_error id1) (* A CHANGER *)
   in
   match find_type id node.p_param_in with
@@ -71,7 +71,6 @@ let handle_assert node asser =
    Seuls les tuples à gauche sont autorisés pour les retours de fonctions.
    
  *)
-
 
 let rec get_atomic_reg lp_list ini_list expr_list node =
   match lp_list, ini_list, expr_list with
@@ -91,9 +90,9 @@ let rec get_atomic_reg lp_list ini_list expr_list node =
 		 n_reg_val = (NE_Ident id);
 	       }::(get_atomic_reg l1 l2 l3 node)
   | _ -> raise Register_error
-      
+
 let handle_reg node = function
-  | P_Eq (PLP_Ident lp_id, PE_Fby (ini, PE_Pre pre_expr)) -> 
+  | P_Eq (PLP_Ident lp_id, PE_Fby (ini, PE_Pre pre_expr)) ->
     let id = (match pre_expr with
 	PE_Ident id -> id
       | _ -> raise Register_error
@@ -124,9 +123,9 @@ let handle_reg node = function
 (* 		 n_reg_val = (NE_Ident id); *)
 (* 	       }  *)
 (*   | _ -> raise Register_error *)
-  
+
 let handle_alt = function
-  | P_Eq (lp, PE_If (c, e1, e2)) -> 
+  | P_Eq (lp, PE_If (c, e1, e2)) ->
     N_Alternative { n_alt_lp = plp_to_nlp lp;
 		    n_alt_cond = p_expr_to_n_expr c;
 		    n_alt_then = p_expr_to_n_expr e1;
@@ -135,7 +134,7 @@ let handle_alt = function
   | _ -> assert false
 
 let handle_app = function
-  | P_Eq (lp, PE_App (id_app, elist)) -> 
+  | P_Eq (lp, PE_App (id_app, elist)) ->
     N_Fonction { n_fun_lp = plp_to_nlp lp;
 		 n_fun_id = id_app;
 		 n_fun_params = List.map p_expr_to_n_expr elist;
@@ -177,7 +176,7 @@ let normalize_node node =
   let inputs = p_decl_to_n_decl node.p_param_in in
   let outputs = p_decl_to_n_decl node.p_param_out in
   let vars = p_decl_to_n_decl node.p_vars in
-  let scheduled_eqs = 
+  let scheduled_eqs =
     let (id_inputs, _) = List.split inputs in
     Scheduler.scheduler eqs (id_inputs)
   in
@@ -186,12 +185,12 @@ let normalize_node node =
   { n_id = node.p_id;
     n_env = env;
     n_param_in = inputs;
-    n_param_out = outputs; 
+    n_param_out = outputs;
     n_vars = vars;
     n_pre = !pre;
     n_post = !post;
-    n_eqs = scheduled_eqs; } 
-    
+    n_eqs = scheduled_eqs; }
+
 let normalize prog =
   { n_node = normalize_node prog.p_node;
     n_includes = prog.p_includes;
