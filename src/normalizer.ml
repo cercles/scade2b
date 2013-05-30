@@ -65,6 +65,17 @@ let handle_assert node asser =
     | Some typ -> Post (id, p_type_to_n_type typ, p_expr_to_n_expr asser)
     | None -> raise (Assert_id_error id)
 
+let handle_assume node (id, expr) =
+  match find_type id node.p_param_in with
+  | Some typ -> (id, p_type_to_n_type typ, p_expr_to_n_expr expr)
+  | None ->  raise (Assert_id_error id)
+
+
+let handle_guarantee node (id,expr) =
+  match find_type id node.p_param_out with
+  | Some typ -> (id, p_type_to_n_type typ, p_expr_to_n_expr expr)
+  | None ->  raise (Assert_id_error id)
+
 
 (* MODIFIER PAR UN SCAN_FOR_TUPLE_IN_EXPR
    faire le scan après passage du parseur, pour vérifier que les équations sont toutes atomiques.
@@ -181,13 +192,17 @@ let normalize_node node =
     Scheduler.scheduler eqs (id_inputs)
   in
   let scheduled_eqs = scheduled_eqs in
+  let assumes = List.map (handle_assume node) node.p_assumes in
+  let guarantees = List.map (handle_guarantee node) node.p_guarantees in
+  pre := !pre @ assumes; (* ENLEVER LES REFS PRE ET POST (deprecated) *)
+  post := !post @ guarantees;
   let env = get_env vars !pre !post in
   { n_id = node.p_id;
     n_env = env;
     n_param_in = inputs;
     n_param_out = outputs;
     n_vars = vars;
-    n_pre = !pre;
+    n_pre = !pre; 
     n_post = !post;
     n_eqs = scheduled_eqs; }
 

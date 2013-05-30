@@ -5,8 +5,12 @@ open Ast_repr_norm
 open Utils
 
 
+(* LES CONST SONT A AJOUTER A L'ENV !!! *)
+
 let id_to_bid env id =
+try
   let bid, _ = Env.find id env in bid
+with Not_found -> id
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
@@ -38,6 +42,7 @@ let nlp_to_blp env = function
 
 let n_decl_to_decl env (id, _) =
   id_to_bid env id
+
 
 let n_condition_to_condition env (id, t, e) =
   (id_to_bid env id, n_type_to_b_type env t, n_expr_to_b_expr env e)
