@@ -88,7 +88,7 @@ let scheduler eqs inputs =
       let res' = List.fold_left (fun r (eq, _, _) -> eq::r) res ok in
       let l' = List.fold_left (fun s (_, l_idset, _) -> L.union s l_idset) l ok in
       let eqs' = nok in
-      (* Stop before loop if there is no change *)
+      (* Stop loop if there is no change *)
       if res' = res && l' = l && eqs'= eqs then failwith "scheduler issue... causality loop?" else ();
       schedul_rec res' l' eqs'
     end

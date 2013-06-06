@@ -40,11 +40,20 @@ and print_expr ppt = function
 
 (* TODO *)
 and print_array ppt = function 
-  | BA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
+  | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
   | BA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_slice_list e_list
   | BA_Index (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_index_list e_list
+
+
+and print_def_list ppt e_list = 
+  let rec fun_rec n ppt = function 
+    | [] -> ()
+    | [v] -> fprintf ppt "%d |-> %a" n print_expr v
+    | v::l -> fprintf ppt "%d |-> %a, %a" n print_expr v (fun_rec (n+1)) l
+  in
+  fun_rec 1 ppt e_list
 
 and print_slice_list ppt = function
   | [] -> ()

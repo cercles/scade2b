@@ -70,25 +70,26 @@ let get_concrete_vars env reg =
    AJOUTER LES CONDITIONS VIDES POUR LES REGISTRES DE VAR LOCALES
 *)
 
-let rec change_id_expr ident =function
-  | BE_Ident _ -> BE_Ident ident
-  | BE_Tuple e_list -> BE_Tuple (List.map (change_id_expr ident) e_list)
-  | BE_Value v -> BE_Value v
-  | BE_Array ar -> BE_Array (change_id_array ident ar)
-  | BE_Bop (bop, e1, e2) -> BE_Bop (bop, change_id_expr ident e1, change_id_expr ident e2)
-  | BE_Unop (unop, e) -> BE_Unop (unop, change_id_expr ident e)
-  | BE_Sharp e_list -> BE_Sharp (List.map (change_id_expr ident) e_list)
+let rec rename_id_expr old ident = function
+  | NE_Ident i -> if i = old then NE_Ident ident else NE_Ident i
+  | NE_Tuple e_list -> NE_Tuple (List.map (rename_id_expr old ident) e_list)
+  | NE_Value v -> NE_Value v
+  | NE_Array ar -> NE_Array (rename_id_array old ident ar)
+  | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old ident e1, rename_id_expr old ident e2)
+  | NE_Unop (unop, e) -> NE_Unop (unop, rename_id_expr old ident e)
+  | NE_Sharp e_list -> NE_Sharp (List.map (rename_id_expr old ident) e_list)
 
-and change_id_array ident = function
-  | BA_Def e_list -> BA_Def (List.map (change_id_expr ident) e_list)
-  | BA_Caret (e1, e2) -> BA_Caret (change_id_expr ident e1, change_id_expr ident e2)
-  | BA_Concat (e1, e2) -> BA_Concat (change_id_expr ident e1, change_id_expr ident e2)
-  | BA_Slice (_, e_list) -> 
-    BA_Slice (ident,
+and rename_id_array old ident = function
+  | NA_Def e_list -> NA_Def (List.map (rename_id_expr old ident) e_list)
+  | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old ident e1, rename_id_expr old ident e2)
+  | NA_Concat (e1, e2) -> NA_Concat (rename_id_expr old ident e1, rename_id_expr old ident e2)
+  | NA_Slice (i, e_list) -> 
+    NA_Slice ((if i = old then ident else i), 
 	      (List.map (fun (e1, e2) ->
-		(change_id_expr ident e1, change_id_expr ident e2)) e_list))
-  | BA_Index (_, e_list) ->
-    BA_Index (ident, (List.map (change_id_expr ident) e_list))
+		(rename_id_expr old ident e1, rename_id_expr old ident e2)) e_list))
+  | NA_Index (i, e_list) -> 
+    NA_Index ((if i = old then ident else i), 
+	      (List.map (rename_id_expr old ident) e_list))
 
 let retrieve_cond_expr env reg =
   let id_val = match reg.n_reg_val with
@@ -96,7 +97,7 @@ let retrieve_cond_expr env reg =
     | _ -> assert false
   in
   let cond_expr = match Env.find id_val env with
-    | _, Some c -> c
+    | _, Some c -> rename_id_expr id_val reg.n_reg_lpid c
     | _, None -> failwith "Register not related to input/output"
   in
   cond_expr 
@@ -105,8 +106,8 @@ let retrieve_cond_expr env reg =
 let get_invariant env reg =
   let cond = n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr env reg) in
   match cond with 
-  | Base_expr (id, t, expr) -> Base_expr (id, t, change_id_expr (id_to_bid env reg.n_reg_lpid) expr)
-  | Fun_expr (id, t, dims, expr) -> Fun_expr (id, t, dims, change_id_expr (id_to_bid env reg.n_reg_lpid) expr)
+  | Base_expr (id, t, expr) -> Base_expr (id, t, expr)
+  | Fun_expr (id, t, dims, expr) -> Fun_expr (id, t, dims, expr)
 
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
