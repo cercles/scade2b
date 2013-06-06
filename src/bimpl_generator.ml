@@ -4,6 +4,12 @@ open Format
 open Ast_repr_b
 open Ast_base
 
+
+
+(* TODO: Generateur de nom de variables absentes de l'environnement. --> dans trad.ml *)
+
+
+
 let print_bid ppt id =
   fprintf ppt "%s" id
 
@@ -32,7 +38,7 @@ and print_expr ppt = function
   | BE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
   | BE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTION *)
 
-(* A FAIRE! *)
+(* TODO *)
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
@@ -148,9 +154,9 @@ let print_basetype ppt = function
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
 
-let print_type ppt = function
+let rec print_type ppt = function
   | BT_Base t -> print_basetype ppt t
-  | BT_Array (t, expr) -> assert false (* SEQUENCES A FAIRE *)
+  | BT_Array (t, expr) -> fprintf ppt "%a %a" print_type t print_expr expr
 
 
 let rec print_initialisation_list ppt = function
@@ -163,7 +169,8 @@ let print_initialisation ppt ini_list =
   else 
     fprintf ppt "INITIALISATION %a" print_initialisation_list ini_list 
 
-let rec print_invariant_list ppt = function
+(*   *)
+let rec print_invariant_list ppt = function 
   | [] -> ()
   | [(id, t, cond)] -> fprintf ppt "%a : %a & %a" print_bid id print_type t print_expr cond
   | (id, t, cond)::l -> fprintf ppt "%a : %a & %a &@,%a" 

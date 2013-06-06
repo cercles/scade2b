@@ -41,8 +41,6 @@ let rec p_type_to_n_type = function
 let p_decl_to_n_decl declist =
   List.map (fun (id, p_type) -> (id, p_type_to_n_type p_type)) declist
 
-
-
 (* Type used for pre/post conditions *)
 type pre_post = Pre of n_condition | Post of n_condition
 

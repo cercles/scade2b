@@ -35,10 +35,6 @@ type p_equation =
 type p_type =
   PT_Base of base_type
 | PT_Array of p_type * p_expression
-(*
-  ex: int^2^3 -> 
-  PT_Array (PT_Array ((PT_Base T_Int), PE_Value (Int 2)), PE_Value (Int 3))
-*)
 
 type p_decl = ident * p_type
 

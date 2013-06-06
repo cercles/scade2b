@@ -80,11 +80,14 @@ let print_basetype ppt = function
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
 
-let print_type ppt = function
-  | BT_Base t -> print_basetype ppt t
-  | BT_Array (t, expr) -> assert false (* SEQUENCES A FAIRE *)
+let print_array_type ppt t expr =
+  ()
 
-let print_then_condition ppt (id, t, expr) =
+let rec print_type ppt = function
+  | BT_Base t -> print_basetype ppt t
+  | BT_Array (t, expr) -> print_array_type ppt t expr
+
+let print_then_condition ppt (id, t, expr) = 
   fprintf ppt "%a :: { %a | %a : %a & %a }"
     print_bid id
     print_bid id

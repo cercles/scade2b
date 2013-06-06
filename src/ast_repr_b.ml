@@ -18,7 +18,9 @@ and array_expr =
 | BA_Slice of ident * (expression * expression) list
 | BA_Index of ident * expression list
 
-type b_type =
+(* TODO: remplacer bt_array en bt_fun, car on utilise plus des arrays mais des fonctions. *)
+
+type b_type = 
   BT_Base of base_type
 | BT_Array of b_type * expression
 
