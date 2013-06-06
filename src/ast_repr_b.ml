@@ -2,27 +2,23 @@
 
 open Ast_base
 
-type expression =
+type b_expression =
   BE_Ident of ident
-| BE_Tuple of expression list
+| BE_Tuple of b_expression list
 | BE_Value of value
-| BE_Bop of bop * expression * expression
-| BE_Unop of unop * expression
-| BE_Sharp of expression list
+| BE_Bop of bop * b_expression * b_expression
+| BE_Unop of unop * b_expression
+| BE_Sharp of b_expression list
 | BE_Array of array_expr
 
 and array_expr =
-  BA_Def of expression list
-| BA_Caret of expression * expression
-| BA_Concat of expression * expression
-| BA_Slice of ident * (expression * expression) list
-| BA_Index of ident * expression list
+  BA_Def of b_expression list
+| BA_Caret of b_expression * b_expression
+| BA_Concat of b_expression * b_expression
+| BA_Slice of ident * (b_expression * b_expression) list
+| BA_Index of ident * b_expression list
 
 (* TODO: remplacer bt_array en bt_fun, car on utilise plus des arrays mais des fonctions. *)
-
-type b_type = 
-  BT_Base of base_type
-| BT_Array of b_type * expression
 
 type left_part =
   BLP_Ident of ident
@@ -30,25 +26,25 @@ type left_part =
 
 type alternative =
   { alt_lp: left_part;
-    alt_cond: expression;
-    alt_then: expression;
-    alt_else: expression;
+    alt_cond: b_expression;
+    alt_then: b_expression;
+    alt_else: b_expression;
   }
 
 type fonction =
   { fun_lp: left_part;
     fun_id: ident;
-    fun_params: expression list;
+    fun_params: b_expression list;
   }
 
 type operation =
   { op_lp: left_part;
-    op_expr: expression;
+    op_expr: b_expression;
   }
 
 type registre =
   { reg_lpid: ident;
-    reg_val: expression;
+    reg_val: b_expression;
   }
 
 type equation =
@@ -57,10 +53,13 @@ type equation =
 | Operation of operation
 
 type initialisation =
-  ident * expression
+  ident * b_expression
 
 type condition =
-  ident * b_type * expression
+  (* Base_type of ident * b_type *)
+(* | Fun_type of ident * b_type *)
+| Base_expr of ident * base_type * b_expression
+| Fun_expr of ident * base_type * b_expression list * b_expression
 
 type op_decl =
   { id: ident;

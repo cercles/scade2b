@@ -1,5 +1,6 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
+open Ast_base
 open Ast_repr_b
 open Ast_repr_norm
 open Utils
@@ -32,9 +33,14 @@ and n_array_to_b_array env = function
   | NA_Index (id, e_list) -> 
     BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
 
-let rec n_type_to_b_type env = function
-  | NT_Base b -> BT_Base b
-  | NT_Array (t,e) -> BT_Array (n_type_to_b_type env t, n_expr_to_b_expr env e)
+(* flatten a NT_Array into a n_expr list (a list of dimensions) *)
+let flatten_array env a =
+  let base_t = ref T_Int in (* default ref *)
+  let rec fun_rec = function
+  | NT_Base t -> base_t := t; []
+  | NT_Array (t, expr) -> (n_expr_to_b_expr env expr) :: (fun_rec t)
+  in
+  (!base_t, fun_rec a)
 
 let nlp_to_blp env = function
   | NLP_Ident id -> BLP_Ident (id_to_bid env id)
@@ -43,9 +49,14 @@ let nlp_to_blp env = function
 let n_decl_to_decl env (id, _) =
   id_to_bid env id
 
-
 let n_condition_to_condition env (id, t, e) =
-  (id_to_bid env id, n_type_to_b_type env t, n_expr_to_b_expr env e)
+  match t with 
+  | NT_Base typ ->  
+    Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env e)
+  | NT_Array (_, _) -> 
+    let typ, dims = flatten_array env t in
+    Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env e)
+
 
 let rec trad_list env to_call = function
   | [] -> []
@@ -53,7 +64,6 @@ let rec trad_list env to_call = function
 
 let get_concrete_vars env reg =
   id_to_bid env reg.n_reg_lpid
-
 
 
 (* EN COURS TRANSITIVITE DE LA CONDITION SUR LES REGISTRES -> A REVOIR 
@@ -87,17 +97,21 @@ let retrieve_cond_expr env reg =
   in
   let cond_expr = match Env.find id_val env with
     | _, Some c -> c
-    | _, None -> assert false
+    | _, None -> failwith "Register not related to input/output"
   in
-  let b_expr = n_expr_to_b_expr env cond_expr in
-  change_id_expr (id_to_bid env reg.n_reg_lpid) b_expr
+  cond_expr 
+  
 
 let get_invariant env reg =
-  (id_to_bid env reg.n_reg_lpid, n_type_to_b_type env reg.n_reg_type,
-   retrieve_cond_expr env reg)
+  let cond = n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr env reg) in
+  match cond with 
+  | Base_expr (id, t, expr) -> Base_expr (id, t, change_id_expr (id_to_bid env reg.n_reg_lpid) expr)
+  | Fun_expr (id, t, dims, expr) -> Fun_expr (id, t, dims, change_id_expr (id_to_bid env reg.n_reg_lpid) expr)
 
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
+
+
 
 let bimpl_translator env node includes =
   let implem_name = String.capitalize (node.n_id ^ "_i") in

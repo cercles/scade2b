@@ -154,10 +154,13 @@ let print_basetype ppt = function
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
 
-let rec print_type ppt = function
-  | BT_Base t -> print_basetype ppt t
-  | BT_Array (t, expr) -> fprintf ppt "%a %a" print_type t print_expr expr
+let rec print_dim_list ppt = function
+  | [] -> ()
+  | [d] -> fprintf ppt "1 .. %a" print_expr d
+  | d :: l -> fprintf ppt "1 .. %a, %a " print_expr d print_dim_list l
 
+let print_array_type t ppt e_list =
+  fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t
 
 let rec print_initialisation_list ppt = function
   | [] -> ()
@@ -170,11 +173,30 @@ let print_initialisation ppt ini_list =
     fprintf ppt "INITIALISATION %a" print_initialisation_list ini_list 
 
 (*   *)
+
+
+let print_condition ppt = function
+  | Base_expr (id, t, expr) -> 
+    fprintf ppt "%a : %a & %a"
+      print_bid id
+      print_basetype t
+      print_expr expr 
+  | Fun_expr (id, t, e_list, expr) ->
+    fprintf ppt "%a : %a & !%s. (%s : (%a) => %a(%s) : %a"
+      print_bid id
+      (print_array_type t) e_list
+      "iii"
+      "iii"
+      print_dim_list e_list
+      print_bid id
+      "iii"
+      print_expr expr
+
 let rec print_invariant_list ppt = function 
   | [] -> ()
-  | [(id, t, cond)] -> fprintf ppt "%a : %a & %a" print_bid id print_type t print_expr cond
-  | (id, t, cond)::l -> fprintf ppt "%a : %a & %a &@,%a" 
-      print_bid id print_type t print_expr cond print_invariant_list l 
+  | [c] -> fprintf ppt "%a" print_condition c
+  | c::l -> fprintf ppt "%a &@,%a" print_condition c print_invariant_list l 
+
 
 let print_invariant ppt inv_list = 
   if (List.length inv_list) = 0 then () 
