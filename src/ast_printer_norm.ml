@@ -21,8 +21,8 @@ let rec print_expr ppt = function
   | NE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
 
 and print_array ppt = function
-  | NA_Def e_list -> fprintf ppt "[%a]" print_e_list e_list
-  | NA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
+  | NA_Def e_list -> fprintf ppt "def[ %a ]" print_e_list e_list
+  | NA_Caret (e1, e2) -> fprintf ppt "(%a ^ %a)" print_expr e1 print_expr e2
   | NA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
   | NA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_id id print_slice_list e_list
   | NA_Index (id, e_list) -> fprintf ppt "%a[%a]" print_id id print_index_list e_list

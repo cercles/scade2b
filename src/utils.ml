@@ -75,3 +75,6 @@ let make_env id_type_cond_list =
     if (String.length id) > 1 && not(Env.exists (fun _ (bid, _) -> id = bid) env) then id else
       if Env.exists (fun _ (bid, _) -> (id^id) = bid) env then make_b_id env (id^id) else (id^id) in
   List.fold_left (fun env (id, _, c) -> Env.add id ((make_b_id env id), c) env) Env.empty id_type_cond_list
+
+
+(* let generate_var_name env = *)

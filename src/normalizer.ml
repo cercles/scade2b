@@ -81,6 +81,7 @@ let handle_guarantee node (id,expr) =
    
  *)
 
+
 let rec get_atomic_reg lp_list ini_list expr_list node =
   match lp_list, ini_list, expr_list with
   | [],[],[] -> []
@@ -163,7 +164,6 @@ let get_env vars pre post =
   let outputs_cond = List.map (fun (id, t, cond) -> (id, t, Some cond)) post in  
   Utils.make_n_env (inputs_cond@outputs_cond@vars_cond)
 
-(* VERIFIER QU'IL Y A AUTANT DE ASSUME QUE DE INPUTS (pareil pour outputs-guarantee) *)
 
 let normalize_node node =
   let pre = ref [] in

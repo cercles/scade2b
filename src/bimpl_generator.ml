@@ -8,7 +8,7 @@ open Ast_base
 
 (* TODO: Generateur de nom de variables absentes de l'environnement. --> dans trad.ml *)
 
-
+(* let array_cond = false ref *)
 
 let print_bid ppt id =
   fprintf ppt "%s" id
@@ -23,7 +23,6 @@ let print_value ppt = function
   | Int i -> fprintf ppt "%d" i
   | Float f -> fprintf ppt "%f" f
 
-
 let rec print_e_list ppt = function 
   | [] -> ()
   | [v] -> fprintf ppt "%a" print_expr v
@@ -31,14 +30,13 @@ let rec print_e_list ppt = function
 
 and print_expr ppt = function
   | BE_Ident id -> print_bid ppt id
-  | BE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
+  | BE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list (* A FAIRE: SUPPRIMER TUPLES! car existe pas en B *)
   | BE_Value v -> print_value ppt v
   | BE_Array ar -> print_array ppt ar
   | BE_Bop (bop, e1, e2) -> fprintf ppt "%a %a %a" print_expr e1 print_bop bop print_expr e2
   | BE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
   | BE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTION *)
 
-(* TODO *)
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
@@ -165,11 +163,11 @@ let print_basetype ppt = function
 
 let rec print_dim_list ppt = function
   | [] -> ()
-  | [d] -> fprintf ppt "1 .. %a" print_expr d
-  | d :: l -> fprintf ppt "1 .. %a, %a " print_expr d print_dim_list l
+  | [d] -> fprintf ppt "(1 .. %a)" print_expr d
+  | d :: l -> fprintf ppt "(1 .. %a) * %a " print_expr d print_dim_list l
 
 let print_array_type t ppt e_list =
-  fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t
+  fprintf ppt "%a --> %a" print_dim_list e_list print_basetype t
 
 let rec print_initialisation_list ppt = function
   | [] -> ()
@@ -205,7 +203,6 @@ let rec print_invariant_list ppt = function
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_condition c
   | c::l -> fprintf ppt "%a &@,%a" print_condition c print_invariant_list l 
-
 
 let print_invariant ppt inv_list = 
   if (List.length inv_list) = 0 then () 

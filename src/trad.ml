@@ -101,7 +101,6 @@ let retrieve_cond_expr env reg =
     | _, None -> failwith "Register not related to input/output"
   in
   cond_expr 
-  
 
 let get_invariant env reg =
   let cond = n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr env reg) in

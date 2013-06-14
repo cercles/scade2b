@@ -11,7 +11,8 @@
       (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
     typ
 
-  (* Used for the distinction between Slice and Index *)
+  (* Used for the distinction between Slice and Index 
+  if e_list is [(a,b), (c,d), (e,f)] with a=b and c=d and e=f then it's an index [a,c,e] else it's a slice*)
   let handle_slice id elist =
     if Utils.a_b_list_equals elist then
       let (l, _) = List.split elist in
