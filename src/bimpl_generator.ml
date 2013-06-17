@@ -8,10 +8,19 @@ open Ast_base
 
 (* TODO: Generateur de nom de variables absentes de l'environnement. --> dans trad.ml *)
 
-(* let array_cond = false ref *)
+(* too naive, change that. *)
+let fun_cond = ref false 
+let var_cond = ref []
 
 let print_bid ppt id =
-  fprintf ppt "%s" id
+  if !fun_cond = true then
+    let indice = 
+      try
+	"(" ^ (List.assoc id !var_cond) ^ ")"
+      with Not_found -> ""
+    in
+    fprintf ppt "%s%s" id indice
+  else fprintf ppt "%s" id
 
 let rec print_idlist_comma ppt = function
   | [] -> ()
@@ -179,8 +188,6 @@ let print_initialisation ppt ini_list =
   else 
     fprintf ppt "INITIALISATION %a" print_initialisation_list ini_list 
 
-(*   *)
-
 
 let print_condition ppt = function
   | Base_expr (id, t, expr) -> 
@@ -189,15 +196,20 @@ let print_condition ppt = function
       print_basetype t
       print_expr expr 
   | Fun_expr (id, t, e_list, expr) ->
-    fprintf ppt "%a : %a & !%s. (%s : (%a) => %a(%s) : %a"
+    var_cond := (id, "iii") :: !var_cond;
+    fprintf ppt "%a : %a & !%s. (%s : %a => %a(%s) :"
       print_bid id
       (print_array_type t) e_list
       "iii"
       "iii"
       print_dim_list e_list
       print_bid id
-      "iii"
-      print_expr expr
+      "iii";
+    fun_cond := true;    
+    fprintf ppt "%a )" print_expr expr;
+    var_cond := List.tl !var_cond;
+    fun_cond := false
+    
 
 let rec print_invariant_list ppt = function 
   | [] -> ()
@@ -238,7 +250,7 @@ let print_implementation ppt impl_name =
 
 let print_machine ppt b_impl =
   fprintf ppt
-    "%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a"
+    "%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a END"
     print_implementation b_impl.name
     print_refines b_impl.refines
     print_sees b_impl.sees
