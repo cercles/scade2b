@@ -28,7 +28,7 @@ let rec print_idlist_comma ppt = function
   | id::l -> fprintf ppt "%a, %a" print_bid id print_idlist_comma l
 
 let print_value ppt = function
-  | Bool b -> fprintf ppt "%b" b
+  | Bool b -> fprintf ppt "%s" (if b then "TRUE" else "FALSE")
   | Int i -> fprintf ppt "%d" i
   | Float f -> fprintf ppt "%f" f
 
@@ -39,20 +39,20 @@ let rec print_e_list ppt = function
 
 and print_expr ppt = function
   | BE_Ident id -> print_bid ppt id
-  | BE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list (* A FAIRE: SUPPRIMER TUPLES! car existe pas en B *)
+  | BE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
   | BE_Value v -> print_value ppt v
   | BE_Array ar -> print_array ppt ar
+  | BE_Bop (bop, e1, e2) when bop = Op_xor -> fprintf ppt "xor(%a, %a)" print_expr e1 print_expr e2
   | BE_Bop (bop, e1, e2) -> fprintf ppt "%a %a %a" print_expr e1 print_bop bop print_expr e2
   | BE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
-  | BE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list (* TROUVER TRADUCTION *)
+  | BE_Sharp e_list -> fprintf ppt "sharp(%a)" print_e_list e_list
 
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
-  | BA_Caret (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
-  | BA_Concat (e1, e2) -> fprintf ppt "%a | %a" print_expr e1 print_expr e2
-  | BA_Slice (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_slice_list e_list
-  | BA_Index (id, e_list) -> fprintf ppt "%a[%a]" print_bid id print_index_list e_list
-
+  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_index_list e_list
+  | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
+  | BA_Concat (e1, e2) -> fprintf ppt "concat(%a, %a)" print_expr e1 print_expr e2
+  | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id print_slice_list e_list
 
 and print_def_list ppt e_list = 
   let rec fun_rec n ppt = function 
@@ -64,15 +64,13 @@ and print_def_list ppt e_list =
 
 and print_slice_list ppt = function
   | [] -> ()
-  | [(e1, e2)] when e1 = e2 -> fprintf ppt "[%a]" print_expr e1
-  | (e1, e2)::l when e1 = e2 -> fprintf ppt "[%a]%a" print_expr e1 print_slice_list l
-  | [(e1, e2)] -> fprintf ppt "[%a .. %a]" print_expr e1 print_expr e2
-  | (e1, e2)::l -> fprintf ppt "[%a .. %a]%a" print_expr e1 print_expr e2 print_slice_list l
+  | [(e1, e2)] -> fprintf ppt "(%a, %a)" print_expr e1 print_expr e2
+  | (e1, e2)::l -> fprintf ppt "(%a, %a), %a" print_expr e1 print_expr e2 print_slice_list l
 
 and print_index_list ppt = function
   | [] -> ()
-  | [(e)] -> fprintf ppt "[%a]" print_expr e
-  | (e)::l -> fprintf ppt "[%a]%a" print_expr e print_index_list l
+  | [(e)] -> fprintf ppt "%a" print_expr e
+  | (e)::l -> fprintf ppt "%a, %a" print_expr e print_index_list l
 
 and print_bop ppt = function
   | Op_eq -> fprintf ppt "="
@@ -92,7 +90,7 @@ and print_bop ppt = function
   | Op_div_f -> fprintf ppt "/"
   | Op_and -> fprintf ppt "&"
   | Op_or -> fprintf ppt "or"
-  | Op_xor -> fprintf ppt "xor" (* XOR en B?? *)
+  | Op_xor -> assert false
 
 and print_unop ppt = function 
   | Op_not -> fprintf ppt "not "
@@ -186,7 +184,7 @@ let rec print_initialisation_list ppt = function
 let print_initialisation ppt ini_list = 
   if (List.length ini_list) = 0 then () 
   else 
-    fprintf ppt "INITIALISATION %a" print_initialisation_list ini_list 
+    fprintf ppt "INITIALISATION @[%a@]" print_initialisation_list ini_list 
 
 
 let print_condition ppt = function
@@ -206,7 +204,7 @@ let print_condition ppt = function
       print_bid id
       "iii";
     fun_cond := true;    
-    fprintf ppt "%a )" print_expr expr;
+    fprintf ppt "%a)" print_expr expr;
     var_cond := List.tl !var_cond;
     fun_cond := false
     
@@ -219,7 +217,7 @@ let rec print_invariant_list ppt = function
 let print_invariant ppt inv_list = 
   if (List.length inv_list) = 0 then () 
   else 
-    fprintf ppt "INVARIANT %a" print_invariant_list inv_list 
+    fprintf ppt "INVARIANT @\n@[<3>   %a@]" print_invariant_list inv_list 
 
 
 let print_concrete_var ppt reg_list =
@@ -245,12 +243,12 @@ let print_refines ppt id =
 
 
 let print_implementation ppt impl_name =
-  fprintf ppt "IMPLEMENTATION %s" impl_name
+  fprintf ppt "%s" impl_name
 
 
 let print_machine ppt b_impl =
   fprintf ppt
-    "%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a END"
+    "IMPLEMENTATION %a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a END"
     print_implementation b_impl.name
     print_refines b_impl.refines
     print_sees b_impl.sees
