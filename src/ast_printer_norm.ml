@@ -135,7 +135,8 @@ let rec print_cond_list ppt = function
   | r::l -> fprintf ppt "%a;@\n%a" print_condition r print_cond_list l
 
 and print_condition ppt = function
-  |(id, ty, e) -> fprintf ppt "%a : %a & @[%a@]" print_id id print_type ty print_expr e
+  |(id, ty, Some e) -> fprintf ppt "%a : %a & @[%a@]" print_id id print_type ty print_expr e
+  |(id, ty, None) -> fprintf ppt "%a : %a " print_id id print_type ty
 
 let print_node ppt node =
   fprintf ppt

@@ -57,7 +57,7 @@ type initialisation =
 
 type condition =
   Base_no_expr of ident * base_type
-| Fun_no_expr of ident * base_type
+| Fun_no_expr of ident * base_type * b_expression list
 | Base_expr of ident * base_type * b_expression
 | Fun_expr of ident * base_type * b_expression list * b_expression
 

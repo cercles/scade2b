@@ -58,20 +58,20 @@ let handle_assert node asser =
     with Two_ident (id1, id2) -> raise (Assert_id_error id1) (* A CHANGER *)
   in
   match find_type id node.p_param_in with
-  | Some typ -> Pre (id, p_type_to_n_type typ, p_expr_to_n_expr asser)
+  | Some typ -> Pre (id, p_type_to_n_type typ, Some (p_expr_to_n_expr asser))
   | None -> match find_type id node.p_param_out with
-    | Some typ -> Post (id, p_type_to_n_type typ, p_expr_to_n_expr asser)
+    | Some typ -> Post (id, p_type_to_n_type typ, Some (p_expr_to_n_expr asser))
     | None -> raise (Assert_id_error id)
 
 let handle_assume node (id, expr) =
   match find_type id node.p_param_in with
-  | Some typ -> (id, p_type_to_n_type typ, p_expr_to_n_expr expr)
+  | Some typ -> (id, p_type_to_n_type typ, Some (p_expr_to_n_expr expr))
   | None ->  raise (Assert_id_error id)
 
 
 let handle_guarantee node (id,expr) =
   match find_type id node.p_param_out with
-  | Some typ -> (id, p_type_to_n_type typ, p_expr_to_n_expr expr)
+  | Some typ -> (id, p_type_to_n_type typ, Some (p_expr_to_n_expr expr))
   | None ->  raise (Assert_id_error id)
 
 
@@ -165,10 +165,8 @@ let get_env vars pre post inputs outputs =
       then cond_l else (id, t, None) :: cond_l) cond_list decl_list
   in
   let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
-  let assumes = add_non_existing_cond
-    (List.map (fun (id, t, cond) -> (id, t, Some cond)) pre) inputs in
-  let guarantees = add_non_existing_cond
-    (List.map (fun (id, t, cond) -> (id, t, Some cond)) post) outputs in  
+  let assumes = add_non_existing_cond pre inputs in
+  let guarantees = add_non_existing_cond post outputs in  
   Utils.make_n_env (assumes@guarantees@vars_cond)
 
 let normalize_node node =
@@ -196,10 +194,20 @@ let normalize_node node =
     Scheduler.scheduler eqs (id_inputs)
   in
   let scheduled_eqs = scheduled_eqs in
+
   let assumes = List.map (handle_assume node) node.p_assumes in
   let guarantees = List.map (handle_guarantee node) node.p_guarantees in
+  let add_non_existing_cond cond_list decl_list =
+    List.fold_left (fun cond_l (id, t) -> 
+      if (List.exists (fun (id_bis, _, _) -> id = id_bis) cond_l)
+      then cond_l else (id, t, None) :: cond_l) cond_list decl_list
+  in
+  let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
+  let assumes = add_non_existing_cond assumes inputs in
+  let guarantees = add_non_existing_cond guarantees outputs in  
   pre := !pre @ assumes; (* ENLEVER LES REFS PRE ET POST (deprecated) *)
   post := !post @ guarantees;
+
   let env = get_env vars !pre !post inputs outputs in
   { n_id = node.p_id;
     n_env = env;

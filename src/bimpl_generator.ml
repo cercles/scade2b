@@ -193,6 +193,10 @@ let print_condition ppt = function
       print_bid id
       print_basetype t
       print_expr expr 
+  | Base_no_expr (id, t) ->
+      fprintf ppt "%a : %a"
+	print_bid id
+	print_basetype t
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
     fprintf ppt "%a : %a & !%s. (%s : (%a) => "
@@ -205,7 +209,11 @@ let print_condition ppt = function
     fprintf ppt "%a)" print_expr expr;
     var_cond := List.tl !var_cond;
     fun_cond := false
-    
+  | Fun_no_expr (id, t, e_list) ->
+    fprintf ppt "%a : %a"
+      print_bid id
+      (print_array_type t) e_list
+
 
 let rec print_invariant_list ppt = function 
   | [] -> ()

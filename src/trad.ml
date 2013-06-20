@@ -51,11 +51,15 @@ let n_decl_to_decl env (id, _) =
 
 let n_condition_to_condition env (id, t, e) =
   match t with 
-  | NT_Base typ ->  
-    Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env e)
-  | NT_Array (_, _) -> 
+  | NT_Base typ ->  (
+      match e with 
+	| None -> Base_no_expr (id_to_bid env id, typ)
+	| Some expr -> Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr))
+  | NT_Array (_, _) -> (
     let typ, dims = flatten_array env t in
-    Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env e)
+    match e with 
+      | None -> Fun_no_expr (id_to_bid env id, typ, dims)
+      | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr))
 
 
 let rec trad_list env to_call = function
@@ -96,18 +100,16 @@ let retrieve_cond_expr env reg =
     | NE_Ident i -> i
     | _ -> assert false
   in
-  let cond_expr = match Env.find id_val env with
-    | _, Some c -> rename_id_expr id_val reg.n_reg_lpid c
-    | _, None -> failwith "Register not related to input/output"
+  let cond_expr = 
+    match Env.find id_val env with
+      | _, Some c -> Some (rename_id_expr id_val reg.n_reg_lpid c)
+      | _, None -> failwith "Register not related to input/output"
   in
   cond_expr 
 
 let get_invariant env reg =
-  let cond = n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr env reg) in
-  match cond with 
-  | Base_expr (id, t, expr) -> Base_expr (id, t, expr)
-  | Fun_expr (id, t, dims, expr) -> Fun_expr (id, t, dims, expr)
-
+  n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr env reg) 
+  
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 

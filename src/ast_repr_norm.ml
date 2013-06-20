@@ -58,7 +58,7 @@ type n_equation =
 | N_Registre of n_registre
 
 type n_condition =
-  ident * n_type * n_expression
+  ident * n_type * n_expression option
 
 type n_decl =
   ident * n_type
@@ -66,7 +66,7 @@ type n_decl =
 
 module N_Env = Set.Make(
   struct
-    type t = ident * n_type * n_expression option
+    type t = n_condition
     let compare = compare
   end
 )
