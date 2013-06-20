@@ -195,14 +195,12 @@ let print_condition ppt = function
       print_expr expr 
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a : %a & !%s. (%s : %a => %a(%s) :"
+    fprintf ppt "%a : %a & !%s. (%s : (%a) => "
       print_bid id
       (print_array_type t) e_list
       "iii"
       "iii"
-      print_dim_list e_list
-      print_bid id
-      "iii";
+      print_dim_list e_list;
     fun_cond := true;    
     fprintf ppt "%a)" print_expr expr;
     var_cond := List.tl !var_cond;
@@ -226,16 +224,16 @@ let print_concrete_var ppt reg_list =
     fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
 
-let print_imports ppt mach_list =
-  if (List.length mach_list) = 0 then () 
+let print_imports ppt imports_l =
+  if (List.length imports_l) = 0 then () 
   else 
-    fprintf ppt "IMPORTS %a" print_idlist_comma mach_list
+    fprintf ppt "IMPORTS %a" print_idlist_comma imports_l
 
 
-let print_sees ppt mach_list =
-  if (List.length mach_list) = 0 then () 
+let print_sees ppt sees_l =
+  if (List.length sees_l) = 0 then () 
   else 
-    fprintf ppt "SEES %a" print_idlist_comma mach_list
+    fprintf ppt "SEES %a" print_idlist_comma sees_l
 
 
 let print_refines ppt id =
@@ -248,7 +246,7 @@ let print_implementation ppt impl_name =
 
 let print_machine ppt b_impl =
   fprintf ppt
-    "IMPLEMENTATION %a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a END"
+    "IMPLEMENTATION %a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
     print_implementation b_impl.name
     print_refines b_impl.refines
     print_sees b_impl.sees

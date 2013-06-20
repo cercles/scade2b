@@ -56,8 +56,8 @@ type initialisation =
   ident * b_expression
 
 type condition =
-  (* Base_type of ident * b_type *)
-(* | Fun_type of ident * b_type *)
+  Base_no_expr of ident * base_type
+| Fun_no_expr of ident * base_type
 | Base_expr of ident * base_type * b_expression
 | Fun_expr of ident * base_type * b_expression list * b_expression
 

@@ -158,12 +158,18 @@ let handle_op = function
 		}
   | _ -> assert false
 
-let get_env vars pre post =
+let get_env vars pre post inputs outputs =    
+  let add_non_existing_cond cond_list decl_list =
+    List.fold_left (fun cond_l (id, t) -> 
+      if (List.exists (fun (id_bis, _, _) -> id = id_bis) cond_l)
+      then cond_l else (id, t, None) :: cond_l) cond_list decl_list
+  in
   let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
-  let inputs_cond = List.map (fun (id, t, cond) -> (id, t, Some cond)) pre in
-  let outputs_cond = List.map (fun (id, t, cond) -> (id, t, Some cond)) post in  
-  Utils.make_n_env (inputs_cond@outputs_cond@vars_cond)
-
+  let assumes = add_non_existing_cond
+    (List.map (fun (id, t, cond) -> (id, t, Some cond)) pre) inputs in
+  let guarantees = add_non_existing_cond
+    (List.map (fun (id, t, cond) -> (id, t, Some cond)) post) outputs in  
+  Utils.make_n_env (assumes@guarantees@vars_cond)
 
 let normalize_node node =
   let pre = ref [] in
@@ -194,7 +200,7 @@ let normalize_node node =
   let guarantees = List.map (handle_guarantee node) node.p_guarantees in
   pre := !pre @ assumes; (* ENLEVER LES REFS PRE ET POST (deprecated) *)
   post := !post @ guarantees;
-  let env = get_env vars !pre !post in
+  let env = get_env vars !pre !post inputs outputs in
   { n_id = node.p_id;
     n_env = env;
     n_param_in = inputs;

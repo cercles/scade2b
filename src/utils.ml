@@ -10,9 +10,9 @@ let a_b_list_equals l=
   List.for_all (fun (a, b) -> a = b) l
 
 (* Define the machines accessed in the SEES clause *)
-let sees_list = []
+let sees_list = ["Constantes2"; "Ctes_math"]
 (* Define the machines accessed in the IMPORT clause (A AUTOMATISER) *)
-let imports_list = ["Bound"]
+let imports_list = []
 
 (* string_of_list (l: string list) returns the concat of every strings in list *)
 let string_of_list l = 

@@ -118,16 +118,14 @@ let print_then_condition ppt = function
       print_expr expr
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a :: { %a | %a : %a & !%s. (%s : %a => %a(%s) : "
+    fprintf ppt "%a :: { %a | %a : %a & !%s. (%s : (%a) => "
       print_bid id
       print_bid id
       print_bid id
       (print_array_type t) e_list
       "iii"
       "iii"
-      print_dim_list e_list
-      print_bid id
-      "iii";
+      print_dim_list e_list;
     fun_cond := true;    
     fprintf ppt "%a )}" print_expr expr;
     var_cond := List.tl !var_cond;
@@ -147,14 +145,12 @@ let print_pre_condition ppt = function
       print_expr expr 
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a : %a & !%s. (%s : %a => %a(%s) : "
+    fprintf ppt "%a : %a & !%s. (%s : (%a) => "
       print_bid id
       (print_array_type t) e_list
       "iii"
       "iii"
-      print_dim_list e_list
-      print_bid id
-      "iii";
+      print_dim_list e_list;
     fun_cond := true;    
     fprintf ppt "%a )" print_expr expr;
     var_cond := List.tl !var_cond;
@@ -189,7 +185,7 @@ let print_id_machine ppt id_machine =
 
 let print_machine ppt b_sig =
   fprintf ppt
-    "MACHINE %a@\n%a@\n%a END"
+    "MACHINE %a@\n%a@\n%a @\nEND"
     print_id_machine b_sig.machine
     print_sees b_sig.sig_sees
     print_operation b_sig.sig_operation
