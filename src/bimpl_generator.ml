@@ -128,7 +128,7 @@ let print_eq ppt = function
 let rec print_eq_list ppt = function
   | [] -> ()
   | [eq] -> fprintf ppt "%a" print_eq eq
-  | eq::l -> fprintf ppt "%a; %a" print_eq eq print_eq_list l 
+  | eq::l -> fprintf ppt "%a; @,%a" print_eq eq print_eq_list l 
 
   
 let print_registre ppt r =
@@ -139,7 +139,7 @@ let print_registre ppt r =
 let rec print_reg_list ppt = function
   | [] -> ()
   | [r] -> fprintf ppt "%a" print_registre r
-  | r::l -> fprintf ppt "%a; %a" print_registre r print_reg_list l 
+  | r::l -> fprintf ppt "%a; @,%a" print_registre r print_reg_list l 
 
 
 let print_vars ppt var_list =
@@ -156,7 +156,7 @@ let print_op_decl ppt op_decl =
 let print_operation ppt operations =
   let sep = if (List.length operations.op_2) > 0 then ";" else "" in
   fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n%a@[<v 3>@,@[<v>%a%s@]@,@[<v>%a@]@]@\n@\nEND"
+    "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a%s@,%a@]@\n END"
     print_op_decl operations.op_decl
     print_vars operations.vars
     print_eq_list operations.op_1
@@ -170,8 +170,8 @@ let print_basetype ppt = function
 
 let rec print_dim_list ppt = function
   | [] -> ()
-  | [d] -> fprintf ppt "(1 .. %a)" print_expr d
-  | d :: l -> fprintf ppt "(1 .. %a) * %a " print_expr d print_dim_list l
+  | [d] -> fprintf ppt "1 .. %a" print_expr d
+  | d :: l -> fprintf ppt "1 .. %a, %a " print_expr d print_dim_list l
 
 let print_array_type t ppt e_list =
   fprintf ppt "%a --> %a" print_dim_list e_list print_basetype t
@@ -179,12 +179,12 @@ let print_array_type t ppt e_list =
 let rec print_initialisation_list ppt = function
   | [] -> ()
   | [(id, e)] -> fprintf ppt "%a := %a" print_bid id print_expr e
-  | (id, e)::l -> fprintf ppt "%a := %a ; %a" print_bid id print_expr e print_initialisation_list l 
+  | (id, e)::l -> fprintf ppt "%a := %a ; @,%a" print_bid id print_expr e print_initialisation_list l 
 
 let print_initialisation ppt ini_list = 
   if (List.length ini_list) = 0 then () 
   else 
-    fprintf ppt "INITIALISATION @[%a@]" print_initialisation_list ini_list 
+    fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]" print_initialisation_list ini_list 
 
 
 let print_condition ppt = function

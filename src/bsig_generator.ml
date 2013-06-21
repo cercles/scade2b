@@ -188,7 +188,7 @@ let print_op_decl ppt op_decl =
 
 let print_operation ppt sigop =
   fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v> %a@]@]@\n@[<v 3> THEN@,@[<v> %a@]@]@\n END"
+    "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v>%a@]@]@\n@[<v 3> THEN@,@[<v>%a@]@]@\n END"
     print_op_decl sigop.sigop_decl
     print_prelist sigop.sigop_pre
     print_thenlist sigop.sigop_post
