@@ -19,6 +19,8 @@
       PA_Index (id, l)
     else
       PA_Slice (id, elist)
+
+  type equation_type = Eq of p_equation | Assume of p_condition | Guarantee of p_condition
 %}
 
 %token NODE RETURNS LET TEL VAR CONST ASSERT ASSUME GUARANTEE INCLUDE
@@ -67,14 +69,19 @@ package_list :
 node :
  | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL
    var_decl
-   LET assume_list eq_list guarantee_list TEL semi_opt
-   { { p_id = $2;
+   LET eq_list TEL semi_opt
+   { let (assumes, guarantees, eqs) = 
+       List.fold_left (fun (a, g, e) eq -> match eq with
+       | Eq p_eq -> (a, g, p_eq :: e)
+       | Assume p_cond -> (p_cond :: a, g, e)
+       | Guarantee p_cond -> (a, p_cond :: g, e)) ([], [], []) $13 in
+     { p_id = $2;
        p_param_in = $4;
        p_param_out = $8;
        p_vars = $11;
-       p_assumes = $13;
-       p_eqs = $14;
-       p_guarantees = $15; } }
+       p_assumes = assumes;
+       p_eqs = eqs;
+       p_guarantees = guarantees; } }
 ;
 
 var_decl :
@@ -105,8 +112,7 @@ base_type :
  | T_REAL { T_Float }
 ;
 
-/* 2 facons de déclarer un tableau apparement 
-  (a verifier, la premiere semble un peu maladroite) */
+/* 2 facons de déclarer un tableau */
 array_type :
  | LBRACKET typ_list RBRACKET { let type_list = $2 in
 				let typ = check_type type_list in
@@ -119,21 +125,13 @@ typ_list :
  | typ COMMA typ_list { $1 :: $3 }
 ;
 
-assume_list :
- |   { [] }
- | ASSUME IDENT COLON expr SEMICOL assume_list { ($2, $4) :: $6 }
-;
-
-guarantee_list :
- |   { [] }
- | GUARANTEE IDENT COLON expr SEMICOL guarantee_list { ($2, $4) :: $6 }
-;
-
 eq_list :
- | ASSERT expr SEMICOL { [P_Assert $2] }
- | ASSERT expr SEMICOL eq_list { (P_Assert $2) :: $4 }
- | left_part EQ expr SEMICOL { [P_Eq ($1, $3)] }
- | left_part EQ expr SEMICOL eq_list { (P_Eq ($1, $3)) :: $5 }
+ | ASSUME IDENT COLON expr SEMICOL { [Assume ($2, $4)] }
+ | ASSUME IDENT COLON expr SEMICOL eq_list { (Assume ($2, $4)) :: $6 }  
+ | GUARANTEE IDENT COLON expr SEMICOL { [Guarantee ($2, $4)] }
+ | GUARANTEE IDENT COLON expr SEMICOL eq_list { (Guarantee ($2, $4)) :: $6 }
+ | left_part EQ expr SEMICOL { [Eq (P_Eq ($1, $3))] }
+ | left_part EQ expr SEMICOL eq_list { (Eq (P_Eq ($1, $3))) :: $5 }
 ;
 
 left_part :

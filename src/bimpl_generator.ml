@@ -128,7 +128,7 @@ let print_eq ppt = function
 let rec print_eq_list ppt = function
   | [] -> ()
   | [eq] -> fprintf ppt "%a" print_eq eq
-  | eq::l -> fprintf ppt "%a; %a" print_eq eq print_eq_list l 
+  | eq::l -> fprintf ppt "%a; @,%a" print_eq eq print_eq_list l 
 
   
 let print_registre ppt r =
@@ -139,7 +139,7 @@ let print_registre ppt r =
 let rec print_reg_list ppt = function
   | [] -> ()
   | [r] -> fprintf ppt "%a" print_registre r
-  | r::l -> fprintf ppt "%a; %a" print_registre r print_reg_list l 
+  | r::l -> fprintf ppt "%a; @,%a" print_registre r print_reg_list l 
 
 
 let print_vars ppt var_list =
@@ -156,7 +156,7 @@ let print_op_decl ppt op_decl =
 let print_operation ppt operations =
   let sep = if (List.length operations.op_2) > 0 then ";" else "" in
   fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n%a@[<v 3>@,@[<v>%a%s@]@,@[<v>%a@]@]@\n@\nEND"
+    "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a%s@,%a@]@\n END"
     print_op_decl operations.op_decl
     print_vars operations.vars
     print_eq_list operations.op_1
@@ -179,12 +179,12 @@ let print_array_type t ppt e_list =
 let rec print_initialisation_list ppt = function
   | [] -> ()
   | [(id, e)] -> fprintf ppt "%a := %a" print_bid id print_expr e
-  | (id, e)::l -> fprintf ppt "%a := %a ; %a" print_bid id print_expr e print_initialisation_list l 
+  | (id, e)::l -> fprintf ppt "%a := %a ; @,%a" print_bid id print_expr e print_initialisation_list l 
 
 let print_initialisation ppt ini_list = 
   if (List.length ini_list) = 0 then () 
   else 
-    fprintf ppt "INITIALISATION @[%a@]" print_initialisation_list ini_list 
+    fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]" print_initialisation_list ini_list 
 
 
 let print_condition ppt = function
@@ -210,12 +210,12 @@ let print_condition ppt = function
 let rec print_invariant_list ppt = function 
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_condition c
-  | c::l -> fprintf ppt "%a &@,%a" print_condition c print_invariant_list l 
+  | c::l -> fprintf ppt "%a & @,%a" print_condition c print_invariant_list l 
 
 let print_invariant ppt inv_list = 
   if (List.length inv_list) = 0 then () 
   else 
-    fprintf ppt "INVARIANT @\n@[<3>   %a@]" print_invariant_list inv_list 
+    fprintf ppt "INVARIANT @\n@[<v 3>   %a@]" print_invariant_list inv_list 
 
 
 let print_concrete_var ppt reg_list =
