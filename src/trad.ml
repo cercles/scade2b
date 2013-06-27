@@ -70,10 +70,6 @@ let get_concrete_vars env reg =
   id_to_bid env reg.n_reg_lpid
 
 
-(* EN COURS TRANSITIVITE DE LA CONDITION SUR LES REGISTRES -> A REVOIR 
-   AJOUTER LES CONDITIONS VIDES POUR LES REGISTRES DE VAR LOCALES
-*)
-
 let rec rename_id_expr old ident = function
   | NE_Ident i -> if i = old then NE_Ident ident else NE_Ident i
   | NE_Tuple e_list -> NE_Tuple (List.map (rename_id_expr old ident) e_list)
@@ -112,7 +108,6 @@ let get_invariant env reg =
   
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
-
 
 
 let bimpl_translator env node includes =

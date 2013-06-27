@@ -49,7 +49,7 @@ and print_expr ppt = function
 
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
-  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_index_list e_list
+  | BA_Index (id, e_list) -> fprintf ppt "%a({%a})" print_bid id print_index_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
   | BA_Concat (e1, e2) -> fprintf ppt "concat(%a, %a)" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id print_slice_list e_list
@@ -155,13 +155,15 @@ let print_op_decl ppt op_decl =
  
 let print_operation ppt operations =
   let sep = if (List.length operations.op_2) > 0 then ";" else "" in
+  let print_end = if (List.length operations.vars) > 0 then "END" else "" in
   fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a%s@,%a@]@\n END"
+    "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a%s@,%a@]@\n %s"
     print_op_decl operations.op_decl
     print_vars operations.vars
     print_eq_list operations.op_1
     sep
     print_reg_list operations.op_2
+    print_end
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
@@ -174,7 +176,7 @@ let rec print_dim_list ppt = function
   | d :: l -> fprintf ppt "1 .. %a, %a " print_expr d print_dim_list l
 
 let print_array_type t ppt e_list =
-  fprintf ppt "%a --> %a" print_dim_list e_list print_basetype t
+  fprintf ppt "%a --> {%a}" print_dim_list e_list print_basetype t
 
 let rec print_initialisation_list ppt = function
   | [] -> ()
@@ -199,7 +201,7 @@ let print_condition ppt = function
 	print_basetype t
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a : %a & !%s. (%s : (%a) => "
+    fprintf ppt "%a : %a & !%s. (%s : {%a} => "
       print_bid id
       (print_array_type t) e_list
       "iii"

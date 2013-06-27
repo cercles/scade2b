@@ -47,7 +47,7 @@ and print_expr ppt = function
 
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
-  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_index_list e_list
+  | BA_Index (id, e_list) -> fprintf ppt "%a({%a})" print_bid id print_index_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
   | BA_Concat (e1, e2) -> fprintf ppt "concat(%a, %a)" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id print_slice_list e_list
@@ -106,7 +106,7 @@ let rec print_dim_list ppt = function
   | d :: l -> fprintf ppt "1 .. %a, %a " print_expr d print_dim_list l
 
 let print_array_type t ppt e_list =
-  fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t
+  fprintf ppt "{%a} --> %a" print_dim_list e_list print_basetype t
 
 let print_then_condition ppt = function
   | Base_expr (id, t, expr) -> 
@@ -124,7 +124,7 @@ let print_then_condition ppt = function
       print_basetype t
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a :: { %a | %a : %a & !%s. (%s : (%a) => "
+    fprintf ppt "%a :: { %a | %a : %a & !%s. (%s : {%a} => "
       print_bid id
       print_bid id
       print_bid id
@@ -160,7 +160,7 @@ let print_pre_condition ppt = function
 	print_basetype t
   | Fun_expr (id, t, e_list, expr) ->
     var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a : %a & !%s. (%s : (%a) => "
+    fprintf ppt "%a : %a & !%s. (%s : {%a} => "
       print_bid id
       (print_array_type t) e_list
       "iii"

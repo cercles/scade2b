@@ -15,6 +15,7 @@ let sees_list = ["Constantes2"; "Ctes_math"]
 let imports_list = []
 
 (* string_of_list (l: string list) returns the concat of every strings in list *)
+(* NOT USED *)
 let string_of_list l = 
   List.fold_left (fun res str -> res^", "^str ) (List.hd l) (List.tl l)
 
