@@ -1,0 +1,88 @@
+% -*- coding: utf-8; ispell-dictionary: "french"
+
+\documentclass[11pt]{report}
+
+\usepackage{graphicx}
+\graphicspath{{img/}}
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{geometry}
+\geometry{left=23mm, right=23mm, top=30mm, bottom=25mm}
+
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Rapport de stage}
+\rhead{Thibord}
+
+
+\title{Rapport de Stage \\ - \\ Traduction de composants Scade/Lustre vers des
+  machines B}
+\author{\textsc{Florian Thibord}}
+
+
+%----------------------------------
+%--------  DEBUT DOCUMENT ---------
+%----------------------------------
+
+\begin{document}
+
+
+
+\maketitle
+\clearpage
+
+\tableofcontents 
+
+
+%% \makebox[6cm][l]{        
+%%   \includegraphics[scale=0.6]{mantano_black_bg.png}
+%% }
+%% \makebox[6cm][r]{
+%%   \includegraphics[scale=0.1]{UPMC.png}
+%% }
+
+%% \vspace*{5cm}
+%% {\centering
+%%   %% \Large{\bfseries RAPPORT DE STAGE - Traduction de Scade vers machine B.}
+%%   %% \vspace{4cm}
+
+%%   Florian Thibord\\
+%%   UPMC - Master STL APr 2ème année\\
+
+%%  \vspace{4cm}
+%% \begin{flushright}
+%%   \includegraphics[scale=0.25]{UPMC.png}
+%% \end{flushright}
+
+%% }
+
+
+%%\newpage
+
+%% \vspace*{3cm}
+
+ \newpage
+
+\chapter{Introduction}
+\input{intro}
+
+\chapter{Scade}
+\input{1_fragmentscade}
+
+\chapter {Machines B}
+\input{2_machinesB}
+
+\chapter{Schémas de traduction}
+\input{3_schemastrad}
+
+\chapter{Exemples tests}
+\input{4_exemples}
+
+\chapter{Conclusion}
+\input{conclusion}
+
+\end{document}
+

@@ -1,0 +1,126 @@
+% -*- coding: utf-8; ispell-dictionary: "french"; -*-
+
+%------------------------
+% Chapter 2 - Machines B
+%------------------------
+
+
+raisonnement rigoureux, logiciel sur
+Raffinements de spécifications formelle vers une spécification
+exécutable. Chaque raffinement passe par une étape d'obligation de
+preuves
+
+
+
+% SECTION 1 : Machines
+
+\section{Machine B}
+
+\subsection{Structure d'une machine}
+Clause, expression, predicats, substitutions
+
+
+Puis développer clause et prédicats
+
+\subsection{Clause}
+
+\paragraph{}
+REFINES
+\paragraph{}
+IMPORT
+\paragraph{}
+SEES
+\paragraph{}
+CONCRETE\_VARIABLES
+\paragraph{}
+INVARIANT
+\paragraph{}
+INITIALISATION
+\paragraph{}
+OPERATIONS
+
+\subsection{Prédicats}
+
+Un prédicat est une formule mahtématique qui a une valeur booléenne.
+
+% SECTION 2 : Expressions
+
+\section{Expressions}
+
+\subsection{Arithmétiques et logiques} 
+Expressions de B (rapidement : arithmétique, logique)
+
+\subsection{Fonction}
+
+\paragraph{}
+Appel d'opération définie dans une autre machine
+
+\paragraph{}
+Détail sur les tableaux en B
+
+% SECTION 3 : Substitutions
+
+\section{Substitutions}
+[S]P : "la substitution S établit le prédicat P".
+
+\paragraph{}
+BLOC
+
+\paragraph{}
+SEQUENCE
+
+\paragraph{}
+VARIABLE LOCALE
+
+\paragraph{}
+PRECONDITION
+
+\paragraph{}
+DEVIENT EGAL
+
+\paragraph{}
+CONDITION
+
+\paragraph{}
+APPEL OPERATION
+
+
+
+% SECTION 4 : Raffinements
+
+
+\section{Raffinements}
+spécification = machine abstraite, puis raffinement vers
+implantation.
+Nous produisons les 2 machines sig/impl (abstrait/concret)
+
+\subsection{Signatures}
+
+Reprise du contrat, utilisation de la substitution precondition
++
+EXEMPLE
+
+\subsection{Implémentation}
+
+Reprise du composant, détail de l'opération
+
+
+% SECTION 5 : Obligations de Preuve
+
+\section{Proof Obligation}
+Cf Proof obligation paper
+
+A chaque raffinement, on passe par une étape de type checking et
+d'obligation de preuves. Démonstrations basée sur les principales
+substitutions. Montrer qu'on utilise ce qu'il faut pour assurer que
+les obligations de preuves sont possibles.
+
+Principe :
+
+Hypothèses (liste de prédicats)
+=>
+But (doit être prouvé sous ces hypothèses)
+
+Pour cela on applique des substitutions aux prédicats. Développer pour les
+différentes substitutions, exemples...
+
