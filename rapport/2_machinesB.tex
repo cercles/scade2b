@@ -145,12 +145,14 @@ détail sur le fonctionnement des tableaux en B dans la section sur les
 expressions.
 
 ON PEUT SE PASSER DU APPARTIENT AVEC \\
-!iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) 
+!iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) \\
+A REGARDER
 
 % SECTION 2 : Expressions
 
 \section{Expressions}
 
+\subsection{}
 Les expressions permettent de désigner les données utilisées. On
 répertorie ici les expressions de B que nous utiliserons. Les
 expressions de base désignent une variable ou une valeur primitive.
@@ -159,16 +161,27 @@ soustraction, multiplication, division et modulo.
 
 \subsection{Fonction}
 
+Nous utiliserons également les fonctions, pour appeler des opérations
+définies dans d'autres composants, mais aussi pour modéliser les
+tableaux en B. Il n'y a pas de type primitif tableau en B, il faut les
+modéliser à l'aide de fonctions.
 
-\paragraph{}
-Appel d'opération définie dans une autre machine
+\paragraph{Les tableaux en B}
+Un tableau est une fonction dont l'ensemble de départ est le produit
+cartésien de n ensembles (où n correspond au nombre de dimensions du
+tableau), et dont l'ensemble d'arrivée est un ensemble concret.\\
+Par exemple, soit $tab$ un tableau, \\
+$tab \in (0..4)*(0..5) \rightarrow INT$ \\
+est une matrice de 5 lignes et 6 colonnes contenant des entiers.
 
-\paragraph{}
-Détail sur les tableaux en B
+A DEVELOPPER 
+
+
 
 % SECTION 3 : Substitutions
 
 \section{Substitutions}
+
 [S]P : "la substitution S établit le prédicat P".
 
 \paragraph{}

@@ -26,18 +26,18 @@
 \contentsline {paragraph}{}{8}
 \contentsline {paragraph}{}{9}
 \contentsline {section}{\numberline {3.2}Expressions}{9}
-\contentsline {subsection}{\numberline {3.2.1}Fonction}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
+\contentsline {subsection}{\numberline {3.2.1}}{9}
+\contentsline {subsection}{\numberline {3.2.2}Fonction}{9}
+\contentsline {paragraph}{Les tableaux en B}{9}
 \contentsline {section}{\numberline {3.3}Substitutions}{9}
 \contentsline {paragraph}{}{9}
 \contentsline {paragraph}{}{9}
 \contentsline {paragraph}{}{9}
 \contentsline {paragraph}{}{9}
 \contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {section}{\numberline {3.4}Raffinements}{9}
+\contentsline {paragraph}{}{10}
+\contentsline {paragraph}{}{10}
+\contentsline {section}{\numberline {3.4}Raffinements}{10}
 \contentsline {subsection}{\numberline {3.4.1}Signatures}{10}
 \contentsline {subsection}{\numberline {3.4.2}Impl\IeC {\'e}mentation}{10}
 \contentsline {section}{\numberline {3.5}Proof Obligation}{10}
