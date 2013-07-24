@@ -8,7 +8,7 @@
 \contentsline {paragraph}{Assertions}{5}
 \contentsline {paragraph}{Concernant les types}{5}
 \contentsline {section}{\numberline {2.3}Le langage d'entr\IeC {\'e}e du traducteur}{5}
-\contentsline {paragraph}{Expressions}{5}
+\contentsline {paragraph}{Expressions}{6}
 \contentsline {paragraph}{Ajouts d'op\IeC {\'e}rations au langage}{6}
 \contentsline {chapter}{\numberline {3}Machines B}{7}
 \contentsline {section}{\numberline {3.1}Machine B}{7}
@@ -21,28 +21,28 @@
 \contentsline {paragraph}{Invariant}{8}
 \contentsline {paragraph}{Initialisation}{8}
 \contentsline {paragraph}{Operations}{8}
-\contentsline {subsection}{\numberline {3.1.3}Pr\IeC {\'e}dicats}{8}
-\contentsline {paragraph}{}{8}
-\contentsline {paragraph}{}{8}
+\contentsline {subsection}{\numberline {3.1.3}Pr\IeC {\'e}dicats}{9}
+\contentsline {paragraph}{}{9}
+\contentsline {paragraph}{}{9}
 \contentsline {paragraph}{}{9}
 \contentsline {section}{\numberline {3.2}Expressions}{9}
 \contentsline {subsection}{\numberline {3.2.1}}{9}
 \contentsline {subsection}{\numberline {3.2.2}Fonction}{9}
-\contentsline {paragraph}{Les tableaux en B}{9}
-\contentsline {section}{\numberline {3.3}Substitutions}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{10}
-\contentsline {paragraph}{}{10}
-\contentsline {section}{\numberline {3.4}Raffinements}{10}
-\contentsline {subsection}{\numberline {3.4.1}Signatures}{10}
-\contentsline {subsection}{\numberline {3.4.2}Impl\IeC {\'e}mentation}{10}
-\contentsline {section}{\numberline {3.5}Proof Obligation}{10}
-\contentsline {chapter}{\numberline {4}Sch\IeC {\'e}mas de traduction}{11}
-\contentsline {section}{\numberline {4.1}Specification}{11}
-\contentsline {section}{\numberline {4.2}Impl\IeC {\'e}mentation}{11}
-\contentsline {chapter}{\numberline {5}Exemples tests}{12}
-\contentsline {chapter}{\numberline {6}Conclusion}{13}
+\contentsline {paragraph}{Les tableaux en B}{10}
+\contentsline {section}{\numberline {3.3}Substitutions}{10}
+\contentsline {paragraph}{Substitution Bloc}{10}
+\contentsline {paragraph}{Substitution Sequence}{10}
+\contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{10}
+\contentsline {paragraph}{Substitution Condition}{10}
+\contentsline {paragraph}{Substitution variable locale}{10}
+\contentsline {paragraph}{Substitution Precondition}{11}
+\contentsline {paragraph}{Substitution Appel operation}{11}
+\contentsline {section}{\numberline {3.4}Raffinements}{11}
+\contentsline {subsection}{\numberline {3.4.1}Signatures}{11}
+\contentsline {subsection}{\numberline {3.4.2}Impl\IeC {\'e}mentation}{11}
+\contentsline {section}{\numberline {3.5}Proof Obligation}{11}
+\contentsline {chapter}{\numberline {4}Sch\IeC {\'e}mas de traduction}{12}
+\contentsline {section}{\numberline {4.1}Specification}{12}
+\contentsline {section}{\numberline {4.2}Impl\IeC {\'e}mentation}{12}
+\contentsline {chapter}{\numberline {5}Exemples tests}{13}
+\contentsline {chapter}{\numberline {6}Conclusion}{14}

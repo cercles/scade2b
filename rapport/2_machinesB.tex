@@ -181,30 +181,70 @@ A DEVELOPPER
 % SECTION 3 : Substitutions
 
 \section{Substitutions}
+Les substitutions permettent de transformer les prédicats, il en existe 18 mais
+nous ne nous intéresseront qu'à 7 d'entres elles. Soit une substitution S et un
+prédicat P, \emph{[S]P} se lit "la substitution S établit le prédicat P".
+Les substitutions ne sont présentes que dans les clauses Initialisation et
+Operations. Dans la partie suivante, on détaillera comment passer des équations
+de Scade à ces substitutions.
 
-[S]P : "la substitution S établit le prédicat P".
+\paragraph{Substitution Bloc}
+La substitution bloc est la substitution de base, elle permet de grouper des
+substitutions. Elles contient une substitution ou une séquence de substitution.
+Elle se note : Soit S une substitution, \\
+$BEGIN~ S~ END$ 
 
-\paragraph{}
-BLOC
+\paragraph{Substitution Sequence}
+Une séquence permet d'appliquer en séquence deux substitutions à un
+prédicat. Elle se note : Soit S et T deux substitution, et P un prédicat, \\
+$[S;~ T]P$
 
-\paragraph{}
-SEQUENCE
+\paragraph{Substitution Devient égal}
+Cette substitution remplace une variable par une expression. Elle se note : Soit
+e une expression, x une variable et P un prédicat, \\
+$[x:=e]P$  \\
+Le prédicat obtenu a alors toute les occurences libre de x dans P par e.
 
-\paragraph{}
-VARIABLE LOCALE
+\paragraph{Substitution Condition}
+C'est cette substitution que l'on utilise pour exprimer le choix entre deux
+substitutions. Elle se note : Soit P et R des prédicats, et S et T des substitutions,\\
+$[IF~ P~ THEN~ S~ ELSE~ T]R$ \\
+Si le prédicat P est évalué à vrai, alors c'est la substitution S que l'on
+applique au prédicat R. Si P est faux, alors c'est la substitution T qui
+s'applique à R.
 
-\paragraph{}
-PRECONDITION
+\paragraph{Substitution variable locale}
+Cette substitution n'est pas utilisée dans la machine abstraite. Elle permet
+d'introduire une liste de variables.
+Elle se note : Soit S une séquence de substitutions et X une liste de variables,\\
+$VAR~ X~ IN~ S~ END$\\
+La liste de variable sera accessible dans les substitions S contenues dans le
+bloc IN ... END, correpondant à une substitution bloc.
 
-\paragraph{}
-DEVIENT EGAL
+\paragraph{Substitution Precondition}
+Cette substitution n'est utilisée que dans la machine abstraite. Elle fixe les
+préconditions sous lesquelles une opération est appelée. Elle se note : Soit P
+et R des prédicats et S une substitution,\\ 
+$[PRE~ P~ THEN~ S~ END]R$\\
+Lors   de   l’appel   d’une   opération   possédant   une   précondition  PRE P THEN S END, 
+l’application de la substitution précondition correspond à la preuve de la précondition  P 
+et à  l’application  de la substitution  S. Si la précondition  n’est pas  prouvée, alors  la 
+substitution   ne   se   termine   pas.   Autrement   dit,   le   comportement   décrit   par   une 
+substitution avec précondition n’est garanti que si, dans son contexte d’utilisation, la 
+précondition est vraie.
+Il faut bien distinguer la substitution précondition de la substitution conditionnelle  IF. 
+La   première   n’est   utilisable   que   si   le   prédicat   est   valide,   alors   que   la   seconde   est 
+toujours réalisée, mais son résultat dépend de la validité d’un prédicat.
 
-\paragraph{}
-CONDITION
+A REECRIRE
 
-\paragraph{}
-APPEL OPERATION
-
+\paragraph{Substitution Appel operation}
+cette substitution se note : Soit R un identificateur correspondant à la sortie
+de l'opération op appliquée aux expressions E, et un prédicat P,\\
+$[R\leftarrow op(E)]P$\\
+La  substitution  appel   d’opération  permet  d’appliquer  la  substitution   d’une opération 
+(non   locale   ou   locale),   en   remplaçant   les   paramètres   formels   par   des   paramètres 
+effectifs.
 
 
 % SECTION 4 : Raffinements
@@ -214,17 +254,6 @@ APPEL OPERATION
 spécification = machine abstraite, puis raffinement vers
 implantation.
 Nous produisons les 2 machines sig/impl (abstrait/concret)
-
-\subsection{Signatures}
-
-Reprise du contrat, utilisation de la substitution precondition
-+
-EXEMPLE
-
-\subsection{Implémentation}
-
-Reprise du composant, détail de l'opération
-
 
 % SECTION 5 : Obligations de Preuve
 
