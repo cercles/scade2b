@@ -4,11 +4,27 @@
 % Chapter 2 - Machines B
 %------------------------
 
-
-raisonnement rigoureux, logiciel sur
-Raffinements de spécifications formelle vers une spécification
-exécutable. Chaque raffinement passe par une étape d'obligation de
-preuves
+Concernant le langage B, langage de sortie du traducteur, nous
+n'aurons besoin d'utiliser que les éléments nécessaires pour exprimer
+les éléments de Scade en B, et pour certifier formellement le
+composant ainsi traduit.\\
+La méthode B s'appuie sur un raisonnement mathématique rigoureux, basé
+sur des étapes de raffinements. Nous n'aurons besoin que d'une étape de
+raffinement pour notre traducteur. Il faudra ainsi produire deux
+machines en sortie du traducteur:
+\begin{itemize}
+\item une signature : elle correspond à la machine abstraite
+  qui reprend les éléments de spécification du composant traduit.
+\item une implémentation : elle raffine la machine abstraite et
+  contient les substitutions correspondant à l'opération définie dans
+  le composant.
+\end{itemize}
+La méthode B est utilisée avec l'environnement de développement
+AtelierB, développé par Clearsy. Nous utiliserons cet environnement
+pour vérifier que le code traduit est correctement traduit en B à
+l'aide d'un analyseur syntaxique intégré ainsi qu'un type checkeur. On
+utilise ensuite l'environnement pour effectuer les obligations de
+preuves lors du raffinement de la signature vers l'implémentation.
 
 
 
@@ -17,40 +33,132 @@ preuves
 \section{Machine B}
 
 \subsection{Structure d'une machine}
-Clause, expression, predicats, substitutions
+
+Une machine B est divisée en \emph{clauses}, que l'on peut assimiler à
+des services permettant l'initialisation puis l'évolution des données
+manipulées. Une clause ne peut-être utilisée plus d'une fois dans une
+machine, mais l'ordre n'est pas imposé. Il en existe une vingtaine,
+mais nous n'en utiliserons que sept, que nous détaillerons dans la
+partie suivante.\\ 
+Ces données sont exprimées dans le même type qui est utilisé avec
+Scade, c'est à dire soit des entiers, soit des réels, soit des
+booléens, soit des tableaux de ces types, qui sont des types primitifs
+du langage B. \\ 
+La machine abstraite reprenant la spécification du composant contient
+également des prédicats portant sur ces données, et la transformation
+de ces données se fait grâce à un mécanisme de substitutions. Les
+différentes substitutions requises pour ce projet seront détaillées
+dans la partie correspondante. \\
+Une machine est précédée d'un en-tête qui diffère selon la machine
+abstraite et l'implémentation:
+\begin{itemize}
+\item pour la signature, l'en-tête sera composé du mot MACHINE suivi
+  du nom du composant.
+\item pour l'implémentation, ce sera IMPLEMENTATION suivi du nom du
+  composant auquel on ajoute le suffixe "\_i".
+\end{itemize}
+Voir annexe A pour un exemple de couple de machines abstraite/implémentation.
 
 
-Puis développer clause et prédicats
 
 \subsection{Clause}
+Les différentes clauses requises pour assurer la traduction sont
+décrites dans cette partie. La machine abstraite ne requière pas les
+clauses IMPORTS, CONCRETE\_VARIABLES, INVARIANT et INITIALISATION car
+elle ne manipule que la spécification. En revanche, l'implémentation ne
+manipule que des données et substitutions ayant un équivalent
+informatique, similaire à un langage impératif, et on aura besoin de
+ces clauses pour exprimer l'opération définie dans le composant Scade.
 
-\paragraph{}
-REFINES
-\paragraph{}
-IMPORT
-\paragraph{}
-SEES
-\paragraph{}
-CONCRETE\_VARIABLES
-\paragraph{}
-INVARIANT
-\paragraph{}
-INITIALISATION
-\paragraph{}
-OPERATIONS
+\paragraph{Refines}
+La clause refines est présente dans la machine implémentation afin
+d'indiquer la machine qui est raffinée. Nous ne faisons qu'une étatpe
+de raffinement, donc la machine raffinée sera toujours la machine
+abstraite. 
+
+\paragraph{Imports}
+Ici, nous indiquons quelles machines B seront nécessaires pour
+manipuler les données. Pour la programmation par composant, nous avons
+besoin de faire appel à d'autres composants, et cette clause permet
+d'importer une instance de ces composants.
+
+\paragraph{Sees}
+Nous avons besoin de faire aussi appel à des bibliothèques contenant
+des définitions de constantes qui sont définies dans des
+machines. Nous mettrons la liste des machines nécessaires dans cette
+clause.  
+
+\paragraph{Concrete\_Variables}
+Cette clause indique quelles sont les variables d'état de la
+machine. C'est dans cette clause que nous déclarons les registres
+définis dans le composant Scade. 
+
+\paragraph{Invariant}
+Nous pouvons alors établir des invariants sur les registres utilisés
+dans cette clause. Les invariants seront des restrictions sur les
+intervalles sur lesquels les registres seront manipulés.
+
+\paragraph{Initialisation}
+L'initialisation permet d'indiquer la valeur donnée aux registres lors
+de l'initialisation du composant. L'initialisation doit être en accord
+avec l'invariant.
+
+\paragraph{Operations}
+La clause principale d'une machine B est la clause Operations. On y
+défini la spécification du composant dans la machine abstraite, et
+cette spécification est concrêtisée dans l'implémentation où on écrira
+les expressions du composant sous forme de substitutions.
+
+A DEVELOPPER
+
 
 \subsection{Prédicats}
 
-Un prédicat est une formule mahtématique qui a une valeur booléenne.
+Un prédicat est une formule mathématique qui peut être prouvée ou
+réfutée. Elle peut être présente pour exprimer des propriétés sur une
+donnée, comme dans la clause \emph{Invariant}, ou dans la substitution
+Precondition. Elle peut-être aussi utilisée pour exprimer une
+condition, comme dans la substitution Condition.
+
+\paragraph{}
+Les prédicats de base sont exprimables à l'aide des opérateurs de
+comparaison habituels: $<,~>,~\leq,$et $\geq$. Les expressions doivent
+être de type entier ou réel.
+
+\paragraph{}
+Pour exprimer un prédicat plus complexe à partir de prédicats basique,
+on utilise des opérateurs de proposition : conjonction $\vee$,
+disjonction $\wedge$, négation $\neg$, parenthèses $()$, implication
+$\Rightarrow$ et équivalence $\Leftrightarrow$.\\
+Par exemple, soit $P$ et $Q$ des prédicats: $P\wedge\neg(Q)$
+
+\paragraph{}
+On utilisera aussi le quantificateur $\forall$, notamment lorsqu'on
+définira des tableaux, pour établir une condition pour tous les
+éléments du tableau. Et on aura besoin de l'opérateur d'appartenance à
+un ensemble $\in$.\\
+Par exemple, soit $tab$ un tableau : $\forall iii . (iii \in (1..5)
+\Rightarrow tab(iii) < 5)$\\
+Cet exemple indique que tout élément du tableau ayant un indice compris
+entre 1 et 5 doit être strictement inférieur à 5. Nous reviendrons en
+détail sur le fonctionnement des tableaux en B dans la section sur les
+expressions.
+
+ON PEUT SE PASSER DU APPARTIENT AVEC \\
+!iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) 
 
 % SECTION 2 : Expressions
 
 \section{Expressions}
 
-\subsection{Arithmétiques et logiques} 
-Expressions de B (rapidement : arithmétique, logique)
+Les expressions permettent de désigner les données utilisées. On
+répertorie ici les expressions de B que nous utiliserons. Les
+expressions de base désignent une variable ou une valeur primitive.
+On retrouve toutes les expressions arithmétiques classiques, addition,
+soustraction, multiplication, division et modulo.
 
 \subsection{Fonction}
+
 
 \paragraph{}
 Appel d'opération définie dans une autre machine
@@ -124,3 +232,4 @@ But (doit être prouvé sous ces hypothèses)
 Pour cela on applique des substitutions aux prédicats. Développer pour les
 différentes substitutions, exemples...
 
+%PAUSE CLOPE 18h

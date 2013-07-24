@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.7.10)  23 JUL 2013 14:39
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.7.10)  24 JUL 2013 18:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -355,18 +355,18 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 ) (./rapport.aux)
 \openout1 = `rapport.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
-LaTeX Font Info:    ... okay on input line 30.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 30.
-LaTeX Font Info:    ... okay on input line 30.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 30.
-LaTeX Font Info:    ... okay on input line 30.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 30.
-LaTeX Font Info:    ... okay on input line 30.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 30.
-LaTeX Font Info:    ... okay on input line 30.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 30.
-LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
+LaTeX Font Info:    ... okay on input line 31.
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count95
@@ -424,9 +424,9 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Info: Redefining \degres on input line 30.
-LaTeX Info: Redefining \dots on input line 30.
-LaTeX Info: Redefining \up on input line 30.
+LaTeX Info: Redefining \degres on input line 31.
+LaTeX Info: Redefining \dots on input line 31.
+LaTeX Info: Redefining \up on input line 31.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -463,11 +463,11 @@ LaTeX Info: Redefining \up on input line 30.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 34.
+(Font)              <12> on input line 33.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 34.
+(Font)              <8> on input line 33.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 34.
+(Font)              <6> on input line 33.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./rapport.toc
@@ -545,24 +545,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 93--98
 Chapitre 3.
 (./2_machinesB.tex [7
 
-] [8]) [9]
+] [8] [9]) [10]
 Chapitre 4.
-(./3_schemastrad.tex) [10
+(./3_schemastrad.tex) [11
 
 ]
 Chapitre 5.
-(./4_exemples.tex) [11
+(./4_exemples.tex) [12
 
 ]
 Chapitre 6.
-(./conclusion.tex) [12
+(./conclusion.tex) [13
 
 ] (./rapport.aux) ) 
 Here is how much of TeX's memory you used:
- 3264 strings out of 493485
- 43251 string characters out of 3143526
+ 3266 strings out of 493485
+ 43274 string characters out of 3143526
  112631 words of memory out of 3000000
- 6499 multiletter control sequences out of 15000+200000
+ 6501 multiletter control sequences out of 15000+200000
  18684 words of font info for 41 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
  38i,11n,43p,240b,227s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -579,10 +579,10 @@ usr/share/texmf/fonts/type1/public/cm-super/sfrm0900.pfb></usr/share/texmf/font
 s/type1/public/cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-su
 per/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></u
 sr/share/texmf/fonts/type1/public/cm-super/sfti1095.pfb>
-Output written on rapport.pdf (13 pages, 225470 bytes).
+Output written on rapport.pdf (14 pages, 237406 bytes).
 PDF statistics:
- 108 PDF objects out of 1000 (max. 8388607)
- 77 compressed objects within 1 object stream
+ 111 PDF objects out of 1000 (max. 8388607)
+ 79 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
