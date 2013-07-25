@@ -1,6 +1,9 @@
-% -*- coding: utf-8; ispell-dictionary: "french"
+% -*- coding: utf-8; ispell-dictionary: "french"; -*-
 
+%--------------
 % Introduction
+%--------------
+
 
 Ce stage s'est déroulé au sein d'un projet financé par l'Agence
 Nationale de la Recherche: CERCLES2. Ce projet a pour but la
@@ -8,20 +11,6 @@ certification compositionnelle des logiciels embarqués critiques et
 sûrs. C'est la notion de composant réutilisable et assemblable pour former des
 logiciels critiques et sûrs qui est à la base du projet, l'intérêt étant à la fois
 pratique par le gain de temps et d'effort, et économique. \\
-
-Pour assurer que ces composants sont sûrs et réutilisables, on
-utilise une méthode formelle, qui permet d'exprimer la signification d'un
-composant dans un formalisme mathématique. Il faut alors introduire le concept des
-contrats: un contrat est un composant associé à des conditions sur ses entrées
-(pré-conditions) et sur ses sorties (post-conditions). 
-A partir d'un composant et de son contrat, il faut alors vérifier formellement
-que:
-\begin{itemize}
-\item  (i) la définition du composant satisfait le contrat
-\item (ii) l'utilisation du composant satisfait les pré-condition, et en
-conséquence de (i) le résultat satisfait les post-conditions.
-\end{itemize}
-La validation est alors faite par une démonstration formelle.
 
 Un acteur majeur du développement de systèmes embarquées critiques est Scade,
 un acronyme pour Safety Critical Application Developpement Environment. Cet
@@ -35,27 +24,64 @@ textuelle en accompagnement du composant.\\
 
 INSERER CAPTURE SCADE\\
 
-Concernant la méthode formelle, c'est la méthode B qui est utilisée. Introduite
-par J.R. Abrial dans les années 80, elle est basé sur le raffinement de
+Pour assurer que ces composants sont sûrs et réutilisables, on
+utilise une méthode formelle, qui permet d'exprimer la signification d'un
+composant dans un formalisme mathématique, afin de démontrer leur
+validité par rapport à une spécification.\\
+Il faut alors introduire le concept des contrats: un contrat est
+associé à un composant et impose des conditions sur ses entrées
+(pré-conditions) et sur ses sorties (post-conditions). Ils donneront
+ainsi une spécification du composant. Les contrats
+ont été introduits par C.A.R Hoare, qui donne la définition
+suivante:\\
+
+\noindent
+\fbox{
+\begin{minipage}{\textwidth}
+\begin{center}
+$P\{Q\}R$ \\
+\emph{"If the assertion P is true before initiation of a program Q, then the
+assertion R will be true on its completion"}
+\end{center}
+\end{minipage}
+}\\
+
+A partir d'un composant et de son contrat, il faut alors vérifier formellement
+que:
+\begin{itemize}
+\item  (i) la définition du composant satisfait le contrat
+\item (ii) l'utilisation du composant satisfait les pré-condition, et en
+conséquence de (i) le résultat satisfait les post-conditions.
+\end{itemize}
+La validation est alors faite par une démonstration formelle.\\
+
+Il existe d'autres méthodes formelles, basées sur des règles de typage
+des programmes, introduites par la correspondance de
+Curry-Howard dans à la fin des années 50.
+L'avantage de la méthode choisie, la méthode B, est qu'elle a déjà
+fait ses preuves industriellement, elle a notamment été utilisée pour
+développer la ligne METEOR (ligne 14) du métro parisien, qui est
+entièrement automatisée.\\ 
+Elle a été introduite
+par J.R. Abrial dans les années 80. Elle est basé sur le raffinement de
 spécifications formelles vers une spécification exécutable. La spécification
 formelle est rédigée dans un formalisme mathématique de haut niveau appelé
-machine abstraite. Le raffinement de cette machine abstraite consiste à la
-reformuler de façon plus concrète et à l'enrichir avec des substitutions
-correspondants aux instructions du composant. Ce raffinement de plus bas niveau
-est appelé implantation. Chaque étape de raffinement passe par une étape
-d'obligation de preuve, une validation par démonstration formelle, garantissant
-la fidélité de la spécification raffinée par rapport à la spécification
-originale. \\
-L'avantage de la méthode B est qu'elle est permet la composition de programme,
-et ainsi permet de faire référence à des composants déjà certifiés. De plus
-cette méthode a déjà fait ses preuves industriellement, elle a notamment été
-utilisée pour développer la ligne METEOR (ligne 14) du métro parisien, qui est
-entièrement automatisée.\\
+machine abstraite, dont le principe de calcul est basé sur le calcul
+des prédicats du premier ordre étendu avec une théorie des
+ensembles. Le raffinement de cette machine abstraite consiste à la
+reformuler de façon plus concrète et à l'enrichir avec des
+substitutions correspondants aux instructions du composant. Ce
+raffinement de plus bas niveau est appelé implantation. Il peut y
+avoir des raffinements intermédiaires, mais nous n'aurons besoin que
+du raffinement de la machine abstraite vers l'implantation. Chaque
+étape de raffinement passe par une étape d'obligations de preuves, une
+validation par démonstration formelle, garantissant la fidélité de la
+spécification raffinée par rapport à la spécification originale. \\ 
 
 Mon travail fut de développer un traducteur permettant de passer d'une méthode à
 l'autre. Le traducteur suit une ligne de compilation classique, prenant en
 entrée un code issu de Scade et produisant en sortie une machine abstraite
 correspondant aux spécification du contrat, ainsi que la machine raffinée qui
-implante le composants. \\
+implante le composant. \\
 
 SCHEMA PRINCIPE GENERAL

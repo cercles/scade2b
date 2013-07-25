@@ -72,7 +72,7 @@ ces clauses pour exprimer l'opération définie dans le composant Scade.
 
 \paragraph{Refines}
 La clause refines est présente dans la machine implémentation afin
-d'indiquer la machine qui est raffinée. Nous ne faisons qu'une étatpe
+d'indiquer la machine qui est raffinée. Nous ne faisons qu'une étape
 de raffinement, donc la machine raffinée sera toujours la machine
 abstraite. 
 
@@ -103,10 +103,10 @@ L'initialisation permet d'indiquer la valeur donnée aux registres lors
 de l'initialisation du composant. L'initialisation doit être en accord
 avec l'invariant.
 
-\paragraph{Operations}
+\paragraph{Opérations}
 La clause principale d'une machine B est la clause Operations. On y
 défini la spécification du composant dans la machine abstraite, et
-cette spécification est concrêtisée dans l'implémentation où on écrira
+cette spécification est concrétisée dans l'implémentation où on écrira
 les expressions du composant sous forme de substitutions.
 
 A DEVELOPPER
@@ -144,22 +144,23 @@ entre 1 et 5 doit être strictement inférieur à 5. Nous reviendrons en
 détail sur le fonctionnement des tableaux en B dans la section sur les
 expressions.
 
-ON PEUT SE PASSER DU APPARTIENT AVEC \\
+NOTE: ON PEUT SE PASSER DU APPARTIENT AVEC \\
 !iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) \\
-A REGARDER
+A REGARDER DANS IMPLEM
+
 
 % SECTION 2 : Expressions
 
 \section{Expressions}
 
-\subsection{}
+\paragraph{}
 Les expressions permettent de désigner les données utilisées. On
 répertorie ici les expressions de B que nous utiliserons. Les
 expressions de base désignent une variable ou une valeur primitive.
 On retrouve toutes les expressions arithmétiques classiques, addition,
 soustraction, multiplication, division et modulo.
 
-\subsection{Fonction}
+\paragraph{Des fonctions}
 
 Nous utiliserons également les fonctions, pour appeler des opérations
 définies dans d'autres composants, mais aussi pour modéliser les
@@ -182,7 +183,7 @@ A DEVELOPPER
 
 \section{Substitutions}
 Les substitutions permettent de transformer les prédicats, il en existe 18 mais
-nous ne nous intéresseront qu'à 7 d'entres elles. Soit une substitution S et un
+nous ne nous intéresseront qu'à 7 d'entre elles. Soit une substitution S et un
 prédicat P, \emph{[S]P} se lit "la substitution S établit le prédicat P".
 Les substitutions ne sont présentes que dans les clauses Initialisation et
 Operations. Dans la partie suivante, on détaillera comment passer des équations
@@ -200,10 +201,11 @@ prédicat. Elle se note : Soit S et T deux substitution, et P un prédicat, \\
 $[S;~ T]P$
 
 \paragraph{Substitution Devient égal}
-Cette substitution remplace une variable par une expression. Elle se note : Soit
-e une expression, x une variable et P un prédicat, \\
+Cette substitution réalise l'affectation, elle remplace une variable
+par une expression. Elle se note : Soit e une expression, x une
+variable et P un prédicat, \\ 
 $[x:=e]P$  \\
-Le prédicat obtenu a alors toute les occurences libre de x dans P par e.
+Le prédicat obtenu a alors toute les occurrences libre de x dans P par e.
 
 \paragraph{Substitution Condition}
 C'est cette substitution que l'on utilise pour exprimer le choix entre deux
@@ -218,46 +220,57 @@ Cette substitution n'est pas utilisée dans la machine abstraite. Elle permet
 d'introduire une liste de variables.
 Elle se note : Soit S une séquence de substitutions et X une liste de variables,\\
 $VAR~ X~ IN~ S~ END$\\
-La liste de variable sera accessible dans les substitions S contenues dans le
+La liste de variable sera accessible dans les substitutions S contenues dans le
 bloc IN ... END, correpondant à une substitution bloc.
 
 \paragraph{Substitution Precondition}
 Cette substitution n'est utilisée que dans la machine abstraite. Elle fixe les
-préconditions sous lesquelles une opération est appelée. Elle se note : Soit P
+préconditions sous lesquelles une substitution. Elle se note : Soit P
 et R des prédicats et S une substitution,\\ 
 $[PRE~ P~ THEN~ S~ END]R$\\
-Lors   de   l’appel   d’une   opération   possédant   une   précondition  PRE P THEN S END, 
-l’application de la substitution précondition correspond à la preuve de la précondition  P 
-et à  l’application  de la substitution  S. Si la précondition  n’est pas  prouvée, alors  la 
-substitution   ne   se   termine   pas.   Autrement   dit,   le   comportement   décrit   par   une 
-substitution avec précondition n’est garanti que si, dans son contexte d’utilisation, la 
-précondition est vraie.
-Il faut bien distinguer la substitution précondition de la substitution conditionnelle  IF. 
-La   première   n’est   utilisable   que   si   le   prédicat   est   valide,   alors   que   la   seconde   est 
-toujours réalisée, mais son résultat dépend de la validité d’un prédicat.
-
-A REECRIRE
+L'application de cette substitution correspond à la preuve de la
+précondition P et à l'application de la substitution S. Si la
+précondition P est fausse, le résultat de la substitution n'est alors
+plus garantit.
 
 \paragraph{Substitution Appel operation}
 cette substitution se note : Soit R un identificateur correspondant à la sortie
 de l'opération op appliquée aux expressions E, et un prédicat P,\\
 $[R\leftarrow op(E)]P$\\
-La  substitution  appel   d’opération  permet  d’appliquer  la  substitution   d’une opération 
-(non   locale   ou   locale),   en   remplaçant   les   paramètres   formels   par   des   paramètres 
-effectifs.
+La  substitution appel d’opération permet d’appliquer la substitution
+d’une opération (non locale ou locale), en remplaçant les paramètres
+formels par des paramètres effectifs. 
+
+\paragraph{}
+On retrouve ainsi les constructions d'un langage de programmation
+impératif, avec des affectations, appels d'opération, un if, et la
+définition de variables locales. Cependant, les substitutions sont
+réordonnées via un tri topologique par rapport aux équations du composant
+Scade, dont l'ordre n'avait pas d'importance. Cette distinction entre
+les deux langages, synchrone contre impératif, sera développée dans la
+section concernant la preuve de correction du traducteur.
 
 
 % SECTION 4 : Raffinements
 
-
 \section{Raffinements}
-spécification = machine abstraite, puis raffinement vers
-implantation.
-Nous produisons les 2 machines sig/impl (abstrait/concret)
 
-% SECTION 5 : Obligations de Preuve
+\subsection{Principes du raffinement}
 
-\section{Proof Obligation}
+Le raffinement de la spécification est une reformulation en une
+expression plus concrète et enrichie.
+L'activité de preuve de preuve d'une spécification B consiste à la
+réalisation d'un certain nombre de démonstrations, afin de prouver
+l'établissement et la conservation des propriétés invariantes de la
+spécification.
+La génération des hypothèses à démontrer est automatique, grâce à la
+transformation des prédicats par les substitutions.
+
+La relation de raffinement est transitive: les valeurs calculées par
+l'implémentation sont conformes à celles attendues par la machine
+abstraite. 
+
+\subsection{Obligations de preuves}
 Cf Proof obligation paper
 
 A chaque raffinement, on passe par une étape de type checking et
@@ -274,4 +287,3 @@ But (doit être prouvé sous ces hypothèses)
 Pour cela on applique des substitutions aux prédicats. Développer pour les
 différentes substitutions, exemples...
 
-%PAUSE CLOPE 18h

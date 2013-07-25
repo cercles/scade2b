@@ -8,35 +8,85 @@
 Scade a été développé par le laboratoire Verimag à partir des travaux sur
 le langage synchrone Lustre, puis repris par Esterel-technologie. On retrouve
 ainsi les notions de Lustre dans le langage de Scade, un programme est découpé
-en noeuds. Ces noeuds sont les composants que nous voulons traduire.
+en noeuds dont les entrées et sorties sont des flux de données. Ces
+noeuds sont les composants que nous voulons traduire. 
 Les noeuds Scade considéré dans le cadre du projet Cercles2 sont
 soumis à quelques restrictions. En effet, il faut limiter le langage
 utilisé, car certains éléments du langage sont spécifiques aux
 langages synchrones et ne sont donc pas traductibles en B.\\
 
+% SECTION 1 : Présentation
 
-% SECTION 1 : Temporalité
+\section{Architecture d'un composant Scade}
 
-\section{Le temps avec Scade}
+\paragraph{}
+Scade étant un environnement de programmation par schémas-blocs, on
+développe avec des boîtes. Par exemple, une addition sur les flux A
+et B s'écrit:
 
-Le temps est un élément primordial dans ces systèmes dits réactifs, il est
-découpé en instants discrets.\\ 
-Le langage de Scade est basé sur la notion d'instant, 
+EXEMPLE D'UN PROGRAMME SIMPLE EN SCADE
+
+Ce langage en boîtes est basé sur le langage synchrone Lustre, et
+c'est le programme en Lustre que nous allons parser avec le
+traducteur. La représentation graphique du programme est ainsi
+réécrite en Lustre avant d'être traduite. C'est donc du code Lustre
+que l'on traduit.
+
+REPRISE DE L'EXEMPLE EN LUSTRE
+
+PUIS DETAILLER COMMENT OBTENIR LE LUSTRE?
+(FICHIER SAOFD)
+
+\paragraph{}
+Les composants que nous voulons traduire sont formés d'un unique
+noeud, dont la définition contient autant d'entrée et de sorties que
+nécessaire. Il n'y a pas non plus de restriction sur le nombre de
+variables locales utilisables.\\
+Au niveau des types de données utilisées, on pourra manipuler
+des entiers, réels et booléens. Et on pourra également manipuler des
+tableaux de ces types. En revanche, les types définis par
+l'utilisateur tels que les types enregistrement ne seront pas gérés
+par le traducteur.\\
+Le comportement du noeud est ensuite défini par une liste d'équations,
+dont l'ordre n'a pas d'importance. Ces équations sont de la forme:
+\begin{verbatim}
+lp = expr;
+\end{verbatim}
+Où lp désigne une variable locale ou une sortie du composant, et expr
+est une expression portant sur une ou plusieurs variables locales ou entrées.
+
+\paragraph{}
+Les expressions disponibles sont toutes les expressions arithmétiques
+(+, -, /, *, mod), les expressions relationnelles (<, >, <=, >=, =, <>)
+et logiques (and, or, xor, not).
+Les expressions conditionelles sont également possibles (if .. then
+.. else ..),en revanche les constructions à base de l'opérateur case
+ne sont pas acceptée. (A AJOUTER?) \\
+Sont également disponibles les opérations sur les tableaux, telles que
+la définition, l'index, et la concaténation.\\
+On peut également faire appel à d'autres composants.
+
+% SECTION 2 : Restrictions
+
+\section{Restrictions}
+
+\subsection{Le temps avec Scade}
+
+Le temps est un élément primordial dans ces systèmes dits réactifs, où
+on manipule des flux de données. Le temps est discrêtisé en instants,
+et chaque instant correspond à 1 tic de l'horloge de base. A chaque
+instant i, les équations du noeud sont résolues à partir du flux reçu
+en entrée à cet instant, et produit le flux de sortie correspondant au
+résultat.
 
 \paragraph{Une horloge unique}
 Ainsi, la première restriction à noter est qu'il n'y a qu'une seule
 horloge, celle de base. Avec les langages synchrones, on peut
-synchroniser des instructions sur des horloges différentes avec, par
-exemple, l'opérateur when:
-
-EXEMPLE/RESULTAT
-
-Mais dans les programmes que nous manipulerons, il n'y aura donc pas
-de définitions d'horloges, d'utilisation de when, ou current. Les
+synchroniser des instructions sur des horloges différentes avec, mais
+dans les programmes que nous manipulerons, il n'y aura donc pas de
+définitions d'horloges, d'utilisation de when, ou current. Les
 instructions d'un noeud sont toutes calculées sur l'horloge de base
-uniquement.
-
-
+uniquement. 
 
 \paragraph{Des registres}
 La seconde restriction concerne l'utilisation des opérateurs pre et
@@ -53,7 +103,7 @@ opérateurs:
 \begin{center}
 $A\rightarrow(pre~X)$
 \end{center}
-Cette construction correspond au bloc SIMULINK 1/Z, où A représente un
+Cette construction correspond au bloc SIMULINK 1/Z\footnote{Simulink MathWorks}, où A représente un
 flux constant qui donnera la valeur de sortie à l'instant 0 du
 bloc. Puis pour les instants 1 à n, on aura la valeur de l'expression
 X à l'instant (1 à n)-1. \\
@@ -61,16 +111,8 @@ On appellera cette construction un registre, qui est initialisé avec la
 valeur A, et qui permet d'accéder à la valeur précédente de X à tout
 instant. Cette construction permet de donner un état à un composant.
 
-LE COTE REGISTRE = ETAT A DEVELOPPER
 
-+ Utilisation de l'opérateur FBY de scade? (pas dans lustre... comment est-il traduit?)
-+ Si preuves de correction en aout, développer le problème langage synchrone
-vers langage formel/impératif?
-
-
-% SECTION 2 : Specification
-
-\section{Contrat}
+\subsection{Contrats}
 
 \paragraph{Assertions}
 On peut définir des assertions dans un noeud afin de poser des
@@ -87,59 +129,3 @@ obligatoires sauf pour la restriction sur les booléen qui est triviale (la
 valeur sera vraie ou fausse).\\
 
 EXEMPLE
-
-
-\paragraph{Concernant les types}
-Ensuite, au niveau des types de données utilisées, on pourra manipuler
-des entiers, réels et booléens. Et on pourra également manipuler des
-tableaux de ces types. En revanche, les types définis par
-l'utilisateur tels que les types enregistrement ne seront pas gérés
-par le traducteur.\\
-
-?HISTOIRES DE POLYMORPHISME POUR LES OPERATIONS SUR LES TABLEAUX A VOIR?
-
-
-\section{Le langage d'entrée du traducteur}
-
-Scade étant un environnement de programmation par schémas-blocs, on
-développe avec des boîtes. Par exemple, une addition sur les fluxs A
-et B s'écrit:
-
-EXEMPLE D'UN PROGRAMME SIMPLE EN SCADE
-
-Ce langage en boîtes est basé sur le langage synchrone Lustre, et
-c'est le programme en Lustre que nous allons parser avec le
-traducteur. La représentation graphique du programme est ainsi
-réécrite en Lustre avant d'être traduite. C'est donc du code Lustre
-que l'on traduit. 
-
-REPRISE DE L'EXEMPLE EN LUSTRE
-
-PUIS DETAILLER COMMENT OBTENIR LE LUSTRE?
-(FICHIER SAOFD)
-
-\paragraph{Expressions}
-Les expressions disponibles sont toutes les expressions arithmétiques
-(+, -, /, *, mod), les expressions relationnelles (<, >, <=, >=, =, <>)
-et logiques (and, or, xor, not).
-Les expressions conditionelles sont également possibles (if .. then
-.. else ..),en revanche les constructions à base de l'opérateur case
-ne sont pas acceptée. (A AJOUTER?) \\
-Sont également disponibles les opérations sur les tableaux, telles que
-la définition, l'index, et la concaténation.
-
-
-\paragraph{Ajouts d'opérations au langage}
-
-A REFORMULER...
-
-Dans la situation où un utilisateur veux ajouter une opération qui
-n'est pas reconnue par le traducteur, il peut définir cette opération
-dans une bibliothèque Scade, et définir cette même opération dans une
-machine B. Cette opération sera vue comme un appel de noeud.
-Une fois la traduction terminée, il suffit d'indiquer en
-haut du couple de machines B produites quelle machine à importer est
-utilisée dans ce programme.
-
-SCHEMA A INCLURE
-
