@@ -45,6 +45,7 @@
 \contentsline {chapter}{\numberline {4}Sch\IeC {\'e}mas de traduction}{12}
 \contentsline {section}{\numberline {4.1}Specification}{12}
 \contentsline {section}{\numberline {4.2}Impl\IeC {\'e}mentation}{12}
+\contentsline {section}{\numberline {4.3}Le traducteur}{12}
 \contentsline {chapter}{\numberline {5}Exemples tests}{13}
 \contentsline {chapter}{\numberline {6}Preuve de correction de la traduction}{14}
 \contentsline {chapter}{\numberline {7}Conclusion}{15}
