@@ -10,10 +10,10 @@ le langage synchrone Lustre, puis repris par Esterel-technologie. On retrouve
 ainsi les notions de Lustre dans le langage de Scade, un programme est découpé
 en noeuds dont les entrées et sorties sont des flux de données. Ces
 noeuds sont les composants que nous voulons traduire. 
-Les noeuds Scade considéré dans le cadre du projet Cercles2 sont
+Les noeuds Scade considérés dans le cadre du projet $Cercles^2$ sont
 soumis à quelques restrictions. En effet, il faut limiter le langage
 utilisé, car certains éléments du langage sont spécifiques aux
-langages synchrones et ne sont donc pas traductibles en B.\\
+langages synchrones et ne sont donc pas traduisibles en B.\\
 
 % SECTION 1 : Présentation
 
@@ -21,21 +21,29 @@ langages synchrones et ne sont donc pas traductibles en B.\\
 
 \paragraph{}
 Scade étant un environnement de programmation par schémas-blocs, on
-développe avec des boîtes. Par exemple, une addition sur les flux A
-et B s'écrit:
+développe avec des boîtes. Par exemple, un programme d'addition sur deux flux d'entiers A
+et B ayant pour sortie un flux C s'écrit:
 
-EXEMPLE D'UN PROGRAMME SIMPLE EN SCADE
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.54]{1_add.png}
+\end{center}
+\caption{Schéma-block de l'addition}
+\end{figure}
 
 Ce langage en boîtes est basé sur le langage synchrone Lustre, et
 c'est le programme en Lustre que nous allons parser avec le
 traducteur. La représentation graphique du programme est ainsi
-réécrite en Lustre avant d'être traduite. C'est donc du code Lustre
+écrite en Lustre avant d'être traduite. C'est donc du code Lustre
 que l'on traduit.
 
-REPRISE DE L'EXEMPLE EN LUSTRE
+\begin{verbatim}
+node ADD (A:int, B:int) returns (C:int);
+let 
+    C = A+B;
+tel
+\end{verbatim}
 
-PUIS DETAILLER COMMENT OBTENIR LE LUSTRE?
-(FICHIER SAOFD)
 
 \paragraph{}
 Les composants que nous voulons traduire sont formés d'un unique
@@ -50,21 +58,20 @@ par le traducteur.\\
 Le comportement du noeud est ensuite défini par une liste d'équations,
 dont l'ordre n'a pas d'importance. Ces équations sont de la forme:
 \begin{verbatim}
-lp = expr;
+left_part = expr;
 \end{verbatim}
-Où lp désigne une variable locale ou une sortie du composant, et expr
+Où left\_part désigne une variable locale ou une sortie du composant, et expr
 est une expression portant sur une ou plusieurs variables locales ou entrées.
 
 \paragraph{}
 Les expressions disponibles sont toutes les expressions arithmétiques
 (+, -, /, *, mod), les expressions relationnelles (<, >, <=, >=, =, <>)
-et logiques (and, or, xor, not).
-Les expressions conditionelles sont également possibles (if .. then
-.. else ..),en revanche les constructions à base de l'opérateur case
-ne sont pas acceptée. (A AJOUTER?) \\
+et logiques (and, or, xor, not). Les expressions conditionelles sont également
+possibles (if .. then .. else ..). On peut également faire des appels à d'autres
+noeuds, sous condition qu'ils aient été traduits auparavant. \\
 Sont également disponibles les opérations sur les tableaux, telles que
 la définition, l'index, et la concaténation.\\
-On peut également faire appel à d'autres composants.
+
 
 % SECTION 2 : Restrictions
 
@@ -127,5 +134,16 @@ expr un prédicat portant sur cette sortie.
 Ces assertions forment le contrat du composant, et seront
 obligatoires sauf pour la restriction sur les booléen qui est triviale (la
 valeur sera vraie ou fausse).\\
+Par exemple, en reprenant le noeud ADD précédent, on impose comme condition sur
+les entrées qu'elles doivent être comprises entre 0 et 100 inclus. Si les
+préconditions sont respectées, alors la sortie sera comprise entre 0 et 200 inclus:
+\begin{verbatim}
+node ADD (A:int, B:int) returns (C:int);
+let 
+    assume A : A <= 100 & A >= 0;
+    assume B : B <= 100 & B >= 0;
+    guarantee C : C <= 200 & C >= 0;
+    C = A+B;
+tel
+\end{verbatim}
 
-EXEMPLE

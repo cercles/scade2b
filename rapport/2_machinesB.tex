@@ -15,7 +15,7 @@ machines en sortie du traducteur:
 \begin{itemize}
 \item une signature : elle correspond à la machine abstraite
   qui reprend les éléments de spécification du composant traduit.
-\item une implémentation : elle raffine la machine abstraite et
+\item une implantation : elle raffine la machine abstraite et
   contient les substitutions correspondant à l'opération définie dans
   le composant.
 \end{itemize}
@@ -23,8 +23,8 @@ La méthode B est utilisée avec l'environnement de développement
 AtelierB, développé par Clearsy. Nous utiliserons cet environnement
 pour vérifier que le code traduit est correctement traduit en B à
 l'aide d'un analyseur syntaxique intégré ainsi qu'un type checkeur. On
-utilise ensuite l'environnement pour effectuer les obligations de
-preuves lors du raffinement de la signature vers l'implémentation.
+utilise ensuite l'environnement pour générer les obligations de
+preuves liées au couple de machines.
 
 
 
@@ -45,19 +45,19 @@ Scade, c'est à dire soit des entiers, soit des réels, soit des
 booléens, soit des tableaux de ces types, qui sont des types primitifs
 du langage B. \\ 
 La machine abstraite reprenant la spécification du composant contient
-également des prédicats portant sur ces données, et la transformation
-de ces données se fait grâce à un mécanisme de substitutions. Les
+des prédicats portant sur ces données, et la transformation
+de ces prédicats se fait grâce à un mécanisme de substitutions. Les
 différentes substitutions requises pour ce projet seront détaillées
 dans la partie correspondante. \\
 Une machine est précédée d'un en-tête qui diffère selon la machine
-abstraite et l'implémentation:
+abstraite et l'implantation:
 \begin{itemize}
 \item pour la signature, l'en-tête sera composé du mot MACHINE suivi
   du nom du composant.
-\item pour l'implémentation, ce sera IMPLEMENTATION suivi du nom du
+\item pour l'implantation, ce sera IMPLEMENTATION suivi du nom du
   composant auquel on ajoute le suffixe "\_i".
 \end{itemize}
-Voir annexe A pour un exemple de couple de machines abstraite/implémentation.
+Voir annexe A pour un exemple de couple de machines abstraite/implantation.
 
 
 
@@ -83,20 +83,21 @@ besoin de faire appel à d'autres composants, et cette clause permet
 d'importer une instance de ces composants.
 
 \paragraph{Sees}
-Nous avons besoin de faire aussi appel à des bibliothèques contenant
-des définitions de constantes qui sont définies dans des
-machines. Nous mettrons la liste des machines nécessaires dans cette
-clause.  
+Nous avons besoin de faire aussi appel à des machines contenant
+des définitions de constantes. Nous mettrons la liste des machines nécessaires
+dans cette clause.
 
 \paragraph{Concrete\_Variables}
 Cette clause indique quelles sont les variables d'état de la
 machine. C'est dans cette clause que nous déclarons les registres
-définis dans le composant Scade. 
+définis dans le composant Scade. Les autres variables locales sont définies dans
+une substituion VAR.
 
 \paragraph{Invariant}
 Nous pouvons alors établir des invariants sur les registres utilisés
 dans cette clause. Les invariants seront des restrictions sur les
-intervalles sur lesquels les registres seront manipulés.
+intervalles sur lesquels les registres seront manipulés, et ils seront écrits
+sous forme de prédicats.
 
 \paragraph{Initialisation}
 L'initialisation permet d'indiquer la valeur donnée aux registres lors
@@ -106,10 +107,10 @@ avec l'invariant.
 \paragraph{Opérations}
 La clause principale d'une machine B est la clause Operations. On y
 défini la spécification du composant dans la machine abstraite, et
-cette spécification est concrétisée dans l'implémentation où on écrira
-les expressions du composant sous forme de substitutions.
-
-A DEVELOPPER
+cette spécification est concrétisée dans l'implantation où on écrira
+les expressions du composant sous forme de substitutions et de prédicats. Bien
+qu'on puisse définir autant d'opération qu'on le souhaite dans cette clause,
+nous ne définirons qu'une seule opération, celle correspondant au composant Scade.
 
 
 \subsection{Prédicats}
@@ -144,9 +145,9 @@ entre 1 et 5 doit être strictement inférieur à 5. Nous reviendrons en
 détail sur le fonctionnement des tableaux en B dans la section sur les
 expressions.
 
-NOTE: ON PEUT SE PASSER DU APPARTIENT AVEC \\
-!iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) \\
-A REGARDER DANS IMPLEM
+%% NOTE: ON PEUT SE PASSER DU APPARTIENT AVEC \\
+%% !iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) \\
+%% A REGARDER DANS IMPLEM
 
 
 % SECTION 2 : Expressions
@@ -154,8 +155,7 @@ A REGARDER DANS IMPLEM
 \section{Expressions}
 
 \paragraph{}
-Les expressions permettent de désigner les données utilisées. On
-répertorie ici les expressions de B que nous utiliserons. Les
+Les expressions permettent de désigner les données utilisées. Les
 expressions de base désignent une variable ou une valeur primitive.
 On retrouve toutes les expressions arithmétiques classiques, addition,
 soustraction, multiplication, division et modulo.
@@ -174,9 +174,6 @@ tableau), et dont l'ensemble d'arrivée est un ensemble concret.\\
 Par exemple, soit $tab$ un tableau, \\
 $tab \in (0..4)*(0..5) \rightarrow INT$ \\
 est une matrice de 5 lignes et 6 colonnes contenant des entiers.
-
-A DEVELOPPER 
-
 
 
 % SECTION 3 : Substitutions
@@ -197,8 +194,12 @@ $BEGIN~ S~ END$
 
 \paragraph{Substitution Sequence}
 Une séquence permet d'appliquer en séquence deux substitutions à un
-prédicat. Elle se note : Soit S et T deux substitution, et P un prédicat, \\
-$[S;~ T]P$
+prédicat. Les deux substitutions sont séparées par un $;$.
+
+\paragraph{Substitution Parallèle}
+A la différence de la substitution séquence, la substitution parallèle permet
+d'effectuer deux substitutions de façon simultanée et indépendamment l'une de
+l'autre. Les deux substitutions sont séparées par $||$.
 
 \paragraph{Substitution Devient égal}
 Cette substitution réalise l'affectation, elle remplace une variable
@@ -217,7 +218,7 @@ s'applique à R.
 
 \paragraph{Substitution variable locale}
 Cette substitution n'est pas utilisée dans la machine abstraite. Elle permet
-d'introduire une liste de variables.
+d'introduire une liste de variables locales.
 Elle se note : Soit S une séquence de substitutions et X une liste de variables,\\
 $VAR~ X~ IN~ S~ END$\\
 La liste de variable sera accessible dans les substitutions S contenues dans le
@@ -243,8 +244,8 @@ formels par des paramètres effectifs.
 
 \paragraph{}
 On retrouve ainsi les constructions d'un langage de programmation
-impératif, avec des affectations, appels d'opération, un if, et la
-définition de variables locales. Cependant, les substitutions sont
+impératif, avec des affectations, appels d'opération, alternative, et la
+définition de variables locales. De plus, les substitutions sont
 réordonnées via un tri topologique par rapport aux équations du composant
 Scade, dont l'ordre n'avait pas d'importance. Cette distinction entre
 les deux langages, synchrone contre impératif, sera développée dans la
@@ -259,12 +260,12 @@ section concernant la preuve de correction du traducteur.
 
 Le raffinement de la spécification est une reformulation en une
 expression plus concrète et enrichie.
-L'activité de preuve d'une spécification B consiste à la
+L'activité de preuve d'une machine B consiste à la
 réalisation d'un certain nombre de démonstrations, afin de prouver
 l'établissement et la conservation des propriétés invariantes de la
 spécification.
 La génération des hypothèses à démontrer est automatique, grâce à la
-transformation des prédicats par les substitutions.
+transformation des prédicats par les substitutions. 
 
 La relation de raffinement est transitive: les valeurs calculées par
 l'implémentation sont conformes à celles attendues par la machine

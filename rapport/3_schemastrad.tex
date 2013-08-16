@@ -21,9 +21,113 @@ Reprise du contrat et traduction en PRE .. THEN .. END
 
 
 \section{Implémentation}
-Ajout des variables d'etats + initialisation (pour les registres)
-Ajout des variables locales
-tri topologique pour la séquence de substitution
+
+\subsection{Traduction des expressions}
+
+Les équations sont traduites différemment selon le "type" d'expression qu'elles
+contiennent.  
+Concernant la partie droite, il y a 4 types d'expressions de Scade à traduire en B:
+\begin{itemize}
+\item Les expressions à manipulant les variables, constantes et opérateurs de
+  base (arithmétiques, relationnels, booléens,...).
+\item Les appels de noeuds, sous réserve que le noeud appelé a déjà été
+  traduit. 
+\item L'alternative.
+\item Le registre.
+\end{itemize}
+
+\paragraph{Opérateurs de base}
+Les opérateurs de base sont traduits par une substitution \emph{devient égal}, on
+effectue une simple affectation. Les opérateurs de base de Scade sont identiques
+à ceux du langage B. Le membre gauche de l'équation correspond à une unique
+variable, les opérations étant atomiques dans Scade. \\
+$a = op(b_1,...,b_n)$ est traduit en B par $a:=op(b_1,...,b_n)$. 
+
+\paragraph{Appel de noeud}
+Un appel de noeud est traduit par une substitution \emph{appel d'opération}.le
+membre gauche de l'équation contient autant de variables qu'il y a de sorties
+pour le noeud appelé. Le noeud appelé doit avoir été traduit auparavant, et la
+machine B correspondante doit êtreprésente dans la clause \emph{IMPORT}.
+$(a_1, ... a_n) = n(b_1, ..., b_m)$ est traduit par $(a_1, ... a_n) \leftarrow n(b_1,
+..., b_n)$
+
+\paragraph{Alternative}
+On traduit l'alternative par la substitution \emph{conditionnelle}. On utilise
+également la substitution \emph{devient égal} pour chaque branche de l'alternative.
+$ a = if~ cond~ then~ b1~ else~ b2$ est traduit par $IF ~cond~ THEN ~a:=b1~ ELSE
+~a:=b2$
+
+\paragraph{Registre}
+Le registre est également traduit en substitution \emph{devient égal}, cependant
+les substitutions correspondantes doivent être placées après les autres. Ces
+équations correspondent à la mise à jour de l'état d'une variable, la mise à
+jour est donc faite à la fin de l'opération. La valeur initiale du registre doit
+être indiquée dans la clause \emph{INITIALISATION} de la machine et la variable d'état
+correspondant au registre doit être déclarée dans \emph{CONCRETE\_VARIABLE}. De
+plus il faut indiquer dans la clause \emph{INVARIANT} les contraintes de typage
+de la variable d'état. \\
+$a = ini \rightarrow (pre ~b)$ est donc traduit par $a := b$ et est placée après les
+autres substitutions.
+
+\paragraph{Tri topologique}
+Dans Scade, l'ordre des équations n'a pas d'importance, mais en B elles doivent
+s'exécuter en séquence. Les équations correspondants aix registres sont
+automatiquements placées à la fin, car elles mettent à jour l'état de la machine
+après son exécution. Il faut donc effectuer un tri topologique des 3 autres
+types d'équations.\\
+On utilise alors une fonction de tri prenant en entrées :
+\begin{itemize}
+\item la liste des équations du programme (sans les équations de registre)
+\item la liste des variables d'entrée du programme.
+\end{itemize}
+La fonction retourne une liste d'équations triées selon l'ordre
+topologique.
+
+\begin{alltt}
+Fonction Tri (eqs: liste d'equations, vars\_in: liste de variables)
+
+eq\_non\_triees : liste d'equations
+eq\_admis : liste d'equations
+v\_admis : liste de variables 
+eq : equation
+
+BEGIN
+ eq\_non\_triees <- eqs;
+ v\_admis <- vars\_in;
+ TANT QUE (eq\_non\_triees \(\neq \emptyset \)) 
+    eq <- tete(eq\_non\_triees);
+    SI vars\_droite(eq) \(\subset\) v\_admis ALORS
+       ajout\_fin(eq\_admis, eq);
+       ajout\_fin(v\_admis, vars\_gauche(eq))
+    SINON
+       ajout\_fin(eq\_non\_triees, eq)
+    FIN SI
+ FIN TANT QUE
+ RETOURNE eq\_admis;
+END
+
+\end{alltt}
+
+On utilise 4 procédures externe nécessaire à cet algorithme:
+\begin{itemize}
+\item tete(l) : retourne le premier élément de la liste l et supprime l'élément
+  en question de l
+\item ajout\_fin(l,e) : ajoute e à la fin de la liste l
+\item vars\_droite(e) : liste des variables contenues dans la partie droite de
+  l'équation e
+\item vars\_gauche(e) : liste des variables contenues dans la partie gauche de
+  l'équation e
+\end{itemize}
+la préocédure tete retourne le premier élément de la liste donnée en argument,
+et le supprime. La procédure 
+Pour commencer, les variables d'entrées sont considérées comme admises. Les
+premières équations sont celles dont la partie droite ne dépend que des
+variables admises. La partie gauche des premières équations est ajoutée à la
+liste des variables admises, et on ajoute les équations dont la partie droite
+dépend du nouveau set de variables admises. La fonction retourne la liste d'
+équations triée.
+
+\subsection{Traduction des variables locales et registres}
 
 \section{Le traducteur}
 Développement du traducteur en Ocaml (pourquoi, avantages
