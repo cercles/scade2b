@@ -7,7 +7,7 @@
 
 Dans les deux parties précédentes, nous avons identifié les différents
 éléments de Scade et de la méthode B dont nous avions besoin pour
-établir la traduction. Cette partie défini les schémas de traduction
+établir la traduction. Cette partie définit les schémas de traduction
 utilisés pour réaliser le traducteur.
 
 
@@ -15,9 +15,16 @@ utilisés pour réaliser le traducteur.
 Reprendre les schémas de traduction du rapport scade to B.
 
 \section{Specification}
+
 Signature des noeuds -> specification en B
 Reprise des informations de typage
 Reprise du contrat et traduction en PRE .. THEN .. END
+
+
+
+
+
+
 
 
 \section{Implémentation}
@@ -126,6 +133,11 @@ variables admises. La partie gauche des premières équations est ajoutée à la
 liste des variables admises, et on ajoute les équations dont la partie droite
 dépend du nouveau set de variables admises. La fonction retourne la liste d'
 équations triée.
+
+
+\paragraph{Gestion des clauses SEES et IMPORTS}
+
+
 
 \subsection{Traduction des variables locales et registres}
 
