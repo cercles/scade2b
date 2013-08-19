@@ -35,8 +35,9 @@
 \contentsline {paragraph}{Substitution Sequence}{9}
 \contentsline {paragraph}{Substitution Parall\IeC {\`e}le}{10}
 \contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{10}
+\contentsline {paragraph}{Substitution Devient Tel Que}{10}
 \contentsline {paragraph}{Substitution Condition}{10}
-\contentsline {paragraph}{Substitution variable locale}{10}
+\contentsline {paragraph}{Substitution Variable Locale}{10}
 \contentsline {paragraph}{Substitution Precondition}{10}
 \contentsline {paragraph}{Substitution Appel operation}{10}
 \contentsline {paragraph}{}{10}
@@ -52,6 +53,7 @@
 \contentsline {paragraph}{Alternative}{13}
 \contentsline {paragraph}{Registre}{13}
 \contentsline {paragraph}{Tri topologique}{13}
+\contentsline {paragraph}{Gestion des clauses SEES et IMPORTS}{14}
 \contentsline {subsection}{\numberline {4.2.2}Traduction des variables locales et registres}{14}
 \contentsline {section}{\numberline {4.3}Le traducteur}{14}
 \contentsline {chapter}{\numberline {5}Exemples tests}{15}

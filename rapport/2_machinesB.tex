@@ -180,7 +180,7 @@ est une matrice de 5 lignes et 6 colonnes contenant des entiers.
 
 \section{Substitutions}
 Les substitutions permettent de transformer les prédicats, il en existe 18 mais
-nous ne nous intéresseront qu'à 7 d'entre elles. Soit une substitution S et un
+nous ne nous intéresseront qu'à la moitié d'entre elles. Soit une substitution S et un
 prédicat P, \emph{[S]P} se lit "la substitution S établit le prédicat P".
 Les substitutions ne sont présentes que dans les clauses Initialisation et
 Operations. Dans la partie suivante, on détaillera comment passer des équations
@@ -199,7 +199,8 @@ prédicat. Les deux substitutions sont séparées par un $;$.
 \paragraph{Substitution Parallèle}
 A la différence de la substitution séquence, la substitution parallèle permet
 d'effectuer deux substitutions de façon simultanée et indépendamment l'une de
-l'autre. Les deux substitutions sont séparées par $||$.
+l'autre. Les deux substitutions sont séparées par $||$. Cette substitution n'est
+disponible que pour la machine abstraite.
 
 \paragraph{Substitution Devient égal}
 Cette substitution réalise l'affectation, elle remplace une variable
@@ -207,6 +208,14 @@ par une expression. Elle se note : Soit e une expression, x une
 variable et P un prédicat, \\ 
 $[x:=e]P$  \\
 Le prédicat obtenu a alors toute les occurrences libre de x dans P par e.
+
+\paragraph{Substitution Devient Element De}
+Les conditions sur les entrées et sorties du programmes sont souvent
+des restrictions sur des ensembles de valeurs. Cette substitution permet
+d'attribuer à une variable, une valeur tirée dans un ensemble. Elle se note:
+Soit E un ensemble et X une variable, \\
+$X:\in E$\\
+Cette substitution n'est pas une substitution d'implantation.
 
 \paragraph{Substitution Condition}
 C'est cette substitution que l'on utilise pour exprimer le choix entre deux
@@ -258,26 +267,35 @@ section concernant la preuve de correction du traducteur.
 
 \subsection{Principes du raffinement}
 
-Le raffinement de la spécification est une reformulation en une
-expression plus concrète et enrichie.
+Le raffinement d'une machine est une reformulation en une
+expression plus concrète et enrichie. La relation de raffinement est transitive:
+les valeurs calculées par l'implantation sont conformes à celles attendues par
+la machine abstraite. 
+
+L'implantation correspond à un code exécutable après une compilation vers du
+code C ou Ada. Donc vers un programme équivalent à celui écrit avec
+Scade, qui est également compilé vers du C en fin de chaîne. Cependant
+nous ne nous intéresserons pas au programme produit par l'atelierB,
+car le compilateur de Scade produisant le C (KCG 6) est qualifié pour produire
+du code certifié pour la norme DO178b.
+
+Ainsi, le raffinement permet de concrétiser un programme jusqu'à obtenir un code
+exécutable, mais il permet surtout de générer un certain nombre de preuves à
+démontrer pour prouver que la reformulation de la spécification est valide.
 L'activité de preuve d'une machine B consiste à la
 réalisation d'un certain nombre de démonstrations, afin de prouver
 l'établissement et la conservation des propriétés invariantes de la
 spécification.
-La génération des hypothèses à démontrer est automatique, grâce à la
+La génération des hypothèses à démontrer est automatique dans l'Atelier B, grâce à la
 transformation des prédicats par les substitutions. 
 
-La relation de raffinement est transitive: les valeurs calculées par
-l'implémentation sont conformes à celles attendues par la machine
-abstraite. 
+La machine abstraite reprendra uniquement les éléments du contrat du composant,
+c'est à dire les conditions indiquées sur les entrées et sorties du noeud
+Scade. Ce sont ces conditions qui devront être vérifiée par les différents
+raffinements de la machine abstraite. L'implémentation repdrendra elle 
+
 
 [
-Raffinement jusqu'à un code exécutable après une compilation vers du
-code C ou Ada. Donc vers un programme équivalent à celui écrit avec
-Scade, qui est également compilé vers du C en fin de chaîne. Cependant
-nous ne nous intéresserons pas au programme produit par l'atelierB,
-car le compilateur de Scade produisant le C est certifié pour la norme
-DO178.
 
 -
 
