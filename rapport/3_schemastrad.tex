@@ -8,9 +8,7 @@
 Dans les deux parties précédentes, nous avons identifié les différents
 éléments de Scade et de la méthode B dont nous avions besoin pour
 établir la traduction. Cette partie définit les schémas de traduction
-utilisés pour réaliser le traducteur.
-
-SYNTAXE DEPUIS LA GRAMMAIRE DU MANREF B
+utilisés pour réaliser le traducteur. \\
 
 \section{Specification}
 
@@ -117,7 +115,8 @@ devient la substitution B:
 \begin{alltt}
 nom\_tableau : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) type\_tableau 
 \end{alltt}
-
+Dans la traduction B, la notation $1..dim_1$ correspond à un
+intervalle allant de 1 à la valeur de dim$_1$
 \paragraph{Traduction des formules logiques}
 Les conditions sur les tableaux en B ont été évoquées dans la section sur les
 quantificateurs en B. Les conditions portent sur l'ensemble des données
@@ -137,26 +136,28 @@ le suivant:
 \setlength{\columnseprule}{0.05cm}
 \begin{multicols}{2}
 \begin{alltt}
-node foo 
+\textbf{node} foo 
   (in\(\sb{1}\): in\(\sb{1}\)\_type, ..., in\(\sb{p}\): in\(\sb{p}\)\_type) 
-  returns 
+  \textbf{returns}
   (out\(\sb{1}\): out\(\sb{1}\)\_type, ..., out\(\sb{q}\): out\(\sb{q}\)\_type);
-var
+\textbf{var}
   v1 : v1\_type;
   ...
   vn : vn\_type;
   r1 : r1\_type;
   ...
   rn : rn\_type;
-let
+\textbf{let}
   assume in\(\sb{1}\) : pred\_in\(\sb{1}\);
   ...
   assume in\(\sb{p}\) : pred\_in\(\sb{p}\);
-  equation\_list;
+
+  \( liste d'equations \)
+
   guarantee out\(\sb{1}\) : pred\_out\(\sb{1}\);
   ...
   guarantee out\(\sb{q}\) : pred\_out\(\sb{q}\);
-tel;
+\textbf{tel;}
 \end{alltt}
 \columnbreak
 
@@ -179,12 +180,14 @@ out\(\sb{1}\), ..., out\(\sb{q}\) \(\leftarrow\) foo(in\(\sb{1}\), ..., in\(\sb{
 \end{alltt}
 \end{multicols}
 
-
+\emph{note: les formules booléennes sont notées pred\_nom où nom
+  correspond au nom de la variable concernée par cette formule, qui à
+  la même syntaxe en Scade et en B}
 
 \section{Implémentation}
 
 
-\subsection{Traduction des expressions}
+\subsection{Traduction des équations}
 
 Les équations sont traduites différemment selon le "type" d'expression qu'elles
 contiennent.  
@@ -203,20 +206,23 @@ Les opérateurs de base sont traduits par une substitution \emph{devient égal},
 effectue une simple affectation. Les opérateurs de base de Scade sont identiques
 à ceux du langage B. Le membre gauche de l'équation correspond à une unique
 variable, les opérations étant atomiques dans Scade. \\
-$a = op(b_1,...,b_n)$ est traduit en B par $a:=op(b_1,...,b_n)$. 
+
+$a = op(b_1,...,b_n)$ $\xrightarrow{traduction ~ equations}$ $a:=op(b_1,...,b_n)$. 
 
 \paragraph{Appel de noeud}
 Un appel de noeud est traduit par une substitution \emph{appel d'opération}.le
 membre gauche de l'équation contient autant de variables qu'il y a de sorties
 pour le noeud appelé. Le noeud appelé doit avoir été traduit auparavant, et la
-machine B correspondante doit êtreprésente dans la clause \emph{IMPORT}.
-$(a_1, ... a_n) = n(b_1, ..., b_m)$ est traduit par $(a_1, ... a_n) \leftarrow n(b_1,
+machine B correspondante doit êtreprésente dans la clause \emph{IMPORT}.\\
+
+$(a_1, ... a_n) = n(b_1, ..., b_m)$ $\xrightarrow{traduction ~ equations}$ $(a_1, ... a_n) \leftarrow n(b_1,
 ..., b_n)$
 
 \paragraph{Alternative}
 On traduit l'alternative par la substitution \emph{conditionnelle}. On utilise
-également la substitution \emph{devient égal} pour chaque branche de l'alternative.
-$ a = if~ cond~ then~ b1~ else~ b2$ est traduit par $IF ~cond~ THEN ~a:=b1~ ELSE
+également la substitution \emph{devient égal} pour chaque branche de l'alternative.\\
+
+$ a = if~ cond~ then~ b1~ else~ b2$ $\xrightarrow{traduction ~ equations}$ $IF ~cond~ THEN ~a:=b1~ ELSE
 ~a:=b2$
 
 \paragraph{Registre}
@@ -228,8 +234,8 @@ jour est donc faite à la fin de l'opération. La valeur initiale du registre do
 correspondant au registre doit être déclarée dans \emph{CONCRETE\_VARIABLE}. De
 plus il faut indiquer dans la clause \emph{INVARIANT} les contraintes de typage
 de la variable d'état. \\
-$a = ini \rightarrow (pre ~b)$ est donc traduit par $a := b$ et est placée après les
-autres substitutions.
+
+$a = ini \rightarrow (pre ~b)$ $\xrightarrow{traduction ~ equations}$ $a := b$ 
 
 \paragraph{Tri topologique}
 Dans Scade, l'ordre des équations n'a pas d'importance, mais en B elles doivent
@@ -292,16 +298,39 @@ dépend du nouveau set de variables admises. La fonction retourne la liste d'
 \subsection{Retour sur la traduction des registres}
 Dans Scade, les équations correspondant aux registres sont initialisées à une
 certaine valeur, puis ils prennent la valeur d'une autre variable pour les
-instants suivants. Avec B, les registres sont considérés comme des variables
+instants suivants. Avec B, les registres sont des variables
 d'état, qui auront lors de l'initialisation du programme la valeur définie pour
-le premier instant avec Scade. 
+le premier instant avec Scade.
 Cette initialisation de registre doit se faire dans la clause INITIALISATION, et
-il doit auparavant être déclaré dans la clause CONCRETE\_VARIABLES. L'information de
+le nom du registre doit auparavant être déclaré dans la clause CONCRETE\_VARIABLES. L'information de
 type du registre doit alors être déclarée comme prédicat dans la clause
 INVARIANT. De plus, si le registre porte sur une variable d'entrée ou de sortie,
 on peut alors récupérer la condition (si elle existe) sur l'entrée ou la sortie
 en question pour compléter le prédicat de la clause INVARIANT. 
 
+Ainsi, soit un registre reg de type t, ayant l'équation suivante :\\
+$reg = ini \rightarrow (pre ~a)$ \\
+avec a une variable d'entrée ou de sortie du composant, possédant une
+précondition ou postcondition P, et ini une valeur d'initialisation de
+reg. Il faudra alors écrire dans l'implantation correspondante: 
+
+\begin{alltt}
+\textbf{IMPLEMENTATION} ...
+...
+
+\textbf{CONCRETE\_VARIABLES} ..., reg
+\textbf{INVARIANT}
+  ...& reg : t & P
+\textbf{INITIALISATION}
+  ... ; rn := ini;
+
+\textbf{OPERATION}
+... =
+\textbf{VAR} ... \textbf{IN}
+  ...;
+  reg := a
+\textbf{END}
+\end{alltt}
 
 \subsection{Gestion des clauses SEES et IMPORTS}
 Pour inclure des opérations ou des constantes définies dans des machines
@@ -310,35 +339,38 @@ la machine courante. Cependant, il n'y a pas de processus automatique pour
 ajouter les machines nécessaires dans ces clauses. Il faut donc les ajouter
 manuellement une fois la traduction est réalisée.
 
+
 \subsection{schéma général}
 
 Le shéma de traduction d'un composant Scade foo en une implémentation B est
 le suivant:
-\newpage
+
 
 \setlength{\columnseprule}{0.05cm}
 \begin{multicols}{2}
 \begin{alltt}
-node foo 
+\textbf{node} foo 
   (in\(\sb{1}\): in\(\sb{1}\)\_type, ..., in\(\sb{p}\): in\(\sb{p}\)\_type) 
-  returns 
+  \textbf{returns}
   (out\(\sb{1}\): out\(\sb{1}\)\_type, ..., out\(\sb{q}\): out\(\sb{q}\)\_type);
-var
+\textbf{var}
   v1 : v1\_type;
   ...
   vn : vn\_type;
   r1 : r1\_type;
   ...
   rn : rn\_type;
-let
+\textbf{let}
   assume in\(\sb{1}\) : pred\_in\(\sb{1}\);
   ...
   assume in\(\sb{p}\) : pred\_in\(\sb{p}\);
-  equation\_list;
+
+  \(liste d'equations\)
+
   guarantee out\(\sb{1}\) : pred\_out\(\sb{1}\);
   ...
   guarantee out\(\sb{q}\) : pred\_out\(\sb{q}\);
-tel;
+\textbf{tel;}
 \end{alltt}
 
 \columnbreak
@@ -366,17 +398,37 @@ out\(\sb{1}\), ..., out\(\sb{q}\) \(\leftarrow\) foo(in\(\sb{1}\), ..., in\(\sb{
   
 \textbf{VAR} v1, ..., vn \textbf{IN}
   
-  substitution\_list;
+  \(sequence de substitutions\)
 
 \textbf{END}
 \end{alltt}
 \end{multicols}
 
+Les clauses invariant, initialisation et la séquence de substitutions
+sont obtenues en appliquant la traduction des équations
+sur la liste d'équations du composant Scade.
 
+\section{Le traducteur}
 
+Le traducteur a été écrit en OCaml, qui est un langage très efficace
+pour développer des compilateurs, et donc des traducteurs.\\
+Le parseur/lexeur a été écrit à partir de la grammaire de Scade,
+définie dans le manuel Textual Scade.
 
-%% \section{Le traducteur}
-%% Développement du traducteur en Ocaml (pourquoi, avantages
-%% inconvénients)
-%% Comment a-t-il été développé
-%% Parties sensibles...
+Les programmes parsés sont alors représentés sous forme d'arbre de
+syntaxe abstraite, donné en annexe A. Cette représentation permet une
+manipulation sur les différents éléments du programme, telle que la
+liste d'équation sur laquelle est effectuée l'algorithme du tri
+topologique. \\
+On identifie également les différentes équations que l'on
+répertorie en opération de base, registres, appel de noeud, et
+alternative.
+
+Cet arbre est ensuite transformé en un arbre donné en annexe B,
+qui peut être imprimé dans deux fichiers de sortie, correspondant à
+la machine abstraite et à l'implantation correspondant au composant
+donné en entrée. L'impression respecte la grammaire donnée dans le
+Manuel de référence de B, et le couple de fichier peut être importé
+dans un projet de l'Atelier B afin de vérifier le typage et la syntaxe
+de chaque machine, et de passer les étapes d'obligation de preuve de
+façon automatique.

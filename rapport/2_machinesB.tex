@@ -349,22 +349,9 @@ prouver une formule à partir d'une liste d'hypothèses:\\
 Hypothèses (liste de prédicats)\\
 $\Rightarrow$\\
 But (doit être prouvé sous ces hypothèses)\\
-Les différentes obligations générées ont été définies dans le B-Book. 
+On ne montrera pas la construction des différentes obligations de
+preuves, ces dernières ont été définies dans le B-Book. 
 
-
-\paragraph{Opération de la machine abstraite}
-L'obligation de preuve générée pour l'opération d'une machine abstraite porte sur le predicat
-P et la substitution S de la substitution precondition. Elle porte également sur
-le prédicat relatif aux informations de typage sur les variables de sorties de
-l'opération, que l'on notera D. L'obligation générée est:\\ 
-
-\bcode{P $\Rightarrow$ [S](D)}\\
-
-A partir de la précondition P de l'opération, l'opération de la machine
-abstraite est correcte si la substitution S de l'opération appliquée au
-prédicat de type sur les sorties de l'opération.
-
-\paragraph{}
 \noindent
 Pour l'implantation, les obligations seront générées pour la clause opération,
 mais aussi pour la clause initialisation. 
@@ -376,8 +363,8 @@ SEES. L'obligation de preuve générée est la suivante:\\
 \bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\Rightarrow$ [Ini$_{imp}$; Ini] Inv} \\
 
 Avec Inv$_{imp}$ et  Inv$_{see}$ les invariants des machines importées et vues,
-et Ini$_{imp}$ les initialisations des machines importées. A partir des
-invariants sur les 
+et Ini$_{imp}$ les initialisations des machines importées. \\
+...EXPLICATION NECESSAIRE
 
 \paragraph{Opération de l'implantation}
 L'opération de l'implantation dépend également des machines importées et vues, mais
@@ -387,6 +374,7 @@ suivante:\\
 \bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\wedge$ Inv $\wedge$ P $\Rightarrow$ [S']$ \neg
 $[S]$ \neg $(Inv)}\\
 
+...EXPLICATION NECESSAIRE
 
 
 
