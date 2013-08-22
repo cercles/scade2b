@@ -8,11 +8,17 @@
 \usepackage[francais]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{alltt}
+\usepackage{xcolor}
 %\usepackage{amssymb}
-
+\usepackage{multicol}
 \usepackage{geometry}
+%% \usepackage{amsfont}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \geometry{left=23mm, right=23mm, top=30mm, bottom=25mm}
 
+\newcommand{\bcode}[1]{\textcolor{darkgray}{#1}}
+\renewcommand{\ttdefault}{txtt}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -49,14 +55,14 @@
 \chapter{Schémas de traduction}
 \input{3_schemastrad}
 
-\chapter{Exemples tests}
-\input{4_exemples}
+%% \chapter{Exemples tests}
+%% \input{4_exemples}
 
-\chapter{Preuve de correction de la traduction}
-\input{5_correction}
+%% \chapter{Preuve de correction de la traduction}
+%% \input{5_correction}
 
-\chapter{Conclusion}
-\input{conclusion}
+%% \chapter{Conclusion}
+%% \input{conclusion}
 
 \end{document}
 

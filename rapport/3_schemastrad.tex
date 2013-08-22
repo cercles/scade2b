@@ -10,24 +10,179 @@ Dans les deux parties précédentes, nous avons identifié les différents
 établir la traduction. Cette partie définit les schémas de traduction
 utilisés pour réaliser le traducteur.
 
-
-...
-Reprendre les schémas de traduction du rapport scade to B.
+SYNTAXE DEPUIS LA GRAMMAIRE DU MANREF B
 
 \section{Specification}
 
-Signature des noeuds -> specification en B
-Reprise des informations de typage
-Reprise du contrat et traduction en PRE .. THEN .. END
+La machine abstraite est engendrée à partir du contrat du composant. Ce sont
+donc les conditions posées par les instructions \emph{assume} et
+\emph{guarantee} qui nous intéressent. Le nom de l'opération sera le même que le
+nom de la définition Scade. Le nom de la machine reprend également le nom de la
+définition Scade, cependant le nom de l'opération doit être différent du nom de
+la machine, donc la première lettre sera une majuscule pour marquer la
+différence de nom. Ainsi, les défintions Scade doivent être écrites en
+minuscules.
+
+\subsection{Traduction de la déclaration du noeud}
+La déclaration d'un noeud Scade comporte le nom du composant, ses
+entrées/sorties, et le types de ses entrées/sorties. En B, on reprend ces
+informations sur le nom du noeud et le nom des entrées sorties pour déclarer une
+opération. Ainsi la déclaration Scade: 
+\begin{alltt}
+node mon\_noeud (in_1: type\_in_1, ..., in_n: type\_in_n) 
+                returns (out_1: type\_out_1, ..., out_m: type\_out_m);
+\end{alltt}
+devient l'operation B:
+\begin{alltt}
+in_1, ..., in_n \(\leftarrow\) mon\_noeud(out_1, ..., out_m) =
+\end{alltt}
+
+Les informations de types sur les entrées et sorties sont reprises pour les
+conditions.
 
 
+\subsection{Traduction des conditions}
 
+La machine abstraite de B forme une spécification de la machine implanté,
+l'opération est ainsi ordinairement consitué d'une substitution précondition
+PRE P THEN S END. P étant le prédicat correspondant aux conditions des
+\emph{assumes} et aux informations de typage sur les entrées, tandis que S est
+la substitution qui reprend les conditions sur les \emph{guarantees} et les informations de typage
+sur les sorties. 
 
+\paragraph{traduction des préconditions}
+Les instructions \emph{assumes} sont des formules logiques, généralement des
+restrictions sur des intervalles. Les opérateurs logiques utilisés sont les
+mêmes pour Scade que pour le langage B, la traduction est donc directe. Les
+conditions sur les différentes entrées sont combinées par un opérateur ET
+logique (\&). La condition est précédée par le type de la variable, reprit
+depuis la déclaration Scade. 
+Dans le cas où une variable d'entrée ou de sortie n'est pas conditionnée, comme
+c'est souvent le cas pour les variables booléennes, alors on indique seulement
+le type de la variable.
+Pour chaque variable le shéma de traduction est le suivant:
+\begin{alltt}
+assume in : formule_logique_sur_in
+\end{alltt}
+devient le prédicat B:
+\begin{alltt}
+in \(\in\) type\_in & formule\_logique\_sur\_in
+\end{alltt}
 
+\paragraph{traduction des postconditions}
+Les instructions \emph{guarantee} sont également des formules
+logiques. Cependant, on utilise des substitution \emph{devient element de} pour
+les post-conditions. Les variables en sortie prennent une valeur comprise dans
+un certain ensemble donné dans la formule logique. Les substitutions sont
+regroupée dans une substitution parallèle, elles sont séparées par un ||. Le
+schéma de traduction est le suivant:
+\begin{alltt}
+guarantee out : formule_logique_sur_out
+\end{alltt}
+devient la substitution B:
+\begin{alltt}
+out \(\in\): \{ iii | iii \(\in\) type_out & formule_logique_sur_out\}
+\end{alltt}
+Cette substitution se lit \emph{out} devient l'élément \emph{iii} de l'ensemble
+de \emph{type\_out} respectant \emph{formule\_logique\_sur\_out}.
+
+\paragraph{Traduction des types}
+La traduction des types de base est directe:
+\begin{itemize}
+\item int est traduit par INT
+\item real est traduit par REAL
+\item bool est traduit par BOOL
+\end{itemize}
+
+\subsection{Le cas des tableaux}
+La traduction des conditions pour les tableaux est moins directe, car il n'y a
+pas de type primitifs pour les tableaux en B. On utilise des fonctions à la
+place. 
+
+\paragraph{Traduction des types}
+Les tableaux peuvent être multi-dimensionnels, mais ne peuvent contenir qu'un
+seul type de donnée. On peut voir les tableaux comme des fonctions prennant
+comme argument l'indice de la donnée stockée, et retournant la valeur de cette
+donnée. Les tableaux sont indexés par des entiers, selectionnés dans les
+intervalles allant de 1 à la taille du tableau.
+Par exemple, pour une matrice \emph{Mat} de n lignes et m colonnes, les valeurs
+des données sont accessibles ainsi: $Mat(p, q)$, avec $1 \leq p \leq n$ et $1 \leq q
+\leq m$.
+Ainsi, le schéma correspondant à la traduction de la déclaration d'un tableau
+est:
+\begin{alltt}
+nom\_tableau : type\_tableau \^ dim_1 \^ ... \^ dim_n
+\end{alltt}
+devient la substitution B:
+\begin{alltt}
+nom\_tableau : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) type\_tableau 
+\end{alltt}
+
+\paragraph{Traduction des formules logiques}
+Les conditions sur les tableaux en B ont été évoquées dans la section sur les
+quantificateurs en B. Les conditions portent sur l'ensemble des données
+contenues dans le tableau. La condition est alors de la forme: pour toute valeur
+iii correspondant à un index du tableau, la donnée référencée par cet index
+respecte la condition donnée. Ainsi, une formule logique f\_l portant sur un
+tableau T de n dimensions correspond à la formule B: 
+\begin{alltt}
+\(\forall \)iii. (iii : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) f\_l)
+\end{alltt}
+
+\subsection{schéma général}
+
+Le shéma de traduction d'un composant Scade foo en une machine abstraite B est
+le suivant:
+
+\setlength{\columnseprule}{0.05cm}
+\begin{multicols}{2}
+\begin{alltt}
+node foo 
+  (in\(\sb{1}\): in\(\sb{1}\)\_type, ..., in\(\sb{p}\): in\(\sb{p}\)\_type) 
+  returns 
+  (out\(\sb{1}\): out\(\sb{1}\)\_type, ..., out\(\sb{q}\): out\(\sb{q}\)\_type);
+var
+  v1 : v1\_type;
+  ...
+  vn : vn\_type;
+  r1 : r1\_type;
+  ...
+  rn : rn\_type;
+let
+  assume in\(\sb{1}\) : pred\_in\(\sb{1}\);
+  ...
+  assume in\(\sb{p}\) : pred\_in\(\sb{p}\);
+  equation\_list;
+  guarantee out\(\sb{1}\) : pred\_out\(\sb{1}\);
+  ...
+  guarantee out\(\sb{q}\) : pred\_out\(\sb{q}\);
+tel;
+\end{alltt}
+\columnbreak
+
+\begin{alltt}
+\textbf{MACHINE} Foo
+
+\textbf{OPERATION}
+
+out\(\sb{1}\), ..., out\(\sb{q}\) \(\leftarrow\) foo(in\(\sb{1}\), ..., in\(\sb{p}\)) =
+  \textbf{PRE}
+    in\(\sb{1}\) \(\in\) in\(\sb{1}\)\_type & pred\_in\(\sb{1}\) &
+    ... &
+    in\(\sb{p}\) \(\in\) in\(\sb{p}\)\_type & pred\_in\(\sb{p}\) &
+  \textbf{THEN}
+    out\(\sb{1}\) \(\in\): \{ iii | iii \(\in\) out\(\sb{1}\)\_type & pred\_out\(\sb{1}\)\}
+    ...
+    out\(\sb{q}\) \(\in\): \{ iii | iii \(\in\) out\(\sb{q}\)\_type & pred\_out\(\sb{q}\)\}
+  \textbf{END}
+\textbf{END}
+\end{alltt}
+\end{multicols}
 
 
 
 \section{Implémentation}
+
 
 \subsection{Traduction des expressions}
 
@@ -78,7 +233,7 @@ autres substitutions.
 
 \paragraph{Tri topologique}
 Dans Scade, l'ordre des équations n'a pas d'importance, mais en B elles doivent
-s'exécuter en séquence. Les équations correspondants aix registres sont
+s'exécuter en séquence. Les équations correspondants aux registres sont
 automatiquements placées à la fin, car elles mettent à jour l'état de la machine
 après son exécution. Il faut donc effectuer un tri topologique des 3 autres
 types d'équations.\\
@@ -134,15 +289,94 @@ liste des variables admises, et on ajoute les équations dont la partie droite
 dépend du nouveau set de variables admises. La fonction retourne la liste d'
 équations triée.
 
+\subsection{Retour sur la traduction des registres}
+Dans Scade, les équations correspondant aux registres sont initialisées à une
+certaine valeur, puis ils prennent la valeur d'une autre variable pour les
+instants suivants. Avec B, les registres sont considérés comme des variables
+d'état, qui auront lors de l'initialisation du programme la valeur définie pour
+le premier instant avec Scade. 
+Cette initialisation de registre doit se faire dans la clause INITIALISATION, et
+il doit auparavant être déclaré dans la clause CONCRETE\_VARIABLES. L'information de
+type du registre doit alors être déclarée comme prédicat dans la clause
+INVARIANT. De plus, si le registre porte sur une variable d'entrée ou de sortie,
+on peut alors récupérer la condition (si elle existe) sur l'entrée ou la sortie
+en question pour compléter le prédicat de la clause INVARIANT. 
 
-\paragraph{Gestion des clauses SEES et IMPORTS}
+
+\subsection{Gestion des clauses SEES et IMPORTS}
+Pour inclure des opérations ou des constantes définies dans des machines
+externes, il faut les ajouter respectivement dans les clauses IMPORTS et SEES de
+la machine courante. Cependant, il n'y a pas de processus automatique pour
+ajouter les machines nécessaires dans ces clauses. Il faut donc les ajouter
+manuellement une fois la traduction est réalisée.
+
+\subsection{schéma général}
+
+Le shéma de traduction d'un composant Scade foo en une implémentation B est
+le suivant:
+\newpage
+
+\setlength{\columnseprule}{0.05cm}
+\begin{multicols}{2}
+\begin{alltt}
+node foo 
+  (in\(\sb{1}\): in\(\sb{1}\)\_type, ..., in\(\sb{p}\): in\(\sb{p}\)\_type) 
+  returns 
+  (out\(\sb{1}\): out\(\sb{1}\)\_type, ..., out\(\sb{q}\): out\(\sb{q}\)\_type);
+var
+  v1 : v1\_type;
+  ...
+  vn : vn\_type;
+  r1 : r1\_type;
+  ...
+  rn : rn\_type;
+let
+  assume in\(\sb{1}\) : pred\_in\(\sb{1}\);
+  ...
+  assume in\(\sb{p}\) : pred\_in\(\sb{p}\);
+  equation\_list;
+  guarantee out\(\sb{1}\) : pred\_out\(\sb{1}\);
+  ...
+  guarantee out\(\sb{q}\) : pred\_out\(\sb{q}\);
+tel;
+\end{alltt}
+
+\columnbreak
+
+\begin{alltt}
+\textbf{IMPLEMENTATION} Foo_i
+\textbf{REFINES} Foo
+
+\textbf{IMPORTS} M\(\sb{imp}\)
+\textbf{SEES} M\(\sb{see}\)
+
+\textbf{CONCRETE\_VARIABLES} r1, ..., rn
+\textbf{INVARIANT}
+  r1 : r1\_type &
+  ... &
+  rn : rn\_type
+\textbf{INITIALISATION}
+  r1 := ;
+  ... ;
+  rn := ;
+
+\textbf{OPERATION}
+
+out\(\sb{1}\), ..., out\(\sb{q}\) \(\leftarrow\) foo(in\(\sb{1}\), ..., in\(\sb{p}\)) =
+  
+\textbf{VAR} v1, ..., vn \textbf{IN}
+  
+  substitution\_list;
+
+\textbf{END}
+\end{alltt}
+\end{multicols}
 
 
 
-\subsection{Traduction des variables locales et registres}
 
-\section{Le traducteur}
-Développement du traducteur en Ocaml (pourquoi, avantages
-inconvénients)
-Comment a-t-il été développé
-Parties sensibles...
+%% \section{Le traducteur}
+%% Développement du traducteur en Ocaml (pourquoi, avantages
+%% inconvénients)
+%% Comment a-t-il été développé
+%% Parties sensibles...

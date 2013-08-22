@@ -61,7 +61,7 @@ Voir annexe A pour un exemple de couple de machines abstraite/implantation.
 
 
 
-\subsection{Clause}
+\subsection{Clauses}
 Les différentes clauses requises pour assurer la traduction sont
 décrites dans cette partie. La machine abstraite ne requière pas les
 clauses IMPORTS, CONCRETE\_VARIABLES, INVARIANT et INITIALISATION car
@@ -80,12 +80,14 @@ abstraite.
 Ici, nous indiquons quelles machines B seront nécessaires pour
 manipuler les données. Pour la programmation par composant, nous avons
 besoin de faire appel à d'autres composants, et cette clause permet
-d'importer une instance de ces composants.
+d'importer une instance de ces composants. Lors d'un appel d'opération d'un machine
+importée, l'opération est instanciée.
 
 \paragraph{Sees}
 Nous avons besoin de faire aussi appel à des machines contenant
 des définitions de constantes. Nous mettrons la liste des machines nécessaires
-dans cette clause.
+dans cette clause. Ce sont des machines vues, car il n'y a aucune instanciation
+d'opération, on a seulement besoin de voir les constantes et leurs valeurs.
 
 \paragraph{Concrete\_Variables}
 Cette clause indique quelles sont les variables d'état de la
@@ -94,14 +96,14 @@ définis dans le composant Scade. Les autres variables locales sont définies da
 une substituion VAR.
 
 \paragraph{Invariant}
-Nous pouvons alors établir des invariants sur les registres utilisés
-dans cette clause. Les invariants seront des restrictions sur les
+Nous pouvons alors établir des invariants sur les registres déclarés dans la
+clause précédente dans cette clause. Les invariants seront des restrictions sur les
 intervalles sur lesquels les registres seront manipulés, et ils seront écrits
 sous forme de prédicats.
 
 \paragraph{Initialisation}
 L'initialisation permet d'indiquer la valeur donnée aux registres lors
-de l'initialisation du composant. L'initialisation doit être en accord
+de l'initialisation du composant, ce sont des substitutions. L'initialisation doit être en accord
 avec l'invariant.
 
 \paragraph{Opérations}
@@ -123,7 +125,7 @@ condition, comme dans la substitution Condition.
 
 \paragraph{}
 Les prédicats de base sont exprimables à l'aide des opérateurs de
-comparaison habituels: $<,~>,~\leq,$et $\geq$. Les expressions doivent
+comparaison habituels: $<,~>,~\leq,$ et $\geq$. Les expressions doivent
 être de type entier ou réel.
 
 \paragraph{}
@@ -141,9 +143,7 @@ un ensemble $\in$.\\
 Par exemple, soit $tab$ un tableau : $\forall iii . (iii \in (1..5)
 \Rightarrow tab(iii) < 5)$\\
 Cet exemple indique que tout élément du tableau ayant un indice compris
-entre 1 et 5 doit être strictement inférieur à 5. Nous reviendrons en
-détail sur le fonctionnement des tableaux en B dans la section sur les
-expressions.
+entre 1 et 5 doit être strictement inférieur à 5. 
 
 %% NOTE: ON PEUT SE PASSER DU APPARTIENT AVEC \\
 %% !iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) \\
@@ -186,41 +186,39 @@ Les substitutions ne sont présentes que dans les clauses Initialisation et
 Operations. Dans la partie suivante, on détaillera comment passer des équations
 de Scade à ces substitutions.
 
-\paragraph{Substitution Bloc}
-La substitution bloc est la substitution de base, elle permet de grouper des
-substitutions. Elles contient une substitution ou une séquence de substitution.
-Elle se note : Soit S une substitution, \\
-$BEGIN~ S~ END$ 
-
 \paragraph{Substitution Sequence}
 Une séquence permet d'appliquer en séquence deux substitutions à un
-prédicat. Les deux substitutions sont séparées par un $;$.
+prédicat. Les deux substitutions sont séparées par un \textbf{;} .
 
 \paragraph{Substitution Parallèle}
 A la différence de la substitution séquence, la substitution parallèle permet
 d'effectuer deux substitutions de façon simultanée et indépendamment l'une de
-l'autre. Les deux substitutions sont séparées par $||$. Cette substitution n'est
+l'autre. Les deux substitutions sont séparées par \textbf{||} . Cette substitution n'est
 disponible que pour la machine abstraite.
 
 \paragraph{Substitution Devient égal}
 Cette substitution réalise l'affectation, elle remplace une variable
 par une expression. Elle se note : Soit e une expression, x une
-variable et P un prédicat, \\ 
-$[x:=e]P$  \\
+variable et P un prédicat,
+
+[ x:=e ] P \\
 Le prédicat obtenu a alors toute les occurrences libre de x dans P par e.
 
 \paragraph{Substitution Devient Element De}
 Les conditions sur les entrées et sorties du programmes sont souvent
 des restrictions sur des ensembles de valeurs. Cette substitution permet
 d'attribuer à une variable, une valeur tirée dans un ensemble. Elle se note:
-Soit E un ensemble et X une variable, \\
-$X:\in E$\\
+Soit E un ensemble et X une variable, 
+
+[X:$\in$ E] \\
 Cette substitution n'est pas une substitution d'implantation.
 
 \paragraph{Substitution Condition}
 C'est cette substitution que l'on utilise pour exprimer le choix entre deux
-substitutions. Elle se note : Soit P et R des prédicats, et S et T des substitutions,\\
-$[IF~ P~ THEN~ S~ ELSE~ T]R$ \\
+substitutions. Elle se note : Soit P et R des prédicats, et S et T des
+substitutions,
+
+[IF P THEN S ELSE T]R \\
 Si le prédicat P est évalué à vrai, alors c'est la substitution S que l'on
 applique au prédicat R. Si P est faux, alors c'est la substitution T qui
 s'applique à R.
@@ -228,16 +226,18 @@ s'applique à R.
 \paragraph{Substitution Variable Locale}
 Cette substitution n'est pas utilisée dans la machine abstraite. Elle permet
 d'introduire une liste de variables locales.
-Elle se note : Soit S une séquence de substitutions et X une liste de variables,\\
-$VAR~ X~ IN~ S~ END$\\
+Elle se note : Soit S une séquence de substitutions et X une liste de variables,
+
+[VAR X IN S END]\\
 La liste de variable sera accessible dans les substitutions S contenues dans le
 bloc IN ... END, correpondant à une substitution bloc.
 
 \paragraph{Substitution Precondition}
 Cette substitution n'est utilisée que dans la machine abstraite. Elle fixe les
-préconditions sous lesquelles une substitution. Elle se note : Soit P
-et R des prédicats et S une substitution,\\ 
-$[PRE~ P~ THEN~ S~ END]R$\\
+préconditions sous lesquelles une substitution sera valide. Elle se note : Soit P
+un prédicat et S une substitution,
+
+[PRE P THEN S END]\\
 L'application de cette substitution correspond à la preuve de la
 précondition P et à l'application de la substitution S. Si la
 précondition P est fausse, le résultat de la substitution n'est alors
@@ -245,8 +245,9 @@ plus garantit.
 
 \paragraph{Substitution Appel operation}
 cette substitution se note : Soit R un identificateur correspondant à la sortie
-de l'opération op appliquée aux expressions E, et un prédicat P,\\
-$[R\leftarrow op(E)]P$\\
+de l'opération op appliquée aux expressions E, 
+
+[R$\leftarrow$ op(E)]P\\
 La  substitution appel d’opération permet d’appliquer la substitution
 d’une opération (non locale ou locale), en remplaçant les paramètres
 formels par des paramètres effectifs. 
@@ -282,46 +283,110 @@ du code certifié pour la norme DO178b.
 Ainsi, le raffinement permet de concrétiser un programme jusqu'à obtenir un code
 exécutable, mais il permet surtout de générer un certain nombre de preuves à
 démontrer pour prouver que la reformulation de la spécification est valide.
-L'activité de preuve d'une machine B consiste à la
-réalisation d'un certain nombre de démonstrations, afin de prouver
-l'établissement et la conservation des propriétés invariantes de la
-spécification.
 La génération des hypothèses à démontrer est automatique dans l'Atelier B, grâce à la
 transformation des prédicats par les substitutions. 
 
 La machine abstraite reprendra uniquement les éléments du contrat du composant,
 c'est à dire les conditions indiquées sur les entrées et sorties du noeud
 Scade. Ce sont ces conditions qui devront être vérifiée par les différents
-raffinements de la machine abstraite. L'implémentation repdrendra elle 
+raffinements de la machine abstraite. Nous n'utiliserons qu'une étape de
+raffinement: l'implantation. Il faut donc prouver que cette machine raffinée
+conserve les propriétés invariantes de la machine abstraite.
+
+La forme générale d'une machine abstraite et de son raffinement est le suivant:
 
 
-[
 
--
+\setlength{\columnseprule}{0.05cm}
+\begin{multicols}{2}
+\begin{alltt}
+\textbf{MACHINE} M
 
-L'atelier B produit automatiquement les obligations de preuves
-nécessaires pour valider le raffinement. Ces obligations sont
-construites ...
+\textbf{OPERATION}
 
-Cf intro obligation proof paper
+outs \(\leftarrow\) op(ins) =
+  \textbf{PRE}
+    P
+  \textbf{THEN}
+    S
+  \textbf{END}
 
-]
+\textbf{END}
+\end{alltt}
+\columnbreak
+\begin{alltt}
+\textbf{IMPLEMENTATION} M\_i
+\textbf{REFINES} M
+
+\textbf{IMPORTS} M\(\sb{imp}\)
+\textbf{SEES} M\(\sb{see}\)
+
+\textbf{CONCRETE\_VARIABLES} regs
+\textbf{INVARIANT}
+  Inv
+\textbf{INITIALISATION}
+  Ini
+
+\textbf{OPERATIONS}
+  
+outs \(\leftarrow\) op(ins) =
+  S'
+
+\textbf{END}
+\end{alltt}
+\end{multicols}
+
 
 
 \subsection{Obligations de preuves}
-Cf Proof obligation paper
 
-A chaque raffinement, on passe par une étape de type checking et
-d'obligation de preuves. Démonstrations basée sur les principales
-substitutions. Montrer qu'on utilise ce qu'il faut pour assurer que
-les obligations de preuves sont possibles.
+Pour chaque machine, depuis la spécification à l'implémentation, il faut
+passer une étape de type checking et d'obligation de preuve. L'étape de type
+checking vérifie la cohérence des types des données manipulées ainsi que la
+syntaxe du programme. Une fois cette étape validée, on peut générer les
+obligations de preuves. Le principe des obligations de preuves consiste à
+prouver une formule à partir d'une liste d'hypothèses:\\
+Hypothèses (liste de prédicats)\\
+$\Rightarrow$\\
+But (doit être prouvé sous ces hypothèses)\\
+Les différentes obligations générées ont été définies dans le B-Book. 
 
-Principe :
 
-Hypothèses (liste de prédicats)
-=>
-But (doit être prouvé sous ces hypothèses)
+\paragraph{Opération de la machine abstraite}
+L'obligation de preuve générée pour l'opération d'une machine abstraite porte sur le predicat
+P et la substitution S de la substitution precondition. Elle porte également sur
+le prédicat relatif aux informations de typage sur les variables de sorties de
+l'opération, que l'on notera D. L'obligation générée est:\\ 
 
-Pour cela on applique des substitutions aux prédicats. Développer pour les
-différentes substitutions, exemples...
+\bcode{P $\Rightarrow$ [S](D)}\\
+
+A partir de la précondition P de l'opération, l'opération de la machine
+abstraite est correcte si la substitution S de l'opération appliquée au
+prédicat de type sur les sorties de l'opération.
+
+\paragraph{}
+\noindent
+Pour l'implantation, les obligations seront générées pour la clause opération,
+mais aussi pour la clause initialisation. 
+
+\paragraph{Initialisation de l'implantation} Pour l'initialisation, la preuve
+dépend également des machines présentes dans les clauses IMPORTS et
+SEES. L'obligation de preuve générée est la suivante:\\
+
+\bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\Rightarrow$ [Ini$_{imp}$; Ini] Inv} \\
+
+Avec Inv$_{imp}$ et  Inv$_{see}$ les invariants des machines importées et vues,
+et Ini$_{imp}$ les initialisations des machines importées. A partir des
+invariants sur les 
+
+\paragraph{Opération de l'implantation}
+L'opération de l'implantation dépend également des machines importées et vues, mais
+aussi et surtout de la machine qu'elle raffine. L'obligation générée est la
+suivante:\\
+
+\bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\wedge$ Inv $\wedge$ P $\Rightarrow$ [S']$ \neg
+$[S]$ \neg $(Inv)}\\
+
+
+
 
