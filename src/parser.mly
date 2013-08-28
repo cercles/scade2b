@@ -23,15 +23,16 @@
   type equation_type = Eq of p_equation | Assume of p_condition | Guarantee of p_condition
 %}
 
-%token NODE RETURNS LET TEL VAR CONST ASSERT ASSUME GUARANTEE INCLUDE
+%token NODE RETURNS PACKAGE LET TEL VAR CONST ASSUME GUARANTEE
+/* %token ASSERT INCLUDE deprecated*/
 %token IF THEN ELSE
-%token PRE FBY 
+/* %token PRE ARROW  deprecated*/
+%token FBY
 %token PLUS MINUS MULT DIV DIV_INT MOD
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
 %token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA QUOTES DOT
-/* these three are array ops */
-%token DOTDOT CARET CONCAT
+%token DOTDOT CARET CONCAT /* these three are array ops */
 %token T_BOOL T_INT T_REAL
 %token <bool> BOOL
 %token <int> INT
@@ -43,7 +44,7 @@
 %nonassoc THEN
 %nonassoc ELSE
 %left DOTDOT
-%left FBY
+%left ARROW
 %left OR XOR
 %left AND
 %left EQ NEQ INF INFEQ SUP SUPEQ
@@ -58,13 +59,12 @@
 %%
 
 prog :
- | package_list node EOF { { p_includes = $1; p_node = $2 } }
+ | PACKAGE IDENT node_list END SEMICOL EOF { $2 }
 ;
 
-package_list :
+node_list :
  |   { [] }
- | INCLUDE QUOTES IDENT DOT IDENT QUOTES SEMICOL package_list { $3 :: $8 }
-;
+ | node node_list { $1::$2 }
 
 node :
  | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL
@@ -162,7 +162,7 @@ expr :
  | expr XOR expr { PE_Bop (Op_xor, $1, $3) }
  | MINUS expr { PE_Unop (Op_minus, $2) }
  | NOT expr { PE_Unop (Op_not, $2) }
- | expr FBY expr { PE_Fby ($1, $3) }
+ | expr ARROW expr { PE_Fby ($1, $3) }
  | PRE expr { PE_Pre $2 }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
  | IDENT LPAREN expr_list RPAREN { PE_App ($1, $3) }

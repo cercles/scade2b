@@ -22,6 +22,7 @@ let real = digit+ '.' digit+ exponent?
   | digit+ exponent
 let alpha = ['a'-'z''A'-'Z''_']
 let ident = alpha (digit|alpha)*
+let pragma_simpl = '#'(digit|alpha)+
 
 rule token = parse
           | sep  { token lexbuf }
@@ -31,6 +32,9 @@ rule token = parse
 		       token lexbuf }
 	  | "/*"     { comment lexbuf;
 		       token lexbuf }
+	  | "#pragma"    { pragma lexbuf;
+			   token lexbuf }
+	  | pragma_simpl { token lexbuf }
 
 	  | "node"    { NODE }
 	  | "returns" { RETURNS }
@@ -38,10 +42,11 @@ rule token = parse
 	  | "tel"     { TEL }
 	  | "var"     { VAR }
 	  | "const"   { CONST }
-	  | "assert"  { ASSERT }
 	  | "assume"  { ASSUME }
 	  | "guarantee" { GUARANTEE }
-	  | "include" { INCLUDE }
+	  | "package" { PACKAGE }
+	  (* | "include" { INCLUDE } *)
+	  (* | "assert"  { ASSERT } *)
 
 	  | "bool" { T_BOOL }
 	  | "int"  { T_INT }
@@ -51,8 +56,9 @@ rule token = parse
 	  | "then" { THEN }
 	  | "else" { ELSE }
 
-	  | "pre" { PRE }
-	  | "->"  { FBY }
+	  (* | "pre" { PRE } *)
+	  (* | "->"  { ARROW } *)
+	  | "fby" { FBY }
 
 	  | '+'   { PLUS }
 	  | '-'   { MINUS }
@@ -101,6 +107,13 @@ and comment = parse
     | '\n' { Lexing.new_line lexbuf; comment lexbuf }
     | _    { comment lexbuf }
     | eof  { raise (Lexical_error "unterminated comment") }
+
+and pragma = parse
+    | "#end" { () }
+    | '\n' { Lexing.new_line lexbuf; comment lexbuf }
+    | _      { pragma lexbuf }
+    | eof    { raise (Lexical_error "unterminated pragma") }
+
 
 {
 }
