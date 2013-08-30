@@ -31,8 +31,25 @@ devient l'operation B:
 in_1, ..., in_n \(\leftarrow\) mon\_noeud(out_1, ..., out_m) =
 \end{alltt}
 
+\noindent
+En reprenant le noeud \texttt{bound}, la traduction donne:\\
+\texttt{vv $\leftarrow$ bound(zz, b\_inf, b\_sup) =}\\
+On peut noter que le nom de la variable de sortie a été
+modifié par rapport à la version de Scade. Dans B, les noms de variables n'ayant qu'une lettre sont
+réservés, donc on effectue un rennomage sur l'ensemble des variables
+du programmes: les lettres simples sont doublées, et si le nouveau nom
+est déjà utilisé par une autre variable, on redouble le nom jusqu'à ce
+qu'il n'y ai aucun conflit dans les noms de variables.
+
+\paragraph{Traduction des types de base}
 Les informations de types sur les entrées et sorties sont reprises pour les
 préconditions et postconditions.
+La traduction des types de base est directe:
+\begin{itemize}
+\item int est traduit par INT
+\item real est traduit par REAL
+\item bool est traduit par BOOL
+\end{itemize}
 
 
 \subsection{Traduction des conditions}
@@ -54,45 +71,37 @@ depuis la déclaration Scade.
 Dans le cas où une variable d'entrée ou de sortie n'est pas conditionnée, comme
 c'est souvent le cas pour les variables booléennes, alors on indique seulement
 le type de la variable.
-Pour chaque variable le shéma de traduction est le suivant:
 
-EXEMPLE
+\noindent
+En reprenant l'exemple bound, les prédicats générés pour les
+préconditions sont:\\
 
-\begin{alltt}
-assume in : formule_logique_sur_in
-\end{alltt}
-devient le prédicat B:
-\begin{alltt}
-in \(\in\) type\_in & formule\_logique\_sur\_in
-\end{alltt}
+\noindent
+\texttt{zz $\in$ INT \& zz <= 2000 \& zz >= -2000 \& \\
+b\_sup $\in$ INT \& b\_sup <= 2000 \& b\_sup >= -2000 \& \\
+b\_inf $\in$ INT \& b\_inf <= 2000 \& b\_inf >= -2000 \\
+}
+
 
 \paragraph{Traduction des postconditions}
 Les instructions \texttt{guarantee} sont également des formules
 logiques. Cependant, on utilise des substitution \emph{Devient Element De} pour
-les post-conditions. Les variables en sortie prennent une valeur comprise dans
-un certain ensemble donné dans la formule logique. Les substitutions sont
-regroupée dans une substitution parallèle, elles sont séparées par un ||. Le
-schéma de traduction est le suivant:
-
-EXEMPLE 
-
+les post-conditions, que l'on combine avec une définition d'ensemble
+en compréhension. Les variables en sortie auront une valeur respectant
+la postcondition qui va être utilisée pour définir l'ensemble en
+compréhension. 
+Les substitutions sont regroupée dans une substitution parallèle,
+elles sont séparées par un ||. 
+Les substitutions seront de la forme:
 \begin{alltt}
-guarantee out : formule_logique_sur_out
+out \(\in\): \{ iii | iii \(\in\) type_out & C \}
 \end{alltt}
-devient la substitution B:
-\begin{alltt}
-out \(\in\): \{ iii | iii \(\in\) type_out & formule_logique_sur_out\}
-\end{alltt}
-Cette substitution se lit \texttt{out} devient l'élément \texttt{iii} de l'ensemble
-de \texttt{type\_out} respectant \texttt{formule\_logique\_sur\_out}.
+avec \texttt{out} la variable de sortie, \texttt{type\_out} son type, et \texttt{C} la
+postcondition associée.\\
+En reprenant l'exemple de \texttt{bound} on obtient pour v:\\
+\texttt{vv $\in$: \{ iii | iii $\in$ INT \& iii <= 200 \& iii >= -2000 \}}
 
-\paragraph{Traduction des types de base}
-La traduction des types de base est directe:
-\begin{itemize}
-\item int est traduit par INT
-\item real est traduit par REAL
-\item bool est traduit par BOOL
-\end{itemize}
+
 
 \subsection{Le cas des tableaux}
 La traduction des conditions pour les tableaux est moins directe, car il n'y a
@@ -129,6 +138,13 @@ tableau \texttt{T} de n dimensions correspond à la formule B:
 \begin{alltt}
 \(\forall \)iii. (iii : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) f\_l)
 \end{alltt}
+
+Prenons par exemple un tableau T de taille 2 comprenant des entiers. La condition
+associée à T est que ses éléments doivent être compris entre 0 et 10 exclus.\\
+Le type du tableau sera alors: \\
+\texttt{T : (1 .. 2) $\rightarrow$ INT }\\
+Et la formule associée au tableau sera: \\
+\texttt{$\forall$iii. (iii $\in$ (1 .. 2) => 0 < T(iii) \& T(iii) < 10)}
 
 \subsection{schéma général}
 

@@ -21,24 +21,38 @@ langages synchrones et ne sont donc pas traduisibles en B.\\
 
 \paragraph{}
 Scade étant un environnement de programmation par schémas-blocs, on
-développe avec des "boîtes". Par exemple, un programme d'addition sur deux flux d'entiers A
-et B ayant pour sortie un flux C s'écrit:
+développe avec des "boîtes". Par exemple, un programme prenant en
+entrées 3 entiers \texttt{b\_sup}, \texttt{b\_inf} et \texttt{z}, qui retourne un entier v égal
+à:
+\begin{itemize}
+\item \texttt{z}, si \texttt{z} est compris entre \texttt{b\_inf} et \texttt{b\_sup}
+\item \texttt{b\_inf}, si \texttt{z} est inférieur à \texttt{b\_inf}
+\item \texttt{b\_sup}, si \texttt{z} est supérieur à \texttt{b\_sup}
+\end{itemize}
+Ce programme s'écrira de la façon suivante dans Scade. 
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.54]{1_add.png}
+\includegraphics[scale=0.7]{1_bound.png}
 \end{center}
-\caption{Schéma-block de l'addition}
+\caption{Version graphique du noeud bound}
 \end{figure}
 
-La version de ce programme correspond au noeud \texttt{add} suivant:
+La version textuelle de ce programme correspond au noeud \texttt{bound} suivant:
 
 \begin{figure}[h]
 \begin{center}
 \begin{verbatim}
-node add (A:int, B:int) returns (C:int);
-let 
-    C = A+B;
+node bound (z: int; b_inf: int; b_sup: int) returns (v: int);
+var
+  a: int;
+  c1: int;
+  c2: int;
+let
+  a = if c1 then b_inf else z;
+  v = if c2 then b_sup else a;
+  c1 = z < b_inf;
+  c2 = a > b_sup;
 tel
 \end{verbatim}
 \end{center}
@@ -62,11 +76,27 @@ est une expression portant sur une ou plusieurs variables locales ou entrées.
 \paragraph{}
 Les expressions disponibles sont toutes les expressions arithmétiques
 (\texttt{+, -, /, *, mod}), les expressions relationnelles (\texttt{<, >, <=, >=, =, <>})
-et logiques (\texttt{and, or, xor, not}). Les expressions conditionelles sont également
-possibles (\texttt{if .. then .. else ..}). Sont également disponibles les opérations sur les tableaux, telles que
-la définition, l'index, et la concaténation.\\
+et logiques (\texttt{and, or, xor, not}). Sont également disponibles les opérations sur les tableaux, telles que
+la définition, l'index, et la concaténation. Lors de la génération
+textuelle du noeud, Scade \emph{atomise} l'ensemble des opérations et
+introduit des variables locales qui correspondent aux fils du
+noeud. Pour ces opérations, la forme des équations sera donc toujours
+semblable, on aura une seule variable à gauche de l'équation, et à
+droite, on aura un opérateur appliqué à un ensemble de variables:
+
+\texttt{v = op$_{base}$(x$_1$, ..., x$_n$);}\\
+Les expressions conditionelles sont également possibles:
+
+\texttt{v = if c then x$_1$ else x$_2$;}\\
+avec \texttt{c}, \texttt{x$_1$} et \texttt{x$_2$} des variables. 
+
 Enfin, on peut évidemment faire des appels à d'autres
-noeuds, pour mettre en pratique la notion de composant réutilisable. \\
+noeuds, pour mettre en pratique la notion de composant
+réutilisable. Les équations correspondantes peuvent avoir plusieurs
+variables dans la partie gauche de l'équation, car un noeud appelé
+peut avoir plusieurs sorties.
+
+\texttt{v$_1$, ..., v$_p$ = op$_{appel}$(x$_1$, ..., x$_n$);}
 
 
 
@@ -87,57 +117,83 @@ synchroniser des instructions sur des horloges différentes. On utilise des
 opérateurs spécifiques au temps pour synchroniser une instruction sur une
 horloge spécifique. Pour assurer la bonne définition des noeuds dont les
 instructions sont calculées sur des horloges différentes, il existe
-
-A COMPLETER AVEC ARTICLE POUZET
-
+une étape de calcul des horloges \cite{Pouzet}.
 Cependant, dans le cadre de ce projet, nous n'utiliserons qu'une seule horloge,
 celle de base. Toutes les équations sont résolues au même instant. 
-Le seul opérateur temporel utilisable est l'opérateur \texttt{fby}. 
 
 \paragraph{L'opérateur fby}
-
+Il y a un seul opérateur temporel qui reste utilisable, c'est
+l'opérateur \texttt{fby}. Cet opérateur prend 3 arguments:
 \begin{itemize}
-\item pre X donne la valeur de l'expression X à l'instant précédent. A
-l'instant 0 \footnote{On suppose que le premier instant est l'instant
-0}, la valeur de pre X n'est pas définie. 
-\item A -> B donne au premier instant la valeur de l'expression A, 
-puis la valeur de l'expression B pour les instants allant de 1 à n. 
+\item une variable v
+\item un délai
+\item une initialisation
 \end{itemize}
+A l'instant i\footnote{On suppose que le premier instant est l'instant
+0}, \texttt{fby} retourne la valeur de la variable v à
+l'instant (i - délai). Dans le cas ou (i - délai) est négatif,
+l'opérateur retourne la valeur initialisation.
+Par exemple, on représente dans le tableau suivant la valeur de sortie
+de l'opérateur \texttt{fby} en fonction de la valeur d'une variable
+d'entrée \texttt{v}, avec une initilisation à 0, et un délai fixé à 1.
 
-Cette construction correspond au bloc Simulink 1/Z, où A représente un
-flux constant qui donnera la valeur de sortie à l'instant 0 du
-bloc. Puis pour les instants 1 à n, on aura la valeur de l'expression
-X à l'instant (1 à n)-1. \\
-On appellera cette construction un \emph{registre}, qui est initialisé avec la
-valeur A, et qui permet d'accéder à la valeur précédente de X à tout
-instant. Cette construction permet de donner un \emph{état} à un composant.
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{ l || c | c | c | c }
+\texttt{instant} & 0 & 1 & 2 & ... \\ \hline
+\texttt{v} & 10 & 20 & 30 & ... \\
+\texttt{z} & 0 & 10 & 20 & ... \\
+\end{tabular}
+\end{center}
+\caption{\texttt{z = fby(v, 1, 0)}}
+\end{figure}
+
+Cet opérateur permet de donner un \emph{état} à un composant, les
+calculs des équations étant alors dépendants de l'instant où ils sont
+effectués.
+Par la suite, on appellera cette construction un \emph{registre}.
 
 
 \section{Contrats}
 
-\paragraph{Assertions}
 On peut définir des assertions dans un noeud afin de poser des
 restrictions sur les valeurs d'entrée ou de sortie du composant. Avec
 Scade, ces assertions sont possibles avec :
 \begin{itemize}
 \item \texttt{assume A: expr}, où \texttt{A} correspond à l'identifiant de la condition, et
-\texttt{expr} un prédicat portant sur une entrée du noeud.
+\texttt{expr} un prédicat portant sur une entrée du noeud: une précondition.
 \item \texttt{guarrantee G: expr}, où \texttt{G} est l'identifiant de la condition, et
-\texttt{expr} un prédicat portant sur une sortie du noeud.
+\texttt{expr} un prédicat portant sur une sortie du noeud: une postcondition.
 \end{itemize}
 Ces assertions forment le contrat du composant, et seront
 obligatoires sauf pour la restriction sur les booléen qui est triviale (la
-valeur sera vraie ou fausse).\\
-Par exemple, en reprenant le noeud \texttt{add} précédent, on impose comme condition sur
-les entrées qu'elles doivent être comprises entre 0 et 100 inclus. Si les
-préconditions sont respectées, alors la sortie sera comprise entre 0 et 200 inclus:
+valeur sera vraie ou fausse). Pour les entiers et les réels, on
+indiquera des intervals de valeurs.\\
+
+Par exemple, en reprenant le noeud \texttt{bound} précédent, on donne comme condition sur
+les entrées qu'elles doivent être comprises entre -2000 et 2000 inclus. Si les
+préconditions sont respectées, alors la sortie sera comprise entre -2000
+et 2000 inclus:
+\begin{figure}[h]
+\begin{center}
 \begin{verbatim}
-node add (A:int, B:int) returns (C:int);
-let 
-    assume A_1 : A <= 100 & A >= 0;
-    assume A_2 : B <= 100 & B >= 0;
-    guarantee G_1 : C <= 200 & C >= 0;
-    C = A+B;
+node bound (z: int; b_inf: int; b_sup: int) returns (v: int);
+var
+  a: int;
+  c1: int;
+  c2: int;
+let
+  assume A_1 : b_inf <= 2000 and b_inf >= -2000;
+  assume A_2 : b_sup <= 2000 and b_sup >= -2000;
+  assume A_3 : z <= 2000 and z >= -2000;
+  guarantee G_1 : v <= 2000 and v >= -2000;
+  a = if c1 then b_inf else z;
+  v = if c2 then b_sup else a;
+  c1 = z < b_inf;
+  c2 = a > b_sup;
 tel
 \end{verbatim}
+\end{center}
+\caption{Noeud bound avec contrat}
+\end{figure}
 

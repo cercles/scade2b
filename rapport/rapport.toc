@@ -1,67 +1,66 @@
 \select@language {french}
-\contentsline {chapter}{\numberline {1}Introduction}{2}
-\contentsline {chapter}{\numberline {2}Scade}{4}
-\contentsline {section}{\numberline {2.1}Architecture d'un composant Scade}{4}
-\contentsline {paragraph}{}{4}
+\contentsline {chapter}{\numberline {1}Scade}{4}
+\contentsline {section}{\numberline {1.1}Architecture d'un composant Scade}{4}
 \contentsline {paragraph}{}{4}
 \contentsline {paragraph}{}{5}
-\contentsline {section}{\numberline {2.2}Le temps avec Scade}{5}
-\contentsline {paragraph}{Une horloge unique}{5}
-\contentsline {paragraph}{L'op\IeC {\'e}rateur fby}{5}
-\contentsline {section}{\numberline {2.3}Contrats}{6}
-\contentsline {paragraph}{Assertions}{6}
-\contentsline {chapter}{\numberline {3}Machines B}{7}
-\contentsline {section}{\numberline {3.1}Machine B}{7}
-\contentsline {subsection}{\numberline {3.1.1}Structure d'une machine}{7}
-\contentsline {subsection}{\numberline {3.1.2}Clauses}{8}
-\contentsline {paragraph}{Refines}{8}
-\contentsline {paragraph}{Imports}{8}
-\contentsline {paragraph}{Sees}{8}
-\contentsline {paragraph}{Concrete\_Variables}{8}
-\contentsline {paragraph}{Invariant}{8}
-\contentsline {paragraph}{Initialisation}{8}
-\contentsline {paragraph}{Op\IeC {\'e}rations}{8}
-\contentsline {subsection}{\numberline {3.1.3}Pr\IeC {\'e}dicats}{8}
-\contentsline {paragraph}{}{8}
+\contentsline {paragraph}{}{5}
+\contentsline {section}{\numberline {1.2}Le temps avec Scade}{5}
+\contentsline {paragraph}{Une horloge unique}{6}
+\contentsline {paragraph}{L'op\IeC {\'e}rateur fby}{6}
+\contentsline {section}{\numberline {1.3}Contrats}{6}
+\contentsline {chapter}{\numberline {2}Machines B}{8}
+\contentsline {section}{\numberline {2.1}Machine B}{8}
+\contentsline {subsection}{\numberline {2.1.1}Structure d'une machine}{8}
+\contentsline {subsection}{\numberline {2.1.2}Clauses}{9}
+\contentsline {paragraph}{Refines}{9}
+\contentsline {paragraph}{Imports}{9}
+\contentsline {paragraph}{Sees}{9}
+\contentsline {paragraph}{Concrete\_Variables}{9}
+\contentsline {paragraph}{Invariant}{9}
+\contentsline {paragraph}{Initialisation}{9}
+\contentsline {paragraph}{Op\IeC {\'e}rations}{9}
+\contentsline {subsection}{\numberline {2.1.3}Pr\IeC {\'e}dicats}{9}
 \contentsline {paragraph}{}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {section}{\numberline {3.2}Expressions}{9}
-\contentsline {paragraph}{}{9}
-\contentsline {paragraph}{Des fonctions}{9}
-\contentsline {paragraph}{Les tableaux en B}{9}
-\contentsline {section}{\numberline {3.3}Substitutions}{9}
-\contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{9}
-\contentsline {paragraph}{Substitution Appel operation}{9}
-\contentsline {paragraph}{Substitution Condition}{10}
-\contentsline {paragraph}{Substitution Variable Locale}{10}
-\contentsline {paragraph}{Substitution Sequence}{10}
 \contentsline {paragraph}{}{10}
-\contentsline {paragraph}{Substitution Parall\IeC {\`e}le}{10}
-\contentsline {paragraph}{Substitution Devient Element De}{10}
-\contentsline {paragraph}{Substitution Precondition}{10}
-\contentsline {section}{\numberline {3.4}Raffinements}{10}
-\contentsline {subsection}{\numberline {3.4.1}Principes du raffinement}{10}
-\contentsline {subsection}{\numberline {3.4.2}Obligations de preuves}{11}
-\contentsline {paragraph}{Initialisation de l'implantation}{11}
-\contentsline {paragraph}{Op\IeC {\'e}ration de l'implantation}{12}
-\contentsline {chapter}{\numberline {4}Sch\IeC {\'e}mas de traduction}{13}
-\contentsline {section}{\numberline {4.1}Sp\IeC {\'e}cification}{13}
-\contentsline {subsection}{\numberline {4.1.1}Traduction de la d\IeC {\'e}claration du noeud}{13}
-\contentsline {subsection}{\numberline {4.1.2}Traduction des conditions}{13}
-\contentsline {paragraph}{Traduction des pr\IeC {\'e}conditions}{14}
-\contentsline {paragraph}{Traduction des postconditions}{14}
+\contentsline {paragraph}{}{10}
+\contentsline {section}{\numberline {2.2}Expressions}{10}
+\contentsline {paragraph}{Expressions de base}{10}
+\contentsline {paragraph}{Des fonctions}{10}
+\contentsline {paragraph}{Les tableaux en B}{10}
+\contentsline {paragraph}{Ensembles en compr\IeC {\'e}hension}{10}
+\contentsline {section}{\numberline {2.3}Substitutions}{11}
+\contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{11}
+\contentsline {paragraph}{Substitution Appel operation}{11}
+\contentsline {paragraph}{Substitution Condition}{11}
+\contentsline {paragraph}{Substitution Variable Locale}{11}
+\contentsline {paragraph}{Substitution Sequence}{11}
+\contentsline {paragraph}{}{11}
+\contentsline {paragraph}{Substitution Parall\IeC {\`e}le}{11}
+\contentsline {paragraph}{Substitution Devient Element De}{12}
+\contentsline {paragraph}{Substitution Precondition}{12}
+\contentsline {section}{\numberline {2.4}Raffinements}{12}
+\contentsline {subsection}{\numberline {2.4.1}Principes du raffinement}{12}
+\contentsline {subsection}{\numberline {2.4.2}Obligations de preuves}{13}
+\contentsline {paragraph}{Initialisation de l'implantation}{13}
+\contentsline {paragraph}{Op\IeC {\'e}ration de l'implantation}{13}
+\contentsline {chapter}{\numberline {3}Sch\IeC {\'e}mas de traduction}{14}
+\contentsline {section}{\numberline {3.1}Sp\IeC {\'e}cification}{14}
+\contentsline {subsection}{\numberline {3.1.1}Traduction de la d\IeC {\'e}claration du noeud}{14}
 \contentsline {paragraph}{Traduction des types de base}{14}
-\contentsline {subsection}{\numberline {4.1.3}Le cas des tableaux}{14}
-\contentsline {paragraph}{Traduction des types}{14}
-\contentsline {paragraph}{Traduction des formules logiques}{15}
-\contentsline {subsection}{\numberline {4.1.4}sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{15}
-\contentsline {section}{\numberline {4.2}Impl\IeC {\'e}mentation}{15}
-\contentsline {subsection}{\numberline {4.2.1}Traduction des \IeC {\'e}quations}{15}
-\contentsline {paragraph}{Op\IeC {\'e}rateurs de base}{16}
-\contentsline {paragraph}{Appel de noeud}{16}
-\contentsline {paragraph}{Alternative}{16}
-\contentsline {paragraph}{Registre}{16}
-\contentsline {subsection}{\numberline {4.2.2}Retour sur la traduction des registres}{17}
-\contentsline {subsection}{\numberline {4.2.3}Gestion des clauses SEES et IMPORTS}{18}
-\contentsline {subsection}{\numberline {4.2.4}sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{18}
-\contentsline {section}{\numberline {4.3}Le traducteur}{19}
+\contentsline {subsection}{\numberline {3.1.2}Traduction des conditions}{15}
+\contentsline {paragraph}{Traduction des pr\IeC {\'e}conditions}{15}
+\contentsline {paragraph}{Traduction des postconditions}{15}
+\contentsline {subsection}{\numberline {3.1.3}Le cas des tableaux}{15}
+\contentsline {paragraph}{Traduction des types}{15}
+\contentsline {paragraph}{Traduction des formules logiques}{16}
+\contentsline {subsection}{\numberline {3.1.4}sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{16}
+\contentsline {section}{\numberline {3.2}Impl\IeC {\'e}mentation}{17}
+\contentsline {subsection}{\numberline {3.2.1}Traduction des \IeC {\'e}quations}{17}
+\contentsline {paragraph}{Op\IeC {\'e}rateurs de base}{17}
+\contentsline {paragraph}{Appel de noeud}{17}
+\contentsline {paragraph}{Alternative}{17}
+\contentsline {paragraph}{Registre}{17}
+\contentsline {subsection}{\numberline {3.2.2}Retour sur la traduction des registres}{18}
+\contentsline {subsection}{\numberline {3.2.3}Gestion des clauses SEES et IMPORTS}{19}
+\contentsline {subsection}{\numberline {3.2.4}Sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{19}
+\contentsline {section}{\numberline {3.3}Le traducteur}{20}

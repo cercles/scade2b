@@ -1,12 +1,21 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.7.10)  30 AUG 2013 11:01
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.7.10)  30 AUG 2013 18:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **rapport.tex
 (./rapport.tex
 LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, fr
-ench, basque, loaded.
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, et
+hiopic, farsi, arabic, pinyin, croatian, bulgarian, ukrainian, russian, slovak,
+ czech, danish, dutch, usenglishmax, ukenglish, finnish, french, basque, ngerma
+n, german, swissgerman, ngerman-x-2012-05-30, german-x-2012-05-30, monogreek, g
+reek, ibycus, ancientgreek, hungarian, bengali, tamil, hindi, telugu, gujarati,
+ sanskrit, malayalam, kannada, assamese, marathi, oriya, panjabi, italian, lati
+n, latvian, lithuanian, mongolian, mongolianlmc, nynorsk, bokmal, indonesian, e
+speranto, coptic, welsh, irish, interlingua, serbian, serbianc, slovenian, friu
+lan, romansh, estonian, romanian, armenian, uppersorbian, turkish, afrikaans, i
+celandic, kurmanji, polish, portuguese, galician, catalan, spanish, swedish, th
+ai, loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
 Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
@@ -274,7 +283,7 @@ Now handling font encoding U ...
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
 ))
-(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+(/var/lib/texmf/tex/generic/babel/babel.sty
 Package: babel 2008/07/08 v3.8m The Babel package
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/frenchb.ldf
@@ -606,9 +615,11 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
  [1
 
 
-]
-Chapitre 1.
-(./intro.tex
+] (./intro.tex
+
+LaTeX Warning: Citation `Cercles' on page 2 undefined on input line 8.
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 8--14
 
  []
@@ -619,6 +630,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 15--25
  []
 
 
+LaTeX Warning: Citation `Hoare' on page 2 undefined on input line 41.
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 33--57
 
  []
@@ -627,6 +641,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 33--57
 Underfull \hbox (badness 10000) in paragraph at lines 66--67
 
  []
+
+
+LaTeX Warning: Citation `JRA' on page 2 undefined on input line 76.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 68--90
@@ -640,7 +657,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 91--96
 
  []
 
-<img/intro_schema.png, id=23, 608.2725pt x 187.70125pt>
+<img/intro_schema.png, id=22, 608.2725pt x 187.70125pt>
 File: img/intro_schema.png Graphic file (type png)
 
 <use img/intro_schema.png>
@@ -654,153 +671,185 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [3 <./img/intro_schema.png>]
-Chapitre 2.
+Chapitre 1.
 (./1_fragmentscade.tex
+
+LaTeX Warning: Citation `Estech' on page 4 undefined on input line 9.
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 8--17
 
  []
 
-<img/1_add.png, id=30, 286.06876pt x 118.4425pt>
-File: img/1_add.png Graphic file (type png)
- <use img/1_add.png>
-Package pdftex.def Info: img/1_add.png used on input line 29.
-(pdftex.def)             Requested size: 154.47482pt x 63.958pt.
-LaTeX Font Info:    Try loading font information for T1+txtt on input line 34.
-
+LaTeX Font Info:    Try loading font information for T1+txtt on input line 25.
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
 File: t1txtt.fd 2000/12/15 v3.1
-) [4
+)
+<img/1_bound.png, id=29, 478.1865pt x 215.00325pt>
+File: img/1_bound.png Graphic file (type png)
+ <use img/1_bound.png>
+Package pdftex.def Info: img/1_bound.png used on input line 36.
+(pdftex.def)             Requested size: 334.72826pt x 150.50124pt.
 
- <./img/1_add.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 63--70
+[4
+
+ <./img/1_bound.png>] [5]
+
+LaTeX Warning: Citation `Pouzet' on page 6 undefined on input line 120.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--172
 
  []
 
-[5]) [6]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+) [6] [7]
+Chapitre 2.
+(./2_machinesB.tex [8
+
+] [9]
+Underfull \hbox (badness 10000) in paragraph at lines 163--169
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--176
+
+ []
+
+[10] [11]
+Underfull \hbox (badness 10000) in paragraph at lines 268--269
+
+ []
+
+[12]
+
+LaTeX Warning: Citation `JRA' on page 13 undefined on input line 362.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 364--367
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 368--369
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 370--372
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 375--378
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 380--381
+
+ []
+
+) [13]
 Chapitre 3.
-(./2_machinesB.tex [7
-
-] [8] [9]
-Underfull \hbox (badness 10000) in paragraph at lines 242--243
-
- []
-
-[10]
-Underfull \hbox (badness 10000) in paragraph at lines 339--342
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 343--344
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 345--347
-
- []
-
-[11]
-Underfull \hbox (badness 10000) in paragraph at lines 350--353
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 355--356
-
- []
-
-) [12]
-Chapitre 4.
 (./3_schemastrad.tex
 Underfull \hbox (badness 10000) in paragraph at lines 8--12
 
  []
 
-[13
+[14
 
 ]
-Overfull \hbox (62.93872pt too wide) in paragraph at lines 86--88
-\T1/cmr/m/n/10.95 Cette sub-sti-tu-tion se lit \T1/txtt/m/n/10.95 out \T1/cmr/m
-/n/10.95 de-vient l'élé-ment \T1/txtt/m/n/10.95 iii \T1/cmr/m/n/10.95 de l'en-s
-emble de \T1/txtt/m/n/10.95 type_out \T1/cmr/m/n/10.95 res-pec-tant \T1/txtt/m/
-n/10.95 formule_logique_sur_out\T1/cmr/m/n/10.95 . 
- []
+Underfull \hbox (badness 10000) in paragraph at lines 75--78
 
-[14]
-Overfull \hbox (0.40984pt too wide) in paragraph at lines 144--144
-[]  \T1/txtt/m/n/10.95 (out$[]$: out$[]$_type, ..., out$[]$: out$[]$_type);[] 
  []
 
 
-Overfull \hbox (39.3396pt too wide) in paragraph at lines 174--174
-[]    \T1/txtt/m/n/10.95 out$[]$ $\OMS/cmsy/m/n/10.95 2$\T1/txtt/m/n/10.95 : { 
-iii | iii $\OMS/cmsy/m/n/10.95 2$ \T1/txtt/m/n/10.95 out$[]$_type & pred_out$[]
-$}[] 
- []
+Underfull \hbox (badness 10000) in paragraph at lines 79--84
 
-
-Overfull \hbox (38.83542pt too wide) in paragraph at lines 176--176
-[]    \T1/txtt/m/n/10.95 out$[]$ $\OMS/cmsy/m/n/10.95 2$\T1/txtt/m/n/10.95 : { 
-iii | iii $\OMS/cmsy/m/n/10.95 2$ \T1/txtt/m/n/10.95 out$[]$_type & pred_out$[]
-$}[] 
  []
 
 [15]
-Underfull \hbox (badness 10000) in paragraph at lines 206--210
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 214--218
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 223--225
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 230--238
-
- []
-
-[16] [17]
-Overfull \hbox (0.40984pt too wide) in paragraph at lines 362--362
+Overfull \hbox (0.40984pt too wide) in paragraph at lines 153--153
 []  \T1/txtt/m/n/10.95 (out$[]$: out$[]$_type, ..., out$[]$: out$[]$_type);[] 
  []
 
-[18]) (./rapport.bbl [19]) [20
 
-] (./rapport.aux) ) 
+Overfull \hbox (39.3396pt too wide) in paragraph at lines 183--183
+[]    \T1/txtt/m/n/10.95 out$[]$ $\OMS/cmsy/m/n/10.95 2$\T1/txtt/m/n/10.95 : { 
+iii | iii $\OMS/cmsy/m/n/10.95 2$ \T1/txtt/m/n/10.95 out$[]$_type & pred_out$[]
+$}[] 
+ []
+
+
+Overfull \hbox (38.83542pt too wide) in paragraph at lines 185--185
+[]    \T1/txtt/m/n/10.95 out$[]$ $\OMS/cmsy/m/n/10.95 2$\T1/txtt/m/n/10.95 : { 
+iii | iii $\OMS/cmsy/m/n/10.95 2$ \T1/txtt/m/n/10.95 out$[]$_type & pred_out$[]
+$}[] 
+ []
+
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 215--219
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 223--227
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--234
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 239--247
+
+ []
+
+[17] [18]
+Overfull \hbox (0.40984pt too wide) in paragraph at lines 371--371
+[]  \T1/txtt/m/n/10.95 (out$[]$: out$[]$_type, ..., out$[]$: out$[]$_type);[] 
+ []
+
+[19])
+No file rapport.bbl.
+[20] (./rapport.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 4773 strings out of 495030
- 60793 string characters out of 3180761
- 146412 words of memory out of 3000000
- 7836 multiletter control sequences out of 15000+200000
+ 4769 strings out of 493485
+ 60757 string characters out of 3143526
+ 147675 words of memory out of 3000000
+ 7948 multiletter control sequences out of 15000+200000
  22558 words of font info for 56 fonts, out of 3000000 for 9000
- 14 hyphenation exceptions out of 8191
+ 957 hyphenation exceptions out of 8191
  38i,12n,43p,240b,465s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}<
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/public/cm-su
-per/sfbx1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></u
-sr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts
-/type1/public/cm-super/sfbx2074.pfb></usr/share/texmf/fonts/type1/public/cm-sup
-er/sfbx2488.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfcc1095.pfb></us
-r/share/texmf/fonts/type1/public/cm-super/sfcc1200.pfb></usr/share/texmf/fonts/
-type1/public/cm-super/sfrm0800.pfb></usr/share/texmf/fonts/type1/public/cm-supe
-r/sfrm0900.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1095.pfb></usr
-/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/t
-ype1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super
-/sfti1095.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1xbtt.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
-Output written on rapport.pdf (21 pages, 339003 bytes).
+{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1095.pfb>
+</usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf/fo
+nts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-
+super/sfbx2074.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx2488.pfb><
+/usr/share/texmf/fonts/type1/public/cm-super/sfcc1095.pfb></usr/share/texmf/fon
+ts/type1/public/cm-super/sfcc1200.pfb></usr/share/texmf/fonts/type1/public/cm-s
+uper/sfrm0800.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm0900.pfb></
+usr/share/texmf/fonts/type1/public/cm-super/sfrm1095.pfb></usr/share/texmf/font
+s/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-su
+per/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1095.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1xbtt.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
+Output written on rapport.pdf (21 pages, 342354 bytes).
 PDF statistics:
  163 PDF objects out of 1000 (max. 8388607)
  113 compressed objects within 2 object streams

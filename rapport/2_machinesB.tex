@@ -118,7 +118,8 @@ condition, comme dans la substitution \emph{Condition}.
 
 \paragraph{}
 Les prédicats de base sont exprimables à l'aide des opérateurs de
-comparaison habituels: \texttt{<, >, $\leq$}, et \texttt{$\geq$}. Les expressions doivent
+comparaison habituels: \texttt{<, >, $\leq$}, et \texttt{$\geq$}. Les
+expressions qui composent ces prédicats de base doivent
 être de type entier ou réel.
 
 \paragraph{}
@@ -126,28 +127,26 @@ Pour exprimer un prédicat plus complexe à partir de prédicats basique,
 on utilise des connecteurs propositionnels : conjonction \texttt{$\vee$},
 disjonction \texttt{$\wedge$}, négation \texttt{$\neg$}, implication
 \texttt{$\Rightarrow$} et équivalence \texttt{$\Leftrightarrow$}.\\
-Par exemple, soit $P$ et $Q$ des prédicats: $P\wedge\neg(Q)$
+Par exemple, soit $P$ et $Q$ des prédicats: $P\wedge\neg(Q)$ est
+également un prédicat.
 
 \paragraph{}
-On utilisera aussi le quantificateur $\forall$, notamment lorsqu'on
+On utilisera aussi le quantificateur $\forall$, et on aura besoin de
+l'opérateur d'appartenance à un ensemble $\in$.\\  
+Ces opérateurs seront utiles lorsqu'on
 définira des tableaux, pour établir une condition pour tous les
-éléments du tableau. Et on aura besoin de l'opérateur d'appartenance à
-un ensemble $\in$.\\
+éléments du tableau.
 Par exemple, soit $tab$ un tableau : $\forall iii . (iii \in (1..5)
 \Rightarrow tab(iii) < 5)$\\
 Cet exemple indique que tout élément du tableau ayant un indice compris
 entre 1 et 5 doit être strictement inférieur à 5. 
-
-%% NOTE: ON PEUT SE PASSER DU APPARTIENT AVEC \\
-%% !iii . (iii : INT $\wedge$ iii > 0 $\wedge$ 6 > iii => tab(iii) < 5) \\
-%% A REGARDER DANS IMPLEM
 
 
 % SECTION 2 : Expressions
 
 \section{Expressions}
 
-\paragraph{}
+\paragraph{Expressions de base}
 Les expressions permettent de désigner les données utilisées. Les
 expressions de base désignent une variable ou une valeur primitive.
 On retrouve toutes les expressions arithmétiques classiques, addition,
@@ -156,17 +155,43 @@ soustraction, multiplication, division et modulo.
 \paragraph{Des fonctions}
 
 Nous utiliserons également les fonctions, pour appeler des opérations
-définies dans d'autres composants, mais aussi pour modéliser les
+définies dans d'autres MACHINES, mais aussi pour modéliser les
 tableaux en B. Il n'y a pas de type primitif tableau en B, il faut les
-modéliser à l'aide de fonctions.
+modéliser à l'aide de fonctions. 
 
 \paragraph{Les tableaux en B}
-Un tableau est une fonction dont l'ensemble de départ est le produit
+Un tableau est donc une fonction dont l'ensemble de départ est le produit
 cartésien de n ensembles (où n correspond au nombre de dimensions du
 tableau), et dont l'ensemble d'arrivée est un ensemble concret.\\
 Par exemple, soit $tab$ un tableau, \\
 $tab \in (0..4)*(0..5) \rightarrow INT$ \\
-est une matrice de 5 lignes et 6 colonnes contenant des entiers.
+est une matrice de 5 lignes et 6 colonnes contenant des entiers.\\
+
+Les tableaux sont donc habituellement modélisé par des fonctions en B,
+mais on aurait également pu utiliser le type \emph{séquence}. Ce
+dernier correspond au type liste que l'on retrouve dans des langages
+comme OCaml ou Scheme. Cependant, reproduire les opérations des
+tableaux avec les séquence n'est pas aussi intuitive qu'avec les
+fonctions.\\
+
+Par exemple, la sélection d'un élément présent à l'indice i d'une
+séquence T se fait à l'aide de deux opérateurs:
+\begin{itemize}
+\item $T\downarrow i$ : retourne la séquence T dont les i premiers
+éléments on été supprimés.
+\item $first(T)$ : retourne le premier élément de la séquence T
+\end{itemize}
+La sélection s'écrit alors: $first(T\downarrow i)$. Tandis qu'avec les
+fonctions, la sélection s'écrit T(i) pour une fonction T modélisant un
+tableau dans lequel on veux obtenir l'élément présent à l'indice i.
+
+\paragraph{Ensembles en compréhension}
+La définition d'ensemble en compréhension fait également partie des expressions de
+B. On l'utilise notamment dans l'écriture des postconditions. A partir
+de la condition sur la sortie, on obtient un ensemble qui respecte
+cette propriété. A partir d'un ensemble $E$, et d'une
+condition $C$ portant sur les éléments de l'ensemble, la définition
+d'ensemble en compréhension s'écrit $\{ iii \in E | C \}$.
 
 
 % SECTION 3 : Substitutions
@@ -182,24 +207,24 @@ de Scade à ces substitutions.
 
 \paragraph{Substitution Devient égal}
 Cette substitution réalise l'affectation, elle remplace une variable
-par une expression. Elle se note : Soit e une expression, x une
+par une expression. Notation : Soit e une expression, x une
 variable et P un prédicat,
 
 [ x:=e ] P \\
 Le prédicat obtenu a alors toute les occurrences libre de x dans P par e.
 
 \paragraph{Substitution Appel operation}
-cette substitution se note : Soit R un identificateur correspondant à la sortie
+Notation : Soit R un identificateur correspondant à la sortie
 de l'opération op appliquée aux expressions E, 
 
-[R$\leftarrow$ op(E)]P\\
+[R $\leftarrow$ op(E)]P\\
 La  substitution appel d’opération permet d’appliquer la substitution
 d’une opération (non locale ou locale), en remplaçant les paramètres
 formels par des paramètres effectifs. 
 
 \paragraph{Substitution Condition}
 C'est cette substitution que l'on utilise pour exprimer le choix entre deux
-substitutions. Elle se note : Soit P et R des prédicats, et S et T des
+substitutions. Notation : Soit P et R des prédicats, et S et T des
 substitutions,
 
 [IF P THEN S ELSE T]R \\
@@ -210,7 +235,7 @@ s'applique à R.
 \paragraph{Substitution Variable Locale}
 Cette substitution n'est pas utilisée dans la machine abstraite. Elle permet
 d'introduire une liste de variables locales.
-Elle se note : Soit S une séquence de substitutions et X une liste de variables,
+Notation : Soit S une séquence de substitutions et X une liste de variables,
 
 [VAR X IN S END]\\
 La liste de variable sera accessible dans les substitutions S contenues dans le
@@ -236,14 +261,15 @@ l'autre. Les deux substitutions sont séparées par \textbf{||} .
 \paragraph{Substitution Devient Element De}
 Les conditions sur les entrées et sorties du programmes sont souvent
 des restrictions sur des ensembles de valeurs. Cette substitution permet
-d'attribuer à une variable, une valeur tirée dans un ensemble. Elle se note:
-Soit E un ensemble et X une variable, 
+d'attribuer à une variable, une valeur tirée dans un ensemble. C'est
+une substitution inderterminée. 
+Notation: Soit E un ensemble et X une variable, 
 
 [X:$\in$ E] \\
 
 \paragraph{Substitution Precondition}
 Cette substitution fixe les
-préconditions sous lesquelles une substitution sera valide. Elle se note : Soit P
+préconditions sous lesquelles une substitution sera valide. Notation : Soit P
 un prédicat et S une substitution,
 
 [PRE P THEN S END]\\
@@ -285,7 +311,7 @@ conserve les propriétés invariantes de la machine abstraite.
 
 Dans le cadre du projet, nous n'avons qu'une étape de raffinement, et la forme
 générale d'une machine abstraite et de son raffinement est le suivant: 
-
+\newpage
 
 
 \setlength{\columnseprule}{0.05cm}
@@ -333,11 +359,10 @@ outs \(\leftarrow\) op(ins) =
 
 Pour chaque machine, de la spécification à l'implantation, il faut
 passer trois étapes de vérification: au niveau syntaxique, le typage, et les obligations de preuves.  
-On ne montrera pas la construction des différentes obligations de
-preuves, ces dernières ont été définies dans le B-Book \cite{JRA}. 
+Les obligations de preuves ont été définies dans le B-Book \cite{JRA}. 
 
 \paragraph{Initialisation de l'implantation} Pour l'initialisation, la preuve
-dépend également des machines présentes dans les clauses IMPORTS et
+dépend des machines présentes dans les clauses IMPORTS et
 SEES. L'obligation de preuve générée est la suivante:\\
 
 \bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\Rightarrow$ [Ini$_{imp}$; Ini] Inv} \\
