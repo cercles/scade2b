@@ -224,7 +224,8 @@ effectue une simple affectation. Les opérateurs de base de Scade sont identique
 à ceux du langage B. Le membre gauche de l'équation correspond à une unique
 variable, les opérations étant atomiques dans Scade. \\
 
-\texttt{$a = op(b_1,...,b_n)$ $\xrightarrow{traduction ~ equations}$ $a:=op(b_1,...,b_n)$. }
+\texttt{$a = op_{base}(b_1,...,b_n)$ $\xrightarrow{traduction ~
+equations}$ $a:=op_{base}(b_1,...,b_n)$. }
 
 \paragraph{Appel de noeud}
 Un appel de noeud est traduit par une substitution \emph{Appel d'Opération}. Le
@@ -232,8 +233,9 @@ membre gauche de l'équation contient autant de variables qu'il y a de sorties
 pour le noeud appelé. Le noeud appelé doit avoir été traduit auparavant, et la
 machine B correspondante doit être présente dans la clause \texttt{IMPORT}.\\
 
-\texttt{$(a_1, ... a_n) = n(b_1, ..., b_m)$ $\xrightarrow{traduction ~ equations}$ $(a_1, ... a_n) \leftarrow n(b_1,
-..., b_n)$}
+\texttt{$(a_1, ... a_n) = op_{appel}(b_1, ..., b_m)$
+$\xrightarrow{traduction ~ equations}$ $(a_1, ... a_n) \leftarrow
+op_{appel}(b_1,..., b_n)$} 
 
 \paragraph{Alternative}
 On traduit l'alternative par la substitution \emph{Condition}. On utilise
