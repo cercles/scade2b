@@ -260,11 +260,11 @@ plus garantit.
 
 Le raffinement d'une machine est une reformulation en une
 expression plus concrète et enrichie. La relation de raffinement est transitive:
-les valeurs calculées par l'implantation sont conformes à celles attendues par
-la machine abstraite. 
+si le raffinement est correct, les valeurs calculées par l'implantation sont
+conformes à celles attendues par la machine abstraite.
 
 L'implantation correspond à un code exécutable après une compilation vers du
-code C ou Ada. Donc vers un programme équivalent à celui écrit avec
+code C ou Ada. Donc vers un programme semblable à celui écrit avec
 Scade, qui est également compilé vers du C en fin de chaîne. Cependant
 nous ne nous intéresserons pas au programme produit par l'atelierB,
 car le compilateur de Scade produisant le C (KCG 6) est qualifié pour produire
@@ -273,7 +273,7 @@ du code certifié pour la norme DO178b.
 Ainsi, le raffinement permet de concrétiser un programme jusqu'à obtenir un code
 exécutable, mais il permet surtout de générer un certain nombre de preuves à
 démontrer pour prouver que la reformulation de la spécification est valide.
-La génération des hypothèses à démontrer est automatique dans l'Atelier B, grâce à la
+La génération des propriétés à démontrer est automatique dans l'Atelier B, grâce à la
 transformation des prédicats par les substitutions. 
 
 La machine abstraite reprendra uniquement les éléments du contrat du composant,
@@ -283,7 +283,8 @@ raffinements de la machine abstraite. Nous n'utiliserons qu'une étape de
 raffinement: l'implantation. Il faut donc prouver que cette machine raffinée
 conserve les propriétés invariantes de la machine abstraite.
 
-La forme générale d'une machine abstraite et de son raffinement est le suivant:
+Dans le cadre du projet, nous n'avons qu'une étape de raffinement, et la forme
+générale d'une machine abstraite et de son raffinement est le suivant: 
 
 
 
@@ -330,21 +331,10 @@ outs \(\leftarrow\) op(ins) =
 
 \subsection{Obligations de preuves}
 
-Pour chaque machine, depuis la spécification à l'implémentation, il faut
-passer une étape de type checking et d'obligation de preuve. L'étape de type
-checking vérifie la cohérence des types des données manipulées ainsi que la
-syntaxe du programme. Une fois cette étape validée, on peut générer les
-obligations de preuves. Le principe des obligations de preuves consiste à
-prouver une formule à partir d'une liste d'hypothèses:\\
-Hypothèses (liste de prédicats)\\
-$\Rightarrow$\\
-But (doit être prouvé sous ces hypothèses)\\
+Pour chaque machine, de la spécification à l'implantation, il faut
+passer trois étapes de vérification: au niveau syntaxique, le typage, et les obligations de preuves.  
 On ne montrera pas la construction des différentes obligations de
-preuves, ces dernières ont été définies dans le B-Book. 
-
-\noindent
-Pour l'implantation, les obligations seront générées pour la clause opération,
-mais aussi pour la clause initialisation. 
+preuves, ces dernières ont été définies dans le B-Book \cite{JRA}. 
 
 \paragraph{Initialisation de l'implantation} Pour l'initialisation, la preuve
 dépend également des machines présentes dans les clauses IMPORTS et
@@ -354,7 +344,7 @@ SEES. L'obligation de preuve générée est la suivante:\\
 
 Avec Inv$_{imp}$ et  Inv$_{see}$ les invariants des machines importées et vues,
 et Ini$_{imp}$ les initialisations des machines importées. \\
-...EXPLICATION NECESSAIRE
+
 
 \paragraph{Opération de l'implantation}
 L'opération de l'implantation dépend également des machines importées et vues, mais
@@ -364,7 +354,6 @@ suivante:\\
 \bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\wedge$ Inv $\wedge$ P $\Rightarrow$ [S']$ \neg
 $[S]$ \neg $(Inv)}\\
 
-...EXPLICATION NECESSAIRE
 
 
 

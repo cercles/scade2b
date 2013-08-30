@@ -30,27 +30,27 @@
 \contentsline {paragraph}{Des fonctions}{9}
 \contentsline {paragraph}{Les tableaux en B}{9}
 \contentsline {section}{\numberline {3.3}Substitutions}{9}
-\contentsline {paragraph}{Substitution Sequence}{9}
-\contentsline {paragraph}{Substitution Parall\IeC {\`e}le}{9}
 \contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{9}
-\contentsline {paragraph}{Substitution Devient Element De}{10}
+\contentsline {paragraph}{Substitution Appel operation}{9}
 \contentsline {paragraph}{Substitution Condition}{10}
 \contentsline {paragraph}{Substitution Variable Locale}{10}
-\contentsline {paragraph}{Substitution Precondition}{10}
-\contentsline {paragraph}{Substitution Appel operation}{10}
+\contentsline {paragraph}{Substitution Sequence}{10}
 \contentsline {paragraph}{}{10}
+\contentsline {paragraph}{Substitution Parall\IeC {\`e}le}{10}
+\contentsline {paragraph}{Substitution Devient Element De}{10}
+\contentsline {paragraph}{Substitution Precondition}{10}
 \contentsline {section}{\numberline {3.4}Raffinements}{10}
 \contentsline {subsection}{\numberline {3.4.1}Principes du raffinement}{10}
 \contentsline {subsection}{\numberline {3.4.2}Obligations de preuves}{11}
-\contentsline {paragraph}{Initialisation de l'implantation}{12}
+\contentsline {paragraph}{Initialisation de l'implantation}{11}
 \contentsline {paragraph}{Op\IeC {\'e}ration de l'implantation}{12}
 \contentsline {chapter}{\numberline {4}Sch\IeC {\'e}mas de traduction}{13}
-\contentsline {section}{\numberline {4.1}Specification}{13}
+\contentsline {section}{\numberline {4.1}Sp\IeC {\'e}cification}{13}
 \contentsline {subsection}{\numberline {4.1.1}Traduction de la d\IeC {\'e}claration du noeud}{13}
 \contentsline {subsection}{\numberline {4.1.2}Traduction des conditions}{13}
-\contentsline {paragraph}{traduction des pr\IeC {\'e}conditions}{14}
-\contentsline {paragraph}{traduction des postconditions}{14}
-\contentsline {paragraph}{Traduction des types}{14}
+\contentsline {paragraph}{Traduction des pr\IeC {\'e}conditions}{14}
+\contentsline {paragraph}{Traduction des postconditions}{14}
+\contentsline {paragraph}{Traduction des types de base}{14}
 \contentsline {subsection}{\numberline {4.1.3}Le cas des tableaux}{14}
 \contentsline {paragraph}{Traduction des types}{14}
 \contentsline {paragraph}{Traduction des formules logiques}{15}
@@ -61,7 +61,6 @@
 \contentsline {paragraph}{Appel de noeud}{16}
 \contentsline {paragraph}{Alternative}{16}
 \contentsline {paragraph}{Registre}{16}
-\contentsline {paragraph}{Tri topologique}{16}
 \contentsline {subsection}{\numberline {4.2.2}Retour sur la traduction des registres}{17}
 \contentsline {subsection}{\numberline {4.2.3}Gestion des clauses SEES et IMPORTS}{18}
 \contentsline {subsection}{\numberline {4.2.4}sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{18}
