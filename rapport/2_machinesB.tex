@@ -13,16 +13,15 @@ sur des étapes de raffinements. Nous n'aurons besoin que d'une étape de
 raffinement pour notre traducteur. Il faudra ainsi produire deux
 machines en sortie du traducteur:
 \begin{itemize}
-\item une signature : elle correspond à la machine abstraite
+\item un contrat : elle correspond à la machine abstraite
   qui reprend les éléments de spécification du composant traduit.
 \item une implantation : elle raffine la machine abstraite et
-  contient les substitutions correspondant à l'opération définie dans
-  le composant.
+  contient les substitutions correspondant aux équations du composant.
 \end{itemize}
 La méthode B est utilisée avec l'environnement de développement
 AtelierB, développé par Clearsy. Nous utiliserons cet environnement
 pour vérifier que le code traduit est correctement traduit en B à
-l'aide d'un analyseur syntaxique intégré ainsi qu'un type checkeur. On
+l'aide d'un analyseur syntaxique intégré ainsi qu'un vérificateur de types. On
 utilise ensuite l'environnement pour générer les obligations de
 preuves liées au couple de machines.
 
@@ -42,29 +41,23 @@ mais nous n'en utiliserons que sept, que nous détaillerons dans la
 partie suivante.\\ 
 Ces données sont exprimées dans le même type qui est utilisé avec
 Scade, c'est à dire soit des entiers, soit des réels, soit des
-booléens, soit des tableaux de ces types, qui sont des types primitifs
-du langage B. \\ 
+booléens, soit des tableaux de ces types.\\ 
 La machine abstraite reprenant la spécification du composant contient
 des prédicats portant sur ces données, et la transformation
-de ces prédicats se fait grâce à un mécanisme de substitutions. Les
-différentes substitutions requises pour ce projet seront détaillées
-dans la partie correspondante. \\
+de ces prédicats se fait grâce à un mécanisme de \emph{substitutions généralisées}.
 Une machine est précédée d'un en-tête qui diffère selon la machine
 abstraite et l'implantation:
 \begin{itemize}
-\item pour la signature, l'en-tête sera composé du mot MACHINE suivi
+\item pour la machine abstraite, l'en-tête sera composé du mot \texttt{MACHINE} suivi
   du nom du composant.
-\item pour l'implantation, ce sera IMPLEMENTATION suivi du nom du
+\item pour l'implantation, ce sera \texttt{IMPLEMENTATION} suivi du nom du
   composant auquel on ajoute le suffixe "\_i".
 \end{itemize}
-Voir annexe A pour un exemple de couple de machines abstraite/implantation.
-
-
 
 \subsection{Clauses}
 Les différentes clauses requises pour assurer la traduction sont
 décrites dans cette partie. La machine abstraite ne requière pas les
-clauses IMPORTS, CONCRETE\_VARIABLES, INVARIANT et INITIALISATION car
+clauses \texttt{IMPORTS}, \texttt{CONCRETE\_VARIABLES}, \texttt{INVARIANT} et \texttt{INITIALISATION} car
 elle ne manipule que la spécification. En revanche, l'implémentation ne
 manipule que des données et substitutions ayant un équivalent
 informatique, similaire à un langage impératif, et on aura besoin de
@@ -80,7 +73,7 @@ abstraite.
 Ici, nous indiquons quelles machines B seront nécessaires pour
 manipuler les données. Pour la programmation par composant, nous avons
 besoin de faire appel à d'autres composants, et cette clause permet
-d'importer une instance de ces composants. Lors d'un appel d'opération d'un machine
+d'importer une instance de ces composants. Lors d'un appel d'opération d'une machine
 importée, l'opération est instanciée.
 
 \paragraph{Sees}
@@ -93,12 +86,12 @@ d'opération, on a seulement besoin de voir les constantes et leurs valeurs.
 Cette clause indique quelles sont les variables d'état de la
 machine. C'est dans cette clause que nous déclarons les registres
 définis dans le composant Scade. Les autres variables locales sont définies dans
-une substituion VAR.
+une substitution \emph{Variable Locale}.
 
 \paragraph{Invariant}
 Nous pouvons alors établir des invariants sur les registres déclarés dans la
-clause précédente dans cette clause. Les invariants seront des restrictions sur les
-intervalles sur lesquels les registres seront manipulés, et ils seront écrits
+clause précédente dans cette clause. Les invariants indiquent le type et la restriction sur l'
+intervalle sur lequel les registres seront manipulés. Ils seront écrits
 sous forme de prédicats.
 
 \paragraph{Initialisation}
@@ -108,7 +101,7 @@ avec l'invariant.
 
 \paragraph{Opérations}
 La clause principale d'une machine B est la clause Operations. On y
-défini la spécification du composant dans la machine abstraite, et
+définit la spécification du composant dans la machine abstraite, et
 cette spécification est concrétisée dans l'implantation où on écrira
 les expressions du composant sous forme de substitutions et de prédicats. Bien
 qu'on puisse définir autant d'opération qu'on le souhaite dans cette clause,
@@ -119,20 +112,20 @@ nous ne définirons qu'une seule opération, celle correspondant au composant Sc
 
 Un prédicat est une formule mathématique qui peut être prouvée ou
 réfutée. Elle peut être présente pour exprimer des propriétés sur une
-donnée, comme dans la clause \emph{Invariant}, ou dans la substitution
-Precondition. Elle peut-être aussi utilisée pour exprimer une
-condition, comme dans la substitution Condition.
+donnée, comme dans la clause \texttt{INVARIANT}, ou dans la substitution
+\emph{Precondition}. Elle peut-être aussi utilisée pour exprimer une
+condition, comme dans la substitution \emph{Condition}.
 
 \paragraph{}
 Les prédicats de base sont exprimables à l'aide des opérateurs de
-comparaison habituels: $<,~>,~\leq,$ et $\geq$. Les expressions doivent
+comparaison habituels: \texttt{<, >, $\leq$}, et \texttt{$\geq$}. Les expressions doivent
 être de type entier ou réel.
 
 \paragraph{}
 Pour exprimer un prédicat plus complexe à partir de prédicats basique,
-on utilise des opérateurs de proposition : conjonction $\vee$,
-disjonction $\wedge$, négation $\neg$, parenthèses $()$, implication
-$\Rightarrow$ et équivalence $\Leftrightarrow$.\\
+on utilise des connecteurs propositionnels : conjonction \texttt{$\vee$},
+disjonction \texttt{$\wedge$}, négation \texttt{$\neg$}, implication
+\texttt{$\Rightarrow$} et équivalence \texttt{$\Leftrightarrow$}.\\
 Par exemple, soit $P$ et $Q$ des prédicats: $P\wedge\neg(Q)$
 
 \paragraph{}
@@ -186,15 +179,6 @@ Les substitutions ne sont présentes que dans les clauses Initialisation et
 Operations. Dans la partie suivante, on détaillera comment passer des équations
 de Scade à ces substitutions.
 
-\paragraph{Substitution Sequence}
-Une séquence permet d'appliquer en séquence deux substitutions à un
-prédicat. Les deux substitutions sont séparées par un \textbf{;} .
-
-\paragraph{Substitution Parallèle}
-A la différence de la substitution séquence, la substitution parallèle permet
-d'effectuer deux substitutions de façon simultanée et indépendamment l'une de
-l'autre. Les deux substitutions sont séparées par \textbf{||} . Cette substitution n'est
-disponible que pour la machine abstraite.
 
 \paragraph{Substitution Devient égal}
 Cette substitution réalise l'affectation, elle remplace une variable
@@ -204,14 +188,14 @@ variable et P un prédicat,
 [ x:=e ] P \\
 Le prédicat obtenu a alors toute les occurrences libre de x dans P par e.
 
-\paragraph{Substitution Devient Element De}
-Les conditions sur les entrées et sorties du programmes sont souvent
-des restrictions sur des ensembles de valeurs. Cette substitution permet
-d'attribuer à une variable, une valeur tirée dans un ensemble. Elle se note:
-Soit E un ensemble et X une variable, 
+\paragraph{Substitution Appel operation}
+cette substitution se note : Soit R un identificateur correspondant à la sortie
+de l'opération op appliquée aux expressions E, 
 
-[X:$\in$ E] \\
-Cette substitution n'est pas une substitution d'implantation.
+[R$\leftarrow$ op(E)]P\\
+La  substitution appel d’opération permet d’appliquer la substitution
+d’une opération (non locale ou locale), en remplaçant les paramètres
+formels par des paramètres effectifs. 
 
 \paragraph{Substitution Condition}
 C'est cette substitution que l'on utilise pour exprimer le choix entre deux
@@ -232,8 +216,33 @@ Elle se note : Soit S une séquence de substitutions et X une liste de variables
 La liste de variable sera accessible dans les substitutions S contenues dans le
 bloc IN ... END, correpondant à une substitution bloc.
 
+\paragraph{Substitution Sequence}
+Une séquence permet d'appliquer en séquence deux substitutions à un
+prédicat. Les deux substitutions sont séparées par un \textbf{;} .
+
+\paragraph{}
+On retrouve ainsi les constructions d'un langage de programmation
+impératif, avec des affectations, appels d'opération, l'alternative, la
+définition de variables locales et la séquence d'instructions.\\
+Les substitutions suivantes ne pas utilisables dans une implantation. Elles
+permettent d'exprimer des notions abstraites, et n'ont pas de correspondance
+dans les langages de programmations.
+
+\paragraph{Substitution Parallèle}
+A la différence de la substitution séquence, la substitution parallèle permet
+d'effectuer deux substitutions de façon simultanée et indépendamment l'une de
+l'autre. Les deux substitutions sont séparées par \textbf{||} .
+
+\paragraph{Substitution Devient Element De}
+Les conditions sur les entrées et sorties du programmes sont souvent
+des restrictions sur des ensembles de valeurs. Cette substitution permet
+d'attribuer à une variable, une valeur tirée dans un ensemble. Elle se note:
+Soit E un ensemble et X une variable, 
+
+[X:$\in$ E] \\
+
 \paragraph{Substitution Precondition}
-Cette substitution n'est utilisée que dans la machine abstraite. Elle fixe les
+Cette substitution fixe les
 préconditions sous lesquelles une substitution sera valide. Elle se note : Soit P
 un prédicat et S une substitution,
 
@@ -242,25 +251,6 @@ L'application de cette substitution correspond à la preuve de la
 précondition P et à l'application de la substitution S. Si la
 précondition P est fausse, le résultat de la substitution n'est alors
 plus garantit.
-
-\paragraph{Substitution Appel operation}
-cette substitution se note : Soit R un identificateur correspondant à la sortie
-de l'opération op appliquée aux expressions E, 
-
-[R$\leftarrow$ op(E)]P\\
-La  substitution appel d’opération permet d’appliquer la substitution
-d’une opération (non locale ou locale), en remplaçant les paramètres
-formels par des paramètres effectifs. 
-
-\paragraph{}
-On retrouve ainsi les constructions d'un langage de programmation
-impératif, avec des affectations, appels d'opération, alternative, et la
-définition de variables locales. De plus, les substitutions sont
-réordonnées via un tri topologique par rapport aux équations du composant
-Scade, dont l'ordre n'avait pas d'importance. Cette distinction entre
-les deux langages, synchrone contre impératif, sera développée dans la
-section concernant la preuve de correction du traducteur.
-
 
 % SECTION 4 : Raffinements
 

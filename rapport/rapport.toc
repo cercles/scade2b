@@ -5,11 +5,10 @@
 \contentsline {paragraph}{}{4}
 \contentsline {paragraph}{}{4}
 \contentsline {paragraph}{}{5}
-\contentsline {section}{\numberline {2.2}Restrictions}{5}
-\contentsline {subsection}{\numberline {2.2.1}Le temps avec Scade}{5}
+\contentsline {section}{\numberline {2.2}Le temps avec Scade}{5}
 \contentsline {paragraph}{Une horloge unique}{5}
-\contentsline {paragraph}{Des registres}{5}
-\contentsline {subsection}{\numberline {2.2.2}Contrats}{6}
+\contentsline {paragraph}{L'op\IeC {\'e}rateur fby}{5}
+\contentsline {section}{\numberline {2.3}Contrats}{6}
 \contentsline {paragraph}{Assertions}{6}
 \contentsline {chapter}{\numberline {3}Machines B}{7}
 \contentsline {section}{\numberline {3.1}Machine B}{7}
@@ -33,15 +32,15 @@
 \contentsline {section}{\numberline {3.3}Substitutions}{9}
 \contentsline {paragraph}{Substitution Sequence}{9}
 \contentsline {paragraph}{Substitution Parall\IeC {\`e}le}{9}
-\contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{10}
+\contentsline {paragraph}{Substitution Devient \IeC {\'e}gal}{9}
 \contentsline {paragraph}{Substitution Devient Element De}{10}
 \contentsline {paragraph}{Substitution Condition}{10}
 \contentsline {paragraph}{Substitution Variable Locale}{10}
 \contentsline {paragraph}{Substitution Precondition}{10}
 \contentsline {paragraph}{Substitution Appel operation}{10}
 \contentsline {paragraph}{}{10}
-\contentsline {section}{\numberline {3.4}Raffinements}{11}
-\contentsline {subsection}{\numberline {3.4.1}Principes du raffinement}{11}
+\contentsline {section}{\numberline {3.4}Raffinements}{10}
+\contentsline {subsection}{\numberline {3.4.1}Principes du raffinement}{10}
 \contentsline {subsection}{\numberline {3.4.2}Obligations de preuves}{11}
 \contentsline {paragraph}{Initialisation de l'implantation}{12}
 \contentsline {paragraph}{Op\IeC {\'e}ration de l'implantation}{12}
