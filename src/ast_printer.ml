@@ -13,14 +13,12 @@ let print_value ppt = function
 
 let rec print_expr ppt = function
   | PE_Ident id -> print_id ppt id
-  | PE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
   | PE_Value v -> print_value ppt v
   | PE_Array ar -> print_array ppt ar
   | PE_App (id, e_list) -> fprintf ppt "%a@[(%a)@]" print_id id print_e_list e_list
   | PE_Bop (bop, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_bop bop print_expr e1 print_expr e2
   | PE_Unop (unop, e) -> fprintf ppt "%a@[(%a)@]" print_unop unop print_expr e
-  | PE_Fby (e1, e2) -> fprintf ppt "@[(%a)@] -> @[(%a)@]" print_expr e1 print_expr e2
-  | PE_Pre e -> fprintf ppt "pre@[(%a)@]" print_expr e
+  | PE_Fby (e1, e2, e3) -> fprintf ppt "fby(%a, %a, %a)" print_expr e1 print_expr e2 print_expr e3
   | PE_If (cond, e1, e2) -> fprintf ppt "if @[%a@] then @\n@[<v 4>%a@] @\nelse @\n@[<v 4>%a@]" print_expr cond print_expr e1 print_expr e2
   | PE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
 
@@ -76,9 +74,7 @@ let rec print_eq_list ppt = function
   | [eq] -> fprintf ppt "@[%a@];" print_eq eq
   | eq::l -> fprintf ppt "@[%a@];@\n%a" print_eq eq print_eq_list l 
 
-and print_eq ppt = function
-  | P_Eq (lp, e) -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
-  | P_Assert e -> fprintf ppt "ASSERT : %a " print_expr e
+and print_eq ppt = function (lp, e) -> fprintf ppt "%a = @[%a@]" print_leftpart lp print_expr e
 
 and print_leftpart ppt = function
   | PLP_Ident id -> print_id ppt id
@@ -121,5 +117,10 @@ let print_node ppt node =
     print_decl_list node.p_vars
     print_eq_list node.p_eqs
 
+let rec print_node_list ppt = function
+  | [] -> ()
+  | [n] -> fprintf ppt "%a" print_node n
+  | n::l -> fprintf ppt "%a@\n@\n%a" print_node n print_node_list l
+
 let print_prog prog =
-  Format.printf "@\nProgram Parsed :@\n%a@\n@." print_node prog.p_node
+  Format.printf "@\nProgram Parsed :@\n%a@\n@." print_node_list prog

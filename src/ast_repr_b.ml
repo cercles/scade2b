@@ -85,16 +85,16 @@ type b_impl =
     operations: operations;
   }
 
-type sig_operation =
-  { sigop_decl: op_decl;
-    sigop_pre: condition list;
-    sigop_post: condition list;
+type abst_operation =
+  { abstop_decl: op_decl;
+    abstop_pre: condition list;
+    abstop_post: condition list;
   }
 
-type b_sig =
+type b_abst =
   { machine: ident;
-    sig_sees: ident list;
-    sig_operation: sig_operation;
+    abst_sees: ident list;
+    abst_operation: abst_operation;
   }
 
 module Env = Map.Make(
@@ -108,6 +108,6 @@ type env = (ident * Ast_repr_norm.n_expression option) Env.t
 
 type prog =
   { env: env;
-    signature: b_sig;
+    machine_abstraite: b_abst;
     implementation: b_impl;
   }

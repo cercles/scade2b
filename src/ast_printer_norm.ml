@@ -149,5 +149,5 @@ let print_node ppt node =
     print_eq_list node.n_eqs
     print_cond_list node.n_post
 
-let print_prog prog =
-  Format.printf "Program normalized : @\n%a@\n@." print_node prog.n_node
+let print_prog node =
+  Format.printf "Program normalized : @\n%a@\n@." print_node node

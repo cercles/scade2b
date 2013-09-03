@@ -186,12 +186,12 @@ let print_op_decl ppt op_decl =
     op_decl.id
     print_idlist_comma op_decl.param_in
 
-let print_operation ppt sigop =
+let print_operation ppt abstop =
   fprintf ppt 
     "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v>%a@]@]@\n@[<v 3> THEN@,@[<v>%a@]@]@\n END"
-    print_op_decl sigop.sigop_decl
-    print_prelist sigop.sigop_pre
-    print_thenlist sigop.sigop_post
+    print_op_decl abstop.abstop_decl
+    print_prelist abstop.abstop_pre
+    print_thenlist abstop.abstop_post
 
 (* The file list can be configured in utils.ml *)
 let print_sees ppt mach_list =
@@ -202,12 +202,12 @@ let print_sees ppt mach_list =
 let print_id_machine ppt id_machine =
   fprintf ppt "%s" id_machine
 
-let print_machine ppt b_sig =
+let print_machine ppt b_abst =
   fprintf ppt
     "MACHINE %a@\n%a@\n%a @\nEND"
-    print_id_machine b_sig.machine
-    print_sees b_sig.sig_sees
-    print_operation b_sig.sig_operation
+    print_id_machine b_abst.machine
+    print_sees b_abst.abst_sees
+    print_operation b_abst.abst_operation
 
-let print_prog b_sig file =
-  fprintf (formatter_of_out_channel file) "%a@." print_machine b_sig
+let print_prog b_abst file =
+  fprintf (formatter_of_out_channel file) "%a@." print_machine b_abst

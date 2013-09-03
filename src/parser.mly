@@ -20,10 +20,10 @@
     else
       PA_Slice (id, elist)
 
-  type equation_type = Eq of p_equation | Assume of p_condition | Guarantee of p_condition
+  type equation_type = Eq of p_equation | Assume of p_expression | Guarantee of p_expression
 %}
 
-%token NODE RETURNS PACKAGE LET TEL VAR CONST ASSUME GUARANTEE
+%token NODE FUNCTION RETURNS LET TEL VAR CONST ASSUME GUARANTEE
 /* %token ASSERT INCLUDE deprecated*/
 %token IF THEN ELSE
 /* %token PRE ARROW  deprecated*/
@@ -59,7 +59,7 @@
 %%
 
 prog :
- | PACKAGE IDENT node_list END SEMICOL EOF { $2 }
+ | node_list EOF { $1 }
 ;
 
 node_list :
@@ -125,18 +125,46 @@ typ_list :
  | typ COMMA typ_list { $1 :: $3 }
 ;
 
+
+
+/*
 eq_list :
- | ASSUME IDENT COLON expr SEMICOL { [Assume ($2, $4)] }
- | ASSUME IDENT COLON expr SEMICOL eq_list { (Assume ($2, $4)) :: $6 }  
- | GUARANTEE IDENT COLON expr SEMICOL { [Guarantee ($2, $4)] }
- | GUARANTEE IDENT COLON expr SEMICOL eq_list { (Guarantee ($2, $4)) :: $6 }
+ | ASSUME IDENT COLON expr SEMICOL { [Assume $4] }
+ | ASSUME IDENT COLON expr SEMICOL eq_list { (Assume $4) :: $6 }  
+ | GUARANTEE IDENT COLON expr SEMICOL { [Guarantee $4] }
+ | GUARANTEE IDENT COLON expr SEMICOL eq_list { (Guarantee $4) :: $6 }
  | left_part EQ expr SEMICOL { [Eq (P_Eq ($1, $3))] }
  | left_part EQ expr SEMICOL eq_list { (Eq (P_Eq ($1, $3))) :: $5 }
 ;
+*/
 
+
+
+eq_list :
+ |   { [] }
+ | eq eq_list { $1 :: $2 }
+;
+
+eq :
+ | ASSUME IDENT COLON expr SEMICOL { Assume $4 }
+ | GUARANTEE IDENT COLON expr SEMICOL { Guarantee $4 }
+ | left_part EQ expr SEMICOL { Eq ($1, $3) }
+;
+
+
+/*
 left_part :
  | IDENT { PLP_Ident $1 }
  | LPAREN IDENT COMMA id_list RPAREN { PLP_Tuple ($2 :: $4) }
+ | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
+;
+*/
+
+
+
+left_part : 
+ | LPAREN left_part RPAREN { $2 }
+ | IDENT { PLP_Ident $1 }
  | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
 ;
 
@@ -162,11 +190,9 @@ expr :
  | expr XOR expr { PE_Bop (Op_xor, $1, $3) }
  | MINUS expr { PE_Unop (Op_minus, $2) }
  | NOT expr { PE_Unop (Op_not, $2) }
- | expr ARROW expr { PE_Fby ($1, $3) }
- | PRE expr { PE_Pre $2 }
+ | FBY LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Fby ($3, $5, $7) }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
  | IDENT LPAREN expr_list RPAREN { PE_App ($1, $3) }
- | LPAREN expr COMMA expr_list RPAREN { PE_Tuple ($2 :: $4) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
  | SHARP LPAREN expr COMMA expr_list RPAREN{ PE_Sharp ($3 :: $5) }

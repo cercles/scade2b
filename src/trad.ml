@@ -110,11 +110,11 @@ let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 
 
-let bimpl_translator env node includes =
+let bimpl_translator env node =
   let implem_name = String.capitalize (node.n_id ^ "_i") in
   let refines = String.capitalize (node.n_id) in
   let sees = Utils.sees_list in
-  let imports = List.map String.capitalize includes in
+  let imports = Utils.imports_list in
   let concrete_vars = ref [] in
   let invariant = ref [] in
   let initialisation = ref [] in
@@ -179,30 +179,29 @@ let bimpl_translator env node includes =
     operations = operations;
   }
 
-let bsig_translator env node =
+let babst_translator env node =
   let machine = String.capitalize node.n_id in
   let sees = Utils.sees_list in
-  let sigop_decl = { id = node.n_id;
+  let abstop_decl = { id = node.n_id;
 		     param_in = trad_list env n_decl_to_decl node.n_param_in;
 		     param_out = trad_list env n_decl_to_decl node.n_param_out;
 		   } in 
-  let sigop_pre = trad_list env n_condition_to_condition node.n_pre in
-  let sigop_post = trad_list env n_condition_to_condition node.n_post in
-  let sig_operation = { sigop_decl = sigop_decl;
-			sigop_pre = sigop_pre;
-			sigop_post = sigop_post;
+  let abstop_pre = trad_list env n_condition_to_condition node.n_pre in
+  let abstop_post = trad_list env n_condition_to_condition node.n_post in
+  let abst_operation = { abstop_decl = abstop_decl;
+			abstop_pre = abstop_pre;
+			abstop_post = abstop_post;
 		      } in
   { machine = machine;
-    sig_sees = sees;
-    sig_operation = sig_operation;
+    abst_sees = sees;
+    abst_operation = abst_operation;
   }
 
-let translate prog =
-  let node = prog.n_node in
+let translate node =
   let env = Utils.make_env (N_Env.elements node.n_env) in
-  let bsig = bsig_translator env node in
-  let bimpl = bimpl_translator env node prog.n_includes in
+  let babst = babst_translator env node in
+  let bimpl = bimpl_translator env node in
   { env = env;
-    signature = bsig;
+    machine_abstraite = babst;
     implementation = bimpl;
   }

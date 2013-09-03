@@ -12,7 +12,7 @@ let a_b_list_equals l=
 (* Define the machines accessed in the SEES clause *)
 let sees_list = ["Constantes2"; "Ctes_math"]
 (* Define the machines accessed in the IMPORT clause (A AUTOMATISER) *)
-let imports_list = []
+let imports_list = ["Bound"]
 
 (* string_of_list (l: string list) returns the concat of every strings in list *)
 (* NOT USED *)
@@ -31,14 +31,12 @@ let find_ident_in_pexpr expr =
   let id = ref "" in
   let rec ident_finder = function
     | PE_Ident iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
-    | PE_Tuple elist -> List.iter ident_finder elist
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
     | PE_App (id, elist) -> List.iter ident_finder elist
     | PE_Bop (bop, e1, e2) -> ident_finder e1; ident_finder e2
     | PE_Unop (unop, exp) -> ident_finder exp
-    | PE_Fby (e1, e2) -> ident_finder e1; ident_finder e2
-    | PE_Pre exp -> ident_finder exp
+    | PE_Fby (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3
     | PE_If (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3
     | PE_Sharp elist -> List.iter ident_finder elist
   and idarray_finder = function

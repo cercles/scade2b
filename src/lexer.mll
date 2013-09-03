@@ -37,6 +37,7 @@ rule token = parse
 	  | pragma_simpl { token lexbuf }
 
 	  | "node"    { NODE }
+	  | "function"{ FUNCTION }
 	  | "returns" { RETURNS }
 	  | "let"     { LET }
 	  | "tel"     { TEL }
@@ -44,7 +45,6 @@ rule token = parse
 	  | "const"   { CONST }
 	  | "assume"  { ASSUME }
 	  | "guarantee" { GUARANTEE }
-	  | "package" { PACKAGE }
 	  (* | "include" { INCLUDE } *)
 	  (* | "assert"  { ASSERT } *)
 
