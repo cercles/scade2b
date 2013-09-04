@@ -13,7 +13,6 @@ let print_value ppt = function
 
 let rec print_expr ppt = function
   | NE_Ident id -> print_id ppt id
-  | NE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
   | NE_Value v -> print_value ppt v
   | NE_Array ar -> print_array ppt ar
   | NE_Bop (bop, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_bop bop print_expr e1 print_expr e2
@@ -105,10 +104,11 @@ and print_eq ppt = function
 	print_leftpart o.n_op_lp
 	print_expr o.n_op_expr
   | N_Registre r ->
-      fprintf ppt "%a = @[REG(%a,%a)@] : %a" 
+      fprintf ppt "%a = @[REG(%a,%a,%a)@] : %a" 
 	print_id r.n_reg_lpid
-	print_expr r.n_reg_ini
+	print_expr r.n_reg_delai
 	print_expr r.n_reg_val
+	print_expr r.n_reg_ini
 	print_type r.n_reg_type
 
 and print_leftpart ppt = function

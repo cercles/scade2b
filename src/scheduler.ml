@@ -24,7 +24,6 @@ let ident_of_expr expr =
   let id = ref L.empty in 
   let rec idexpr_rec = function
     | NE_Ident iden -> id := L.add iden !id
-    | NE_Tuple elist -> List.iter idexpr_rec elist
     | NE_Value v -> ()
     | NE_Bop (bop, e1, e2) -> idexpr_rec e1; idexpr_rec e2 
     | NE_Unop (unop, exp) -> idexpr_rec exp

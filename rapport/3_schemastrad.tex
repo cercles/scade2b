@@ -244,7 +244,10 @@ On traduit l'alternative par la substitution \emph{Condition}. On utilise
 \texttt{$ a = if~ cond~ then~ b1~ else~ b2$ $\xrightarrow{traduction ~ equations}$ $IF ~cond~ THEN ~a:=b1~ ELSE
 ~a:=b2$}
 
-\paragraph{Registre}
+
+
+\subsection*{Registres}
+
 Le registre est également traduit en substitution \emph{Devient Egal}, cependant
 les substitutions correspondantes doivent être placées après les autres. Ces
 équations correspondent à la mise à jour de l'état d'une variable, la mise à
@@ -254,26 +257,121 @@ correspondant au registre doit être déclarée dans \texttt{CONCRETE\_VARIABLE}
 plus il faut indiquer dans la clause \texttt{INVARIANT} les contraintes de typage
 de la variable d'état. \\
 
-\texttt{$a = ini \rightarrow (pre ~b)$ $\xrightarrow{traduction ~ equations}$ $a := b$ }
+\texttt{$a = fby(ini, delai, b) \xrightarrow{traduction ~ equations} a := b$ }\\
+
+Dans Scade, les équations correspondant aux registres sont initialisées à une
+certaine valeur, puis ils prennent la valeur d'une autre variable après un
+certain délai, supérieur à 1.
+Avec B, on a un langage impératif sans notion de temps, mais dont les machines
+peuvent avoir un état grâce à des variables d'état déclarées dans la
+clause \texttt{CONCRETE\_VARIABLES}. Pour traduire un registre avec un délai égal
+à 1, il faut donc une variable d'état qui sera initialisée avec la valeur
+d'initialisation déclarée dans l'opérateur \texttt{fby}, et il faudra mettre à
+jour ce registre à la fin de l'opération.
+
+L'initialisation doit se faire dans la clause \texttt{INITIALISATION}, et
+l'information de type du registre doit être indiquée dans la
+clause \texttt{INVARIANT}. De plus, si le registre porte sur une variable d'entrée ou de sortie,
+on peut alors récupérer la condition (si elle existe) sur l'entrée ou la sortie
+en question pour compléter le prédicat de la clause \texttt{INVARIANT}. 
+
+Ainsi, soit un registre reg de type t avec un délai de 1, ayant l'équation suivante :\\
+\texttt{reg = fby(ini, 1, a)} \\
+avec a une variable d'entrée ou de sortie du composant, possédant une
+précondition ou postcondition P, et ini une valeur d'initialisation de
+reg. \\
+Cependant, la condition P porte sur une variable d'entrée ou de sortie que l'on
+connait, et on veux qu'elle porte sur le registre, il faut donc effectuer un
+renommage de la condition P en remplaçant les occurence du nom de la variable
+concernée par le nom du registre. On obtient une condition P$_{reg}$. \\
+Pour résumer, on obtiendra dans l'implantation:
+
+\begin{alltt}
+\textbf{IMPLEMENTATION} ...
+...
+
+\textbf{CONCRETE\_VARIABLES} ..., reg
+\textbf{INVARIANT}
+  ...& reg : t & P\(\sb{reg}\)
+\textbf{INITIALISATION}
+  ... ; reg := ini
+
+\textbf{OPERATION}
+... =
+\textbf{VAR} ... \textbf{IN}
+  ...;
+  reg := a
+\textbf{END}
+\end{alltt}
+
+Dans le cas ou on fixe le délai de l'opérateur \texttt{fby} à 2 ou plus, il faut
+introduire de nouvelle variables d'état intermédiaires. On ne peut simuler qu'un
+registre ayant un délai égal à 1, donc pour tout registre ayant un délai
+supérieur, il faudra introduire (délai - 1) nouvelles variables. Toute les
+variables intermédiaires auront la même initialisation et le même invariant que
+la variable d'état "principale". A la fin de l'opération, elle devront cependant
+être ordonnée correctement, la variable principale doit être affectée en dernière.\\
+Prenons par exemple l'équation suivante avec un délai fixé à 3:
+\texttt{reg = fby(ini, 3, a)}\\
+La machine générée doit être:
+
+\newpage
+
+\begin{alltt}
+\textbf{IMPLEMENTATION} ...
+...
+
+\textbf{CONCRETE\_VARIABLES} ..., reg, reg\_i1, reg\_i2
+\textbf{INVARIANT}
+  ...& reg : t & P\(\sb{reg}\) & 
+  reg\_i1 : t & P\(\sb{reg\_i1}\) & 
+  reg\_i2 : t & P\(\sb{reg\_i2}\) 
+\textbf{INITIALISATION}
+  ... ; reg := ini; 
+  reg\_i1 := ini; 
+  reg\_i2 := ini
+
+\textbf{OPERATION}
+... =
+\textbf{VAR} ... \textbf{IN}
+  ...;
+  reg\_i1 := a;
+  reg\_i2 := reg\_i1;
+  reg := reg\_i2
+\textbf{END}
+\end{alltt}
+
 
 \section*{Séquencement des équations}
 
-Dans Scade, l'ordre des équations n'a pas d'importance, mais en B elles doivent
-s'exécuter en séquence. Les équations correspondants aux registres sont
+Dans Scade, l'ordre des équations n'a pas d'importance, une analyse de causalité
+est effectuée lors de la validation du noeud. Comme toutes les équations sont
+résolues au même instant dans un noeud, cette analyse vérifie qu'un flot
+ne dépend jamais de lui même au même instant. Par exemple, on ne peut accepter
+une équation du type: \texttt{X = not X}, car au même instant la variable X est
+vraie et fausse.  Ainsi, une variable ne peut être
+dans la partie droite et gauche d'un équation, sauf si la partie droite est
+composée d'un opérateur \texttt{fby}. Dans ce cas, le flot retourné par
+l'opérateur correspond à celui d'un instant précédent, donc il n'y a pas de
+dépendance directe et l'équation est valide. \\
+
+Cependant, en B les substitutions doivent s'exécuter en séquence. Il faut donc
+effectuer un séquencement des équations avant de les traduire en substitutions.
+Les équations correspondants aux registres sont
 automatiquements placées à la fin, car elles mettent à jour l'état de la machine
 après son exécution. Il faut donc effectuer un tri topologique des 3 autres
 types d'équations.\\
 On utilise alors une fonction de tri prenant en entrées :
 \begin{itemize}
 \item la liste des équations du programme (sans les équations de registre)
-\item la liste des variables d'entrée du programme. 
-\item la
+\item un liste de variables comprenant les variables d'entrée du programme et
+les registres 
 \end{itemize}
 La fonction retourne une liste d'équations triées selon l'ordre
 topologique.
-
+\newpage
 \begin{alltt}
-Fonction Tri (eqs: liste d'equations, vars\_in: liste de variables)
+Fonction Tri (eqs: liste d'equations, vars: liste de variables)
 
 eq\_non\_triees : liste d'equations
 eq\_admis : liste d'equations
@@ -282,7 +380,7 @@ eq : equation
 
 BEGIN
  eq\_non\_triees <- eqs;
- v\_admis <- vars\_in;
+ v\_admis <- vars;
  TANT QUE (eq\_non\_triees \(\neq \emptyset \)) 
     eq <- tete(eq\_non\_triees);
     SI vars\_droite(eq) \(\subset\) v\_admis ALORS
@@ -314,44 +412,6 @@ liste des variables admises, et on ajoute les équations dont la partie droite
 dépend du nouvel ensemble de variables admises. La fonction retourne la liste d'
 équations triée.
 
-\subsection{Retour sur la traduction des registres}
-Dans Scade, les équations correspondant aux registres sont initialisées à une
-certaine valeur, puis ils prennent la valeur d'une autre variable pour les
-instants suivants. Avec B, les registres sont des variables
-d'état, qui auront lors de l'initialisation du programme la valeur définie pour
-le premier instant avec Scade.
-Cette initialisation de registre doit se faire dans la clause \texttt{INITIALISATION}, et
-le nom du registre doit auparavant être déclaré dans la clause \texttt{CONCRETE\_VARIABLES}. L'information de
-type du registre doit alors être déclarée comme prédicat dans la clause
-\texttt{INVARIANT}. De plus, si le registre porte sur une variable d'entrée ou de sortie,
-on peut alors récupérer la condition (si elle existe) sur l'entrée ou la sortie
-en question pour compléter le prédicat de la clause \texttt{INVARIANT}. 
-
-Ainsi, soit un registre reg de type t, ayant l'équation suivante :\\
-$reg = ini \rightarrow (pre ~a)$ \\
-avec a une variable d'entrée ou de sortie du composant, possédant une
-précondition ou postcondition P, et ini une valeur d'initialisation de
-reg. Il faudra alors écrire dans l'implantation correspondante: 
-
-RENNOMAGE
-
-\begin{alltt}
-\textbf{IMPLEMENTATION} ...
-...
-
-\textbf{CONCRETE\_VARIABLES} ..., reg
-\textbf{INVARIANT}
-  ...& reg : t & P
-\textbf{INITIALISATION}
-  ... ; rn := ini;
-
-\textbf{OPERATION}
-... =
-\textbf{VAR} ... \textbf{IN}
-  ...;
-  reg := a
-\textbf{END}
-\end{alltt}
 
 \subsection{Gestion des clauses SEES et IMPORTS}
 Pour inclure des opérations ou des constantes définies dans des machines

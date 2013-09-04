@@ -37,7 +37,6 @@ let rec print_e_list ppt = function
 
 and print_expr ppt = function
   | BE_Ident id -> print_bid ppt id
-  | BE_Tuple e_list -> fprintf ppt "(@[%a@])" print_e_list e_list
   | BE_Value v -> print_value ppt v
   | BE_Array ar -> print_array ppt ar
   | BE_Bop (bop, e1, e2) when bop = Op_xor -> fprintf ppt "xor(%a, %a)" print_expr e1 print_expr e2

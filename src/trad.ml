@@ -6,8 +6,6 @@ open Ast_repr_norm
 open Utils
 
 
-(* LES CONST SONT A AJOUTER A L'ENV !!! *)
-
 let id_to_bid env id =
 try
   let bid, _ = Env.find id env in bid
@@ -15,7 +13,6 @@ with Not_found -> id
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
-  | NE_Tuple e_list -> BE_Tuple (List.map (n_expr_to_b_expr env) e_list)
   | NE_Value v -> BE_Value v
   | NE_Array ar -> BE_Array (n_array_to_b_array env ar)
   | NE_Bop (bop, e1, e2) -> BE_Bop (bop, n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
@@ -72,7 +69,6 @@ let get_concrete_vars env reg =
 
 let rec rename_id_expr old ident = function
   | NE_Ident i -> if i = old then NE_Ident ident else NE_Ident i
-  | NE_Tuple e_list -> NE_Tuple (List.map (rename_id_expr old ident) e_list)
   | NE_Value v -> NE_Value v
   | NE_Array ar -> NE_Array (rename_id_array old ident ar)
   | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old ident e1, rename_id_expr old ident e2)
@@ -179,23 +175,25 @@ let bimpl_translator env node =
     operations = operations;
   }
 
+
 let babst_translator env node =
   let machine = String.capitalize node.n_id in
   let sees = Utils.sees_list in
   let abstop_decl = { id = node.n_id;
-		     param_in = trad_list env n_decl_to_decl node.n_param_in;
-		     param_out = trad_list env n_decl_to_decl node.n_param_out;
-		   } in 
+		      param_in = trad_list env n_decl_to_decl node.n_param_in;
+		      param_out = trad_list env n_decl_to_decl node.n_param_out;
+		    } in 
   let abstop_pre = trad_list env n_condition_to_condition node.n_pre in
   let abstop_post = trad_list env n_condition_to_condition node.n_post in
   let abst_operation = { abstop_decl = abstop_decl;
-			abstop_pre = abstop_pre;
-			abstop_post = abstop_post;
-		      } in
+			 abstop_pre = abstop_pre;
+			 abstop_post = abstop_post;
+		       } in
   { machine = machine;
     abst_sees = sees;
     abst_operation = abst_operation;
   }
+
 
 let translate node =
   let env = Utils.make_env (N_Env.elements node.n_env) in

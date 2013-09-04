@@ -67,7 +67,7 @@ node_list :
  | node node_list { $1::$2 }
 
 node :
- | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN SEMICOL
+ | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN semi_opt
    var_decl
    LET eq_list TEL semi_opt
    { let (assumes, guarantees, eqs) = 

@@ -79,8 +79,9 @@ let handle_reg node = function
     in
     N_Registre { n_reg_lpid = lp_id;
 		 n_reg_ini = p_expr_to_n_expr ini;
-		 n_reg_type = p_type_to_n_type typ;
+		 n_reg_delai = p_expr_to_n_expr delai;
 		 n_reg_val = (NE_Ident id);
+		 n_reg_type = p_type_to_n_type typ;
 	       } 
   | _ -> raise Register_error
 
@@ -149,7 +150,7 @@ let normalize_node node =
   (* Construction de l'environnement *)
   let env = Utils.make_n_env (assumes@guarantees@vars_cond) in
   (* Noeud normalisé *)
-  { n_id = node.p_id;
+  { n_id = String.lowercase node.p_id;
     n_env = env;
     n_param_in = inputs;
     n_param_out = outputs;

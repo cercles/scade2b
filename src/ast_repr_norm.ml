@@ -4,7 +4,6 @@ open Ast_base
 
 type n_expression =
   NE_Ident of ident
-| NE_Tuple of n_expression list
 | NE_Value of value
 | NE_Bop of bop * n_expression * n_expression
 | NE_Unop of unop * n_expression
@@ -47,6 +46,7 @@ type n_operation =
 type n_registre =
   { n_reg_lpid: ident;
     n_reg_ini: n_expression;
+    n_reg_delai: n_expression;
     n_reg_val: n_expression;
     n_reg_type: n_type;
   }

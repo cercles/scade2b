@@ -4,7 +4,6 @@ open Ast_base
 
 type b_expression =
   BE_Ident of ident
-| BE_Tuple of b_expression list
 | BE_Value of value
 | BE_Bop of bop * b_expression * b_expression
 | BE_Unop of unop * b_expression
