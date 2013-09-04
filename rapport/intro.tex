@@ -7,7 +7,7 @@
 
 Ce stage s'est déroulé au sein du projet ANR-10-SEGI-017 \cercles\cite{Cercles}.
 L'objectif du projet est de certifier formellement
-des composants réutilisables, l'intérêt étant de réduire les tests en prouvant
+des composants réutilisables, afin de réduire les tests en prouvant
 grâce à des méthodes formelles la sûreté des différentes briques formant un
 logiciel. L'intérêt est à la fois pratique par la réutilisabilité des composants
 certifiés, et économique en réduisant le temps et le coût des tests. \\  
@@ -89,14 +89,17 @@ validation par démonstration formelle, garantissant la fidélité de la
 machine raffinée par rapport à la machine abstraite. \\
 
 Mon travail fut de développer un traducteur permettant de transposer un
-composant écrit en SCADE vers B. Le traducteur suit une ligne de compilation classique, prenant en
-entrée un code issu de Scade et produisant en sortie une machine abstraite
-correspondant aux spécifications du contrat, ainsi que la machine raffinée qui
-implante le programme. \\
+composant écrit en SCADE vers un couple de machines B. \\
+Un composant Scade est constitué d'un \emph{noeud}
+correspondant à un programme, et d'un ensemble de conditions sur les
+entrées et sorties du programme qui vont former le contrat. 
+Le traducteur suit une ligne de compilation classique, prenant en
+entrée le programme et son contrat, et produit en sortie une machine abstraite
+correspondant au contrat, ainsi qu'une machine raffinée qui implante le programme. \\
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.54]{intro_schema.png}
+\includegraphics[scale=0.54]{intro_schema2.png}
 \end{center}
 \caption{Schéma du principe de traduction}
 \end{figure}

@@ -4,5 +4,35 @@
 % Conclusion
 %------------
 
+L'utilisation de méthodes formelles pour la validation de programmes n'est pas
+une activité récente. Cependant, les industriels ayant toujours eu recours aux
+tests pour valider un programme, il existe une inertie dans ce domaine
+qui bloque la propagation d'autres approches.
+Il y a néanmoins un regain d'intérêt pour les méthodes formelles
+depuis quelques années, la fiabilité des composants formellement
+validés étant supérieure à celle des composants testés. C'est surtout
+le cas dans les domaines critiques tel que la santé, les systèmes de
+transport, ou la production d'énergie, qui recquièrent un niveau
+d'exigence élevé pour la validation des programmes utilisés.\\
 
-Difficultés, Apport projet, Après projet, ...
+Scade est un outil très utilisé pour le développement de composants
+pour les logiciels embarqués. Mais la validation de ces composants
+passe encore par des tests, car il n'y a aucune validation par méthode
+formelle integrée à l'outil de développement. L'intérêt de ce projet
+est de proposer une validation par méthode formelle en utilisant B, ce
+qui est rendu possible par une traduction automatique des composants Scade
+vers des machines B. 
+Ainsi, dans l'état actuel, le traducteur permet un gain de temps et de
+sécurité dans la validation de composants développés avec Scade.\\
+
+Il reste cependant à formaliser une preuve de correction de la
+traduction elle même. On pourra réfléchir à une démonstration basée
+sur la structure des différentes équations traduites.\\
+De plus, ce travail ne s'appuie que sur un fragment de Scade, les possibilités
+offertes par le langage étant très vastes. Ainsi, à partir de ce
+projet, il est envisageable de poursuivre différents axes pour élargir
+le fragment de Scade traduit. On pourrait notamment s'intéresser aux
+machines à état, qui permettent de décrire des automates. On peut
+également réfléchir à la possibilité de traduire d'autres opérateurs
+synchrones en B. 
+

@@ -5,7 +5,7 @@ open Ast_repr_b
 open Ast_repr_norm
 open Utils
 
-
+(* Traduction des expressions *)
 let id_to_bid env id =
 try
   let bid, _ = Env.find id env in bid
@@ -67,25 +67,25 @@ let get_concrete_vars env reg =
   id_to_bid env reg.n_reg_lpid
 
 
-let rec rename_id_expr old ident = function
-  | NE_Ident i -> if i = old then NE_Ident ident else NE_Ident i
+let rec rename_id_expr old new_i = function
+  | NE_Ident i -> if i = old then NE_Ident new_i else NE_Ident i
   | NE_Value v -> NE_Value v
-  | NE_Array ar -> NE_Array (rename_id_array old ident ar)
-  | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old ident e1, rename_id_expr old ident e2)
-  | NE_Unop (unop, e) -> NE_Unop (unop, rename_id_expr old ident e)
-  | NE_Sharp e_list -> NE_Sharp (List.map (rename_id_expr old ident) e_list)
+  | NE_Array ar -> NE_Array (rename_id_array old new_i ar)
+  | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old new_i e1, rename_id_expr old new_i e2)
+  | NE_Unop (unop, e) -> NE_Unop (unop, rename_id_expr old new_i e)
+  | NE_Sharp e_list -> NE_Sharp (List.map (rename_id_expr old new_i) e_list)
 
-and rename_id_array old ident = function
-  | NA_Def e_list -> NA_Def (List.map (rename_id_expr old ident) e_list)
-  | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old ident e1, rename_id_expr old ident e2)
-  | NA_Concat (e1, e2) -> NA_Concat (rename_id_expr old ident e1, rename_id_expr old ident e2)
+and rename_id_array old new_i = function
+  | NA_Def e_list -> NA_Def (List.map (rename_id_expr old new_i) e_list)
+  | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
+  | NA_Concat (e1, e2) -> NA_Concat (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
   | NA_Slice (i, e_list) -> 
-    NA_Slice ((if i = old then ident else i), 
+    NA_Slice ((if i = old then new_i else i), 
 	      (List.map (fun (e1, e2) ->
-		(rename_id_expr old ident e1, rename_id_expr old ident e2)) e_list))
+		(rename_id_expr old new_i e1, rename_id_expr old new_i e2)) e_list))
   | NA_Index (i, e_list) -> 
-    NA_Index ((if i = old then ident else i), 
-	      (List.map (rename_id_expr old ident) e_list))
+    NA_Index ((if i = old then new_i else i), 
+	      (List.map (rename_id_expr old new_i) e_list))
 
 let retrieve_cond_expr env reg =
   let id_val = match reg.n_reg_val with
@@ -106,6 +106,7 @@ let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 
 
+(* Traduction du noeud vers l'implantation *)
 let bimpl_translator env node =
   let implem_name = String.capitalize (node.n_id ^ "_i") in
   let refines = String.capitalize (node.n_id) in
@@ -176,6 +177,7 @@ let bimpl_translator env node =
   }
 
 
+(* Traduction du noeud vers la machine abstraite *)
 let babst_translator env node =
   let machine = String.capitalize node.n_id in
   let sees = Utils.sees_list in
