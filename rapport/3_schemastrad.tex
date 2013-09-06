@@ -10,7 +10,7 @@ Dans les deux parties précédentes, nous avons posé les différents
 établir la traduction. Cette partie définit les schémas de traduction
 utilisés pour réaliser le traducteur. \\
 
-\section{Spécification}
+\section{Machine Abstraite}
 
 La machine abstraite est engendrée à partir du contrat du composant. Ce sont
 donc les conditions posées par les instructions \texttt{assume} et
@@ -20,13 +20,13 @@ nom de la définition Scade.
 \subsection{Traduction de la déclaration du noeud}
 La déclaration d'un noeud Scade comporte le nom du composant, ses
 entrées/sorties, et le type de ses entrées/sorties. En B, on reprend ces
-informations sur le nom du noeud et le nom des entrées sorties pour déclarer une
+informations sur le nom du noeud et le nom des entrées et sorties pour déclarer une
 opération. Ainsi la déclaration Scade: 
 \begin{alltt}
 node mon\_noeud (in_1: type\_in_1, ..., in_n: type\_in_n) 
                 returns (out_1: type\_out_1, ..., out_m: type\_out_m);
 \end{alltt}
-devient l'operation B:
+devient l'opération B:
 \begin{alltt}
 in_1, ..., in_n \(\leftarrow\) mon\_noeud(out_1, ..., out_m) =
 \end{alltt}
@@ -39,10 +39,10 @@ modifié par rapport à la version de Scade. Dans B, les noms de variables n'aya
 réservés, donc on effectue un rennomage sur l'ensemble des variables
 du programmes: les lettres simples sont doublées, et si le nouveau nom
 est déjà utilisé par une autre variable, on redouble le nom jusqu'à ce
-qu'il n'y ai aucun conflit dans les noms de variables.
+qu'il n'y ait aucun conflit dans les noms de variables.
 
 \paragraph{Traduction des types de base}
-Les informations de types sur les entrées et sorties sont reprises pour les
+Les informations de type sur les entrées et sorties sont reprises pour les
 préconditions et postconditions.
 La traduction des types de base est directe:
 \begin{itemize}
@@ -84,23 +84,24 @@ b\_inf $\in$ INT \& b\_inf <= 2000 \& b\_inf >= -2000 \\
 
 
 \paragraph{Traduction des postconditions}
-Les instructions \texttt{guarantee} sont également des formules
+Les instructions \texttt{guarantees} sont également des formules
 logiques. Cependant, on utilise des substitution \emph{Devient Element De} pour
 les post-conditions, que l'on combine avec une définition d'ensemble
 en compréhension. Les variables en sortie auront une valeur respectant
 la postcondition qui va être utilisée pour définir l'ensemble en
 compréhension. 
-Les substitutions sont regroupée dans une substitution parallèle,
+Les conditions sont regroupée dans une substitution parallèle,
 elles sont séparées par un ||. 
 Les substitutions seront de la forme:
 \begin{alltt}
-out \(\in\): \{ iii | iii \(\in\) type_out & C \}
+out \(\in\): \{ ii | ii \(\in\) type_out & C \}
 \end{alltt}
 avec \texttt{out} la variable de sortie, \texttt{type\_out} son type, et \texttt{C} la
-postcondition associée.\\
+postcondition associée. Un rennomage est effectué sur la condition \texttt{C},
+car elle porte alors sur la variable \texttt{ii}. Avant d'effectuer le rennomage, on
+vérifie que la nouvelle variable n'existe pas déjà dans l'environnement.\\
 En reprenant l'exemple de \texttt{bound} on obtient pour v:\\
-\texttt{vv $\in$: \{ iii | iii $\in$ INT \& iii <= 200 \& iii >= -2000 \}}
-
+\texttt{vv $\in$: \{ ii | ii $\in$ INT \& ii <= 200 \& ii >= -2000 \}}
 
 
 \subsection{Le cas des tableaux}
@@ -113,38 +114,39 @@ Les tableaux peuvent être multi-dimensionnels, mais ne peuvent contenir qu'un
 seul type de donnée. On peut voir les tableaux comme des fonctions prennant
 comme argument l'indice de la donnée stockée, et retournant la valeur de cette
 donnée. Les tableaux sont indexés par des entiers, sélectionnés dans les
-intervalles allant de 1 à la taille du tableau.
+intervalles allant de 0 à la taille du tableau - 1.
 Par exemple, pour une matrice \emph{Mat} de n lignes et m colonnes, les valeurs
-des données sont accessibles ainsi: $Mat(p, q)$, avec $1 \leq p \leq n$ et $1 \leq q
-\leq m$.
+des données sont accessibles ainsi: $Mat(p, q)$, avec $0 \leq p \leq n-1$ et $0 \leq q
+\leq m-1$.
 Ainsi, le schéma correspondant à la traduction de la déclaration d'un tableau
 est:
 \begin{alltt}
 nom\_tableau : type\_tableau \^ dim_1 \^ ... \^ dim_n
 \end{alltt}
-devient la substitution B:
+devient en B:
 \begin{alltt}
-nom\_tableau : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) type\_tableau 
+nom\_tableau : (0..dim_1-1, ..., 0..dim_n-1) \(\rightarrow\) type\_tableau 
 \end{alltt}
-Dans la traduction B, la notation \texttt{1..dim$_1$} correspond à un
-intervalle allant de \texttt{1} à la valeur de \texttt{dim$_1$}
+Dans la traduction B, la notation \texttt{0..dim$_1$-1} correspond à un
+intervalle allant de \texttt{0} à la valeur de \texttt{dim$_1$-1}
+
 \paragraph{Traduction des formules logiques}
 Les conditions sur les tableaux en B ont été évoquées dans la section sur les
 quantificateurs en B. Les conditions portent sur l'ensemble des données
 contenues dans le tableau. La condition est alors de la forme: pour toute valeur
-iii correspondant à un index du tableau, la donnée référencée par cet index
+\texttt{jj} correspondant à un index du tableau, la donnée référencée par cet index
 respecte la condition donnée. Ainsi, une formule logique \texttt{f\_l} portant sur un
-tableau \texttt{T} de n dimensions correspond à la formule B: 
+tableau de n dimensions correspond à la formule B: 
 \begin{alltt}
-\(\forall \)iii. (iii : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) f\_l)
+\(\forall \)jj. (jj : (1..dim_1, ..., 1..dim_n) \(\rightarrow\) f\_l)
 \end{alltt}
 
-Prenons par exemple un tableau T de taille 2 comprenant des entiers. La condition
-associée à T est que ses éléments doivent être compris entre 0 et 10 exclus.\\
+Prenons par exemple un tableau Tab de taille 2 comprenant des entiers. La condition
+associée à Tab est que ses éléments doivent être compris entre 0 et 10 exclus.\\
 Le type du tableau sera alors: \\
-\texttt{T : (1 .. 2) $\rightarrow$ INT }\\
+\texttt{Tab : (0 .. 1) $\rightarrow$ INT }\\
 Et la formule associée au tableau sera: \\
-\texttt{$\forall$iii. (iii $\in$ (1 .. 2) => 0 < T(iii) \& T(iii) < 10)}
+\texttt{$\forall$jj. (jj $\in$ (0 .. 1) => 0 < Tab(jj) \& Tab(jj) < 10)}
 
 \subsection{schéma général}
 
@@ -197,18 +199,27 @@ out\(\sb{1}\), ..., out\(\sb{q}\) \(\leftarrow\) foo(in\(\sb{1}\), ..., in\(\sb{
 
 \noindent
 Les formules booléennes sont notées \texttt{pred\_nom} où nom
-correspond au nom de la variable concernée par cette formule, qui à
+correspond au nom de la variable concernée par cette formule, qui a
 la même syntaxe en Scade et en B. De plus, les variables locales ne sont pas
 considérées dans la machine abstraite.
 
-\section{Implémentation}
+\section{Implantation}
 
+\subsection{Traduction des variables locales}
+Les variables locales correspondent aux fils de Scade. Elles sont générées
+automatiquement et leur identifiant est de la forme: \texttt{\_L}X, où X est un
+numéro. Dans le langage B, les identifiants ne peuvent commencer par
+un \texttt{"\_"}. Donc un rennomage est effectué sur l'ensemble des variables
+locales pour supprimer le \texttt{"\_"}, en vérifiant que le nouvel identifiant
+n'est pas déjà présent dans l'environnement. Si le nouvel identifiant \texttt{L}X est déjà
+utilisé, alors on ajoute une lettre à l'identifiant jusqu'à ce que ce dernier ne
+soit pas déjà présent dans l'environnement.
 
 \subsection{Traduction des équations}
 
-Les équations sont traduites différemment selon le "type" d'expression qu'elles
+Les équations sont traduites différemment selon la "famille" d'expression qu'elles
 contiennent.  
-Concernant la partie droite, il y a 4 types d'expressions de Scade à traduire en B:
+Concernant la partie droite, il y a 4 familles d'expressions de Scade à traduire en B:
 \begin{itemize}
 \item Les expressions à manipulant les variables, constantes et opérateurs de
   base (arithmétiques, relationnels, booléens,...).
@@ -227,6 +238,13 @@ variable, les opérations étant atomiques dans Scade. \\
 \texttt{$a = op_{base}(b_1,...,b_n)$ $\xrightarrow{traduction ~
 equations}$ $a:=op_{base}(b_1,...,b_n)$. }
 
+Si l'opérateur est un opérateur de prédicat tel que les opérateurs booléens, ou
+les opérateurs de comparaison, alors l'opération sera précédée par
+l'opérateur \texttt{bool}, car la partie droite des substitutions \emph{Devient
+Egal} ne peuvent contenir que des expressions, et l'opérateur \texttt{bool}
+permet de transformer un prédicat en expression.
+
+
 \paragraph{Appel de noeud}
 Un appel de noeud est traduit par une substitution \emph{Appel d'Opération}. Le
 membre gauche de l'équation contient autant de variables qu'il y a de sorties
@@ -239,13 +257,17 @@ op_{appel}(b_1,..., b_n)$}
 
 \paragraph{Alternative}
 On traduit l'alternative par la substitution \emph{Condition}. On utilise
-également la substitution \emph{Devient Egal} pour chaque branche de l'alternative.\\
+également la substitution \emph{Devient Egal} pour chaque branche de
+l'alternative.
+La condition doit correspondre à un prédicat, or si c'est une simple variable,
+elle sera considérée comme une expression. Pour la transformer en prédicat, la
+condition B sera une égalité entre la condition Scade et la valeur
+booléenne \texttt{TRUE}.
 
-\texttt{$ a = if~ cond~ then~ b1~ else~ b2$ $\xrightarrow{traduction ~ equations}$ $IF ~cond~ THEN ~a:=b1~ ELSE
-~a:=b2$}
-
-
-
+\noindent
+\begin{small}
+\texttt{$ a=if~cond~then~b1~else~b2\xrightarrow{traduction~equations}IF~cond=TRUE~THEN~a:=b1~ELSE~a:=b2~END$}
+\end{small}
 \subsection*{Registres}
 
 Le registre est également traduit en substitution \emph{Devient Egal}, cependant
@@ -289,7 +311,6 @@ Pour résumer, on obtiendra dans l'implantation:
 \begin{alltt}
 \textbf{IMPLEMENTATION} ...
 ...
-
 \textbf{CONCRETE\_VARIABLES} ..., reg
 \textbf{INVARIANT}
   ...& reg : t & P\(\sb{reg}\)
@@ -315,12 +336,9 @@ Prenons par exemple l'équation suivante avec un délai fixé à 3:
 \texttt{reg = fby(ini, 3, a)}\\
 La machine générée doit être:
 
-\newpage
-
 \begin{alltt}
 \textbf{IMPLEMENTATION} ...
 ...
-
 \textbf{CONCRETE\_VARIABLES} ..., reg, reg\_i1, reg\_i2
 \textbf{INVARIANT}
   ...& reg : t & P\(\sb{reg}\) & 
@@ -330,7 +348,6 @@ La machine générée doit être:
   ... ; reg := ini; 
   reg\_i1 := ini; 
   reg\_i2 := ini
-
 \textbf{OPERATION}
 ... =
 \textbf{VAR} ... \textbf{IN}
@@ -418,7 +435,7 @@ Pour inclure des opérations ou des constantes définies dans des machines
 externes, il faut les ajouter respectivement dans les clauses \texttt{IMPORTS} et \texttt{SEES} de
 la machine courante. Cependant, il n'y a pas de processus automatique pour
 ajouter les machines nécessaires dans ces clauses. Il faut donc les ajouter
-manuellement une fois la traduction est réalisée.
+manuellement une fois la traduction réalisée.
 
 
 \subsection{Schéma général}
@@ -427,7 +444,7 @@ Le nom de la machine reprend le nom de la
 définition Scade, cependant le nom de l'opération doit être différent du nom de
 la machine, donc la première lettre sera une majuscule pour marquer la
 différence de nom. 
-Le shéma de traduction d'un composant Scade foo en une implémentation B est
+Le schéma de traduction d'un composant Scade foo en une implantation B est
 le suivant:
 
 
@@ -495,13 +512,12 @@ sur la liste d'équations du composant Scade.
 
 \section{Le traducteur}
 
-Le traducteur a été écrit en OCaml, qui est un langage très efficace
+Le traducteur\cite{Traducteur} a été écrit en OCaml, qui est un langage très efficace
 pour développer des compilateurs, et donc des traducteurs.\\
 Le parseur/lexeur a été écrit à partir de la grammaire de Scade,
-définie dans le manuel Textual Scade.
-
+définie dans le manuel Textual Scade\cite{ScadeRef}.
 Les programmes parsés sont alors représentés sous forme d'arbre de
-syntaxe abstraite, donné en annexe A. Cette représentation permet une
+syntaxe abstraite, donné en annexe B. Cette représentation permet une
 manipulation sur les différents éléments du programme, telle que la
 liste d'équation sur laquelle est effectuée l'algorithme du tri
 topologique. \\
@@ -509,11 +525,12 @@ On identifie également les différentes équations que l'on
 répertorie en opération de base, registres, appel de noeud, et
 alternative.
 
-Cet arbre est ensuite transformé en un arbre donné en annexe B,
-qui peut être imprimé dans deux fichiers de sortie, correspondant à
-la machine abstraite et à l'implantation correspondant au composant
+Cet arbre est ensuite transformé en un arbre donné en annexe C,
+qui peut être imprimé dans deux fichiers de sortie, 
+la machine abstraite et l'implantation qui correspondent au composant
 donné en entrée. L'impression respecte la grammaire donnée dans le
-Manuel de référence de B, et le couple de fichier peut être importé
+Manuel de référence de B\cite{BRef}, et le couple de fichier peut être importé
 dans un projet de l'Atelier B afin de vérifier le typage et la syntaxe
 de chaque machine, et de passer les étapes d'obligation de preuve de
 façon automatique.
+

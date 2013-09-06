@@ -10,9 +10,9 @@ let a_b_list_equals l=
   List.for_all (fun (a, b) -> a = b) l
 
 (* Define the machines accessed in the SEES clause *)
-let sees_list = ["Constantes2"; "Ctes_math"]
+let sees_list = []
 (* Define the machines accessed in the IMPORT clause (A AUTOMATISER) *)
-let imports_list = ["Bound"]
+let imports_list = []
 
 (* string_of_list (l: string list) returns the concat of every strings in list *)
 (* NOT USED *)
@@ -48,6 +48,30 @@ let find_ident_in_pexpr expr =
   in
   ident_finder expr;
   !id
+
+
+(* Fonctions de rennomage *)
+let rec rename_id_expr old new_i = function
+  | NE_Ident i -> if i = old then NE_Ident new_i else NE_Ident i
+  | NE_Value v -> NE_Value v
+  | NE_Array ar -> NE_Array (rename_id_array old new_i ar)
+  | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old new_i e1, rename_id_expr old new_i e2)
+  | NE_Unop (unop, e) -> NE_Unop (unop, rename_id_expr old new_i e)
+  | NE_Sharp e_list -> NE_Sharp (List.map (rename_id_expr old new_i) e_list)
+
+and rename_id_array old new_i = function
+  | NA_Def e_list -> NA_Def (List.map (rename_id_expr old new_i) e_list)
+  | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
+  | NA_Concat (e1, e2) -> NA_Concat (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
+  | NA_Slice (i, e_list) -> 
+    NA_Slice ((if i = old then new_i else i), 
+	      (List.map (fun (e1, e2) ->
+		(rename_id_expr old new_i e1, rename_id_expr old new_i e2)) e_list))
+  | NA_Index (i, e_list) -> 
+    NA_Index ((if i = old then new_i else i), 
+	      (List.map (rename_id_expr old new_i) e_list))
+
+
 
 (* In B, ids must be defined by more than 1 letter, if it has only 1 letter then we double it else it doesn't change.
    we add a triplet (id, bid, n_type) in an Env.t set, and we check there is no doublon

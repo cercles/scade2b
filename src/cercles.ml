@@ -59,24 +59,26 @@ let () =
     if !verbose then Ast_printer_norm.print_prog ast_n;
     if !norm_only then exit 0 ;
     let ast_b = Trad.translate ast_n in
-    let babst_file = open_out ((Filename.chop_extension file)^".mch") in
+    let babst_file = open_out (Filename.concat (Filename.dirname file) (String.capitalize(main_node^".mch"))) in
     Babst_generator.print_prog ast_b.machine_abstraite babst_file;
-    let bimpl_file = open_out ((Filename.chop_extension file)^"_i.imp") in
+    let bimpl_file = open_out (Filename.concat (Filename.dirname file) (String.capitalize(main_node^"_i.imp"))) in
     Bimpl_generator.print_prog ast_b.implementation bimpl_file;
     close_out babst_file;
     close_out bimpl_file;
     ()
   with
   | Lexer.Lexical_error s ->
-    Format.eprintf "lexical error: %s\n@." s;
-    handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
-    exit 1
+      Format.eprintf "lexical error: %s\n@." s;
+      handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
+      exit 1
   | Parsing.Parse_error ->
-    Format.eprintf "syntax error\n@.";
-    handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
-    exit 1
+      Format.eprintf "syntax error\n@.";
+      handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
+      exit 1
   | Normalizer.Assert_id_error e ->
-    Format.eprintf "assert error: %s \n@." e
+      Format.eprintf "assert error: %s \n@." e
+  | Trad.Register_cond_error e ->
+      Format.eprintf "Register condition error: %s isn't related to an input/output \n@." e
   | e ->
-    Format.eprintf "Anomaly: %s\n@." (Printexc.to_string e);
-    exit 2
+      Format.eprintf "Anomaly: %s\n@." (Printexc.to_string e);
+      exit 2

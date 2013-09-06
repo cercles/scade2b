@@ -16,6 +16,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{url}
+\usepackage[toc,page]{appendix}
 \geometry{left=23mm, right=23mm, top=30mm, bottom=25mm}
 
 \newcommand{\bcode}[1]{\textcolor{darkgray}{#1}}
@@ -26,14 +27,28 @@
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{Rapport de stage}
-\rhead{Thibord}
+\lhead{\textsc{Rapport de stage}}
+\rhead{\textsc{Florian Thibord}}
 
 
-\title{Rapport de Stage \\ - \\ Traduction de composants Scade/Lustre vers des
-  machines B}
-\author{\textsc{Florian Thibord}}
+\title{
+	\normalsize{M2 Informatique STL APR\\
+	Université Pierre et Marie Curie\\
+	2012-2013}\\
+	\vspace{3mm}
+	\rule{\linewidth{}}{0.3mm}\\
+	\Large{Rapport de Stage}\\
+	\Large{Traduction de composants Scade/Lustre vers des machines B}\\
+	\vspace{3mm}
+	\normalsize{Florian THIBORD}
+	\rule{\linewidth{}}{0.3mm}
+}
 
+\author{}
+
+\date{}
+
+\setcounter{tocdepth}{1}
 
 %----------------------------------
 %-------- DEBUT DOCUMENT ----------
@@ -49,6 +64,7 @@
 
 \chapter*{Introduction}
 \input{intro}
+\addcontentsline{toc}{chapter}{Introduction}
 
 \chapter{Scade}
 \input{1_fragmentscade}
@@ -59,16 +75,27 @@
 \chapter{Schémas de traduction}
 \input{3_schemastrad}
 
-%% \chapter{Exemples}
-%% \input{4_exemples}
+\chapter{Exemples}
+\input{4_exemples}
 
 \chapter*{Conclusion}
 \input{conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
 
 \nocite{*}
-
 \bibliographystyle{plain}
 \bibliography{biblio}
+
+\begin{appendix}
+\chapter{Annexe A: Obligation de preuve pour l'opération}
+\input{annexe_a}
+
+\chapter{Annexe B: ast\_repr.ml}
+\input{annexe_b}
+
+\chapter{Annexe C: ast\_repr\_b.ml}
+\input{annexe_c}
+\end{appendix}
 
 \end{document}
 

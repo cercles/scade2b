@@ -1,4 +1,5 @@
 \select@language {french}
+\contentsline {chapter}{Introduction}{3}
 \contentsline {chapter}{\numberline {1}Scade}{4}
 \contentsline {section}{\numberline {1.1}Architecture d'un composant Scade}{4}
 \contentsline {paragraph}{}{4}
@@ -45,7 +46,7 @@
 \contentsline {paragraph}{Op\IeC {\'e}ration de l'implantation}{13}
 \contentsline {paragraph}{}{13}
 \contentsline {chapter}{\numberline {3}Sch\IeC {\'e}mas de traduction}{15}
-\contentsline {section}{\numberline {3.1}Sp\IeC {\'e}cification}{15}
+\contentsline {section}{\numberline {3.1}Machine Abstraite}{15}
 \contentsline {subsection}{\numberline {3.1.1}Traduction de la d\IeC {\'e}claration du noeud}{15}
 \contentsline {paragraph}{Traduction des types de base}{15}
 \contentsline {subsection}{\numberline {3.1.2}Traduction des conditions}{16}
@@ -55,11 +56,21 @@
 \contentsline {paragraph}{Traduction des types}{16}
 \contentsline {paragraph}{Traduction des formules logiques}{17}
 \contentsline {subsection}{\numberline {3.1.4}sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{17}
-\contentsline {section}{\numberline {3.2}Impl\IeC {\'e}mentation}{18}
-\contentsline {subsection}{\numberline {3.2.1}Traduction des \IeC {\'e}quations}{18}
+\contentsline {section}{\numberline {3.2}Implantation}{18}
+\contentsline {subsection}{\numberline {3.2.1}Traduction des variables locales}{18}
+\contentsline {subsection}{\numberline {3.2.2}Traduction des \IeC {\'e}quations}{18}
 \contentsline {paragraph}{Op\IeC {\'e}rateurs de base}{18}
 \contentsline {paragraph}{Appel de noeud}{18}
 \contentsline {paragraph}{Alternative}{18}
-\contentsline {subsection}{\numberline {3.2.2}Gestion des clauses SEES et IMPORTS}{21}
-\contentsline {subsection}{\numberline {3.2.3}Sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{21}
+\contentsline {subsection}{\numberline {3.2.3}Gestion des clauses SEES et IMPORTS}{21}
+\contentsline {subsection}{\numberline {3.2.4}Sch\IeC {\'e}ma g\IeC {\'e}n\IeC {\'e}ral}{21}
 \contentsline {section}{\numberline {3.3}Le traducteur}{22}
+\contentsline {chapter}{\numberline {4}Exemples}{23}
+\contentsline {section}{\numberline {4.1}Bound}{23}
+\contentsline {section}{\numberline {4.2}Integr}{25}
+\contentsline {section}{\numberline {4.3}Extab}{26}
+\contentsline {chapter}{Conclusion}{29}
+\contentsline {chapter}{\numberline {A}Annexe A: Obligation de preuve pour l'op\IeC {\'e}ration}{31}
+\contentsline {paragraph}{}{31}
+\contentsline {chapter}{\numberline {B}Annexe B: ast\_repr.ml}{37}
+\contentsline {chapter}{\numberline {C}Annexe C: ast\_repr\_b.ml}{39}

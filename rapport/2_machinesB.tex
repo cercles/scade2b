@@ -150,7 +150,12 @@ entre 1 et 5 doit être strictement inférieur à 5.
 Les expressions permettent de désigner les données utilisées. Les
 expressions de base désignent une variable ou une valeur primitive.
 On retrouve toutes les expressions arithmétiques classiques, addition,
-soustraction, multiplication, division et modulo.
+soustraction, multiplication, division et modulo. \\
+On peut également transformer un prédicat en expression grâce à
+l'opérateur $bool$, qui retournera une expression de
+type BOOL. Par exemple, le prédicat $A < B$ peut être considéré comme
+une expression ainsi : $bool(A < B)$. Cet opérateur sera surtout utile dans la
+substitution \emph{Devient Egal} qui ne porte que sur des expressions.
 
 \paragraph{Des fonctions}
 
@@ -376,13 +381,15 @@ L'opération de l'implantation dépend également des machines importées et vue
 aussi et surtout de la machine qu'elle raffine. L'obligation générée est la
 suivante:\\
 
-\bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\wedge$ Inv $\wedge$ P $\Rightarrow$ [S']$ \neg
-$[S]$ \neg $(Inv)}\\
+\bcode{Inv$_{imp}$ $\wedge$ Inv$_{see}$ $\wedge$ Inv $\wedge$ P $\Rightarrow$
+[[u:=u'] S']$ \neg
+$[S]$ \neg $(Inv $\wedge$ u = u')}\\
 
+Avec u correspondant aux sorties de la machine abstraite et u' les sorties de l'implantation.
 
 \paragraph{}
 Prenons un exemple. Soit la machine Integr, qui utilise la machine Bound,
-générée à partir du noeud bound. Le couple de machine importées est le suivant:
+générée à partir du noeud bound. Le couple de machines est le suivant:
 \newpage
 \setlength{\columnseprule}{0.05cm}
 \begin{multicols}{2}
@@ -395,8 +402,8 @@ yy \(\leftarrow\) integr(xx) =
   \textbf{PRE}
     xx \(\in\) INT & -256 <= xx & xx <= 255
   \textbf{THEN}
-    yy \(\in\): { yy | yy \(\in\) INT & 
-          -1024 <= yy & yy <= 1023 }
+    yy \(\in\): \{ yy | yy \(\in\) INT & 
+          -1024 <= yy & yy <= 1023 \}
   \textbf{END}
 
 \end{alltt}
@@ -441,17 +448,4 @@ En appliquant la substitution à l'invariant on obtient:\\
 
 \noindent
 ce qui est correct.\\
-
-\noindent
-Pour l'opération on a:\\
-
-\noindent
-\bcode{ (reg1 $\in $ INT $\&$ -1024 <= reg1 $\&$ reg1 <= 1023) $\wedge$}\\
-\bcode{ (xx $\in $ INT $\&$ -256 <= xx $\&$ xx <= 255)}\\
-\bcode{ $\Rightarrow$ }\\
-\bcode{ [  zz := xx + reg1;} \\
-\bcode{ $~$ yy $\leftarrow$ bound(-1024, zz, 1023);}\\
-\bcode{ $~$ reg1 := yy ]}\\
-\bcode{ $\neg$ [ yy $\in $: { yy | yy $\in$ INT $\&$ -1024 <= yy $\&$ yy <=
-1023} ]}\\
-\bcode{ $\neg$ ( reg1 $\in$ INT $\&$ -1024 <= reg1 $\&$ reg1 <= 1023)}\\
+Concernant l'opération, la preuve est bien plus fastidieuse. Elle est disponible en annexe.

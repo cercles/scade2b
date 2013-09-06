@@ -1,0 +1,78 @@
+\noindent
+Le fichier \texttt{ast\_repr.ml} contient la définition de l'arbre de
+syntaxe abstraite d'un composant Scade après avoir été parsé.
+\begin{small}
+\begin{verbatim}
+
+type ident = string
+
+type value =
+  Bool of bool
+| Int of int
+| Float of float
+
+type base_type =
+  T_Bool
+| T_Int
+| T_Float
+
+(* Opérateurs binaires de Scade *)
+type bop =
+  Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge
+| Op_add | Op_sub | Op_mul | Op_div | Op_mod
+| Op_div_f | Op_and | Op_or | Op_xor
+
+(* Opérateurs unaires de Scade *)
+type unop =
+  Op_not | Op_minus
+
+(* Expressions Scade *)
+type p_expression =
+  PE_Ident of ident
+| PE_Value of value
+| PE_Array of p_array_expr
+| PE_App of ident * p_expression list
+| PE_Bop of bop * p_expression * p_expression
+| PE_Unop of unop * p_expression
+| PE_Fby of p_expression * p_expression * p_expression
+| PE_If of p_expression * p_expression * p_expression
+
+(* Opérations sur les tableaux*)
+and p_array_expr =
+  PA_Def of p_expression list (* Définition avec la syntaxe [e1, ..., en] *)
+| PA_Caret of p_expression * p_expression   (* Définition avec la syntaxe e1^e2 (ex: false^4) *)
+| PA_Concat of p_expression * p_expression
+| PA_Slice of ident * (p_expression * p_expression) list
+| PA_Index of ident * p_expression list
+| PA_Reverse of p_expression
+
+(* Partie gauche d'une équation *)
+type p_left_part =
+  PLP_Ident of ident
+| PLP_Tuple of ident list
+
+(* Equation, une partie gauche et une expression à droite *)
+type p_equation = p_left_part * p_expression
+
+(* Type d'une variable (base ou tableau) *)
+type p_type =
+  PT_Base of base_type
+| PT_Array of p_type * p_expression
+
+(* Déclaration d'une variable *)
+type p_decl = ident * p_type
+
+(* Node, défini par un identifiant, des paramètres d'entrées/sorties, les
+conditions associées, une liste de variables locales, et une liste d'équations *)
+type p_node =
+  {  p_id: ident;
+     p_param_in: p_decl list;
+     p_param_out: p_decl list;
+     p_assumes: p_expression list;
+     p_guarantees: p_expression list;
+     p_vars: p_decl list;
+     p_eqs: p_equation list; 
+  }
+
+\end{verbatim}
+\end{small}

@@ -70,10 +70,10 @@ let handle_guarantee node expr =
   | None ->  raise (Assert_id_error id)
 
 
-(* Retourne un registre normalisé avec l'information de type de la variable concernée par le registre *) 
+(* Retourne un registre normalisé *) 
 let handle_reg node = function
   | PLP_Ident lp_id, PE_Fby (PE_Ident id, delai, ini) ->
-    let typ = match find_type id (node.p_param_in@node.p_param_out@node.p_vars) with
+    let typ = match find_type lp_id (node.p_param_in@node.p_param_out@node.p_vars) with
       | Some typ -> typ
       | None -> raise Register_error
     in

@@ -5,6 +5,8 @@ open Ast_repr_b
 open Ast_repr_norm
 open Utils
 
+exception Register_cond_error of string
+
 (* Traduction des expressions *)
 let id_to_bid env id =
 try
@@ -30,14 +32,6 @@ and n_array_to_b_array env = function
   | NA_Index (id, e_list) -> 
     BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
 
-(* flatten a NT_Array into a n_expr list (a list of dimensions) *)
-let flatten_array env a =
-  let base_t = ref T_Int in (* default ref *)
-  let rec fun_rec = function
-  | NT_Base t -> base_t := t; []
-  | NT_Array (t, expr) -> (n_expr_to_b_expr env expr) :: (fun_rec t)
-  in
-  (!base_t, fun_rec a)
 
 let nlp_to_blp env = function
   | NLP_Ident id -> BLP_Ident (id_to_bid env id)
@@ -47,63 +41,75 @@ let n_decl_to_decl env (id, _) =
   id_to_bid env id
 
 let n_condition_to_condition env (id, t, e) =
+  (* flatten a NT_Array into a n_expr list (a list of dimensions) *)
+  let flatten_array env a =
+    let base_t = ref T_Int in (* default ref *)
+    let rec fun_rec = function
+      | NT_Base t -> base_t := t; []
+      | NT_Array (t, expr) -> (n_expr_to_b_expr env expr) :: (fun_rec t)
+    in
+    (!base_t, fun_rec a)
+  in
   match t with 
-  | NT_Base typ ->  (
-      match e with 
-	| None -> Base_no_expr (id_to_bid env id, typ)
-	| Some expr -> Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr))
-  | NT_Array (_, _) -> (
-    let typ, dims = flatten_array env t in
-    match e with 
-      | None -> Fun_no_expr (id_to_bid env id, typ, dims)
-      | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr))
+    | NT_Base typ ->  (
+	match e with 
+	  | None -> Base_no_expr (id_to_bid env id, typ)
+	  | Some expr -> Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr))
+    | NT_Array (_, _) -> (
+	let typ, dims = flatten_array env t in
+	match e with 
+	  | None -> Fun_no_expr (id_to_bid env id, typ, dims)
+	  | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr))
+	
+
+(* Traduction des registres *)
+
+let get_concrete_vars env reg = 
+  id_to_bid env reg.n_reg_lpid
+
+let retrieve_cond_expr reg node env =
+  let params_in, params_out, eqs = node.n_param_in, node.n_param_out, node.n_eqs in
+  let id_var = match reg.n_reg_val with
+    | NE_Ident i -> i
+    | _ -> assert false
+  in
+  let eqs_folder condition eq =
+    match eq with
+      | N_Operation op -> begin
+	  match op.n_op_lp, op.n_op_expr with
+	    | NLP_Ident idl, NE_Ident ide -> begin
+		try 
+		  let id_in, _ = List.find (fun (p_in, _) ->
+					      Printf.printf "INS : %s %s %s %s \n" p_in ide idl id_var;
+					      p_in = ide && idl = id_var) params_in in
+		  match Env.find id_in env with
+		    | _, Some c -> Some (Utils.rename_id_expr id_in reg.n_reg_lpid c) 
+		    | _, None -> raise Not_found
+		with Not_found -> try
+		  let id_out, _ = List.find (fun (p_out, _) -> 
+					       Printf.printf "OUTS : %s %s %s %s \n" p_out idl ide id_var;
+					       p_out = idl && ide = id_var) params_out in
+		  match Env.find id_out env with
+		    | _, Some c -> Some (Utils.rename_id_expr id_out reg.n_reg_lpid c)
+		    | _, None -> raise Not_found
+		with Not_found -> condition
+	      end
+	    | _ -> condition
+	end
+      | _ -> condition
+  in
+  List.fold_left eqs_folder None eqs
+  
+let get_invariant env node reg =
+  n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env) 
+  
+let get_initialisation env reg =
+  (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 
 
 let rec trad_list env to_call = function
   | [] -> []
   | elt::l -> (to_call env elt)::(trad_list env to_call l)
-
-let get_concrete_vars env reg =
-  id_to_bid env reg.n_reg_lpid
-
-
-let rec rename_id_expr old new_i = function
-  | NE_Ident i -> if i = old then NE_Ident new_i else NE_Ident i
-  | NE_Value v -> NE_Value v
-  | NE_Array ar -> NE_Array (rename_id_array old new_i ar)
-  | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old new_i e1, rename_id_expr old new_i e2)
-  | NE_Unop (unop, e) -> NE_Unop (unop, rename_id_expr old new_i e)
-  | NE_Sharp e_list -> NE_Sharp (List.map (rename_id_expr old new_i) e_list)
-
-and rename_id_array old new_i = function
-  | NA_Def e_list -> NA_Def (List.map (rename_id_expr old new_i) e_list)
-  | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
-  | NA_Concat (e1, e2) -> NA_Concat (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
-  | NA_Slice (i, e_list) -> 
-    NA_Slice ((if i = old then new_i else i), 
-	      (List.map (fun (e1, e2) ->
-		(rename_id_expr old new_i e1, rename_id_expr old new_i e2)) e_list))
-  | NA_Index (i, e_list) -> 
-    NA_Index ((if i = old then new_i else i), 
-	      (List.map (rename_id_expr old new_i) e_list))
-
-let retrieve_cond_expr env reg =
-  let id_val = match reg.n_reg_val with
-    | NE_Ident i -> i
-    | _ -> assert false
-  in
-  let cond_expr = 
-    match Env.find id_val env with
-      | _, Some c -> Some (rename_id_expr id_val reg.n_reg_lpid c)
-      | _, None -> failwith "Register not related to input/output"
-  in
-  cond_expr 
-
-let get_invariant env reg =
-  n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr env reg) 
-  
-let get_initialisation env reg =
-  (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 
 
 (* Traduction du noeud vers l'implantation *)
@@ -140,7 +146,7 @@ let bimpl_translator env node =
     let translator = function
       | N_Registre r ->
 	concrete_vars := (get_concrete_vars env r):: !concrete_vars;
-	invariant := (get_invariant env r):: !invariant;
+	invariant := (get_invariant env node r):: !invariant;
 	initialisation := (get_initialisation env r):: !initialisation;
 	{ reg_lpid = id_to_bid env r.n_reg_lpid;
 	  reg_val =  n_expr_to_b_expr env r.n_reg_val;
