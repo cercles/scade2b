@@ -1,0 +1,35 @@
+\frametitle {Traduction des conditions}
+Utilisation d'une substitution \emph{Precondition} PRE \textbf{P} THEN
+\textbf{S} END:
+\alt<2>{
+  \begin{itemize}
+  \item \textbf{P} prédicat reprenant les pré-conditions des
+    \texttt{assumes}. Pour chaque entrée, un prédicat est constitué de l'information
+    de type et de la condition associée à l'entrée.
+  \item \textbf{S} substitution reprenant les post-conditions des
+    \texttt{guarantees}. Pour chaque sortie, une substitution \emph{Devient élément
+      de} + la définition d'un ensemble en compréhension.
+  \end{itemize}
+}
+{
+Prenons un exemple :
+\begin{verbatim}
+  assume A_1 : b_inf <= 2000 and b_inf >= -2000;
+  assume A_2 : b_sup <= 2000 and b_sup >= -2000;
+  assume A_3 : z <= 2000 and z >= -2000;
+  guarantee G_v : v <= 2000 and v >= -2000;
+\end{verbatim}
+Est traduit par
+\begin{verbatim}
+ PRE
+   zz : INT & zz <= 2000 & zz >= -2000 &
+   b_sup : INT & b_sup <= 2000 & b_sup >= -2000 &
+   b_inf : INT & b_inf <= 2000 & b_inf >= -2000
+ THEN
+   vv :: { ii | ii : INT & ii <= 2000 & ii >= -2000 }
+ END
+\end{verbatim}
+}
+\pause[2]
+\emph{note: ":" se traduit par $\in$.}
+
