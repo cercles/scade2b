@@ -17,20 +17,27 @@ let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
   | NE_Value v -> BE_Value v
   | NE_Array ar -> BE_Array (n_array_to_b_array env ar)
-  | NE_Bop (bop, e1, e2) -> BE_Bop (bop, n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
-  | NE_Unop (unop, e) -> BE_Unop (unop, n_expr_to_b_expr env e)
-  | NE_Sharp e_list -> BE_Sharp (List.map (n_expr_to_b_expr env) e_list)
+  | NE_Op_Arith (op, e_list) -> BE_Op_Arith (op, (List.map (n_expr_to_b_expr env) e_list))
+  | NE_Op_Logic (op, e_list) -> BE_Op_Logic (op, (List.map (n_expr_to_b_expr env) e_list))
+
+and caret_to_def e1 e2 = 
+  let rec funrec v dim acc =
+    if dim = 0 then acc
+    else funrec v (dim-1) (v :: acc)
+  in
+  NA_Def (funrec e1 e2 [])
 
 and n_array_to_b_array env = function
   | NA_Def e_list -> BA_Def (List.map (n_expr_to_b_expr env) e_list)
+  | NA_Caret (e1, NE_Value (Int i)) -> n_array_to_b_array env (caret_to_def e1 i)
   | NA_Caret (e1, e2) -> BA_Caret (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
   | NA_Concat (e1, e2) -> BA_Concat (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
   | NA_Slice (id, e_list) -> 
-    BA_Slice (id_to_bid env id, 
-	      (List.map (fun (e1, e2) -> 
-		(n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)) e_list))
+      BA_Slice (id_to_bid env id, 
+		(List.map (fun (e1, e2) -> 
+			     (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)) e_list))
   | NA_Index (id, e_list) -> 
-    BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
+      BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
 
 
 let nlp_to_blp env = function
@@ -80,14 +87,12 @@ let retrieve_cond_expr reg node env =
 	    | NLP_Ident idl, NE_Ident ide -> begin
 		try 
 		  let id_in, _ = List.find (fun (p_in, _) ->
-					      Printf.printf "INS : %s %s %s %s \n" p_in ide idl id_var;
 					      p_in = ide && idl = id_var) params_in in
 		  match Env.find id_in env with
 		    | _, Some c -> Some (Utils.rename_id_expr id_in reg.n_reg_lpid c) 
 		    | _, None -> raise Not_found
 		with Not_found -> try
 		  let id_out, _ = List.find (fun (p_out, _) -> 
-					       Printf.printf "OUTS : %s %s %s %s \n" p_out idl ide id_var;
 					       p_out = idl && ide = id_var) params_out in
 		  match Env.find id_out env with
 		    | _, Some c -> Some (Utils.rename_id_expr id_out reg.n_reg_lpid c)
@@ -129,15 +134,15 @@ let bimpl_translator env node =
 		      alt_then = n_expr_to_b_expr env a.n_alt_then;
 		      alt_else = n_expr_to_b_expr env a.n_alt_else;
     		    }
-      | N_Fonction f ->
-	Fonction { fun_lp = nlp_to_blp env f.n_fun_lp;
-		   fun_id = f.n_fun_id;
-		   fun_params = List.map (n_expr_to_b_expr env) f.n_fun_params;
+      | N_Call f ->
+	Call { call_lp = nlp_to_blp env f.n_fun_lp;
+		   call_id = f.n_fun_id;
+		   call_params = List.map (n_expr_to_b_expr env) f.n_fun_params;
 		 }
       | N_Operation o ->
-	Operation { op_lp = nlp_to_blp env o.n_op_lp;
-		    op_expr = n_expr_to_b_expr env o.n_op_expr;
-		  }
+	Op_Base { op_lp = nlp_to_blp env o.n_op_lp;
+		  op_expr = n_expr_to_b_expr env o.n_op_expr;
+		}
       | _ -> assert false
     in
     List.map translator eqs

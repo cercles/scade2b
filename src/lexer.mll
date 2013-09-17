@@ -36,8 +36,7 @@ rule token = parse
 			   token lexbuf }
 	  | pragma_simpl { token lexbuf }
 
-	  | "node"    { NODE }
-	  | "function"{ FUNCTION }
+	  | "node"|"function"  { NODE }
 	  | "returns" { RETURNS }
 	  | "let"     { LET }
 	  | "tel"     { TEL }

@@ -23,7 +23,7 @@
   type equation_type = Eq of p_equation | Assume of p_expression | Guarantee of p_expression
 %}
 
-%token NODE FUNCTION RETURNS LET TEL VAR CONST ASSUME GUARANTEE
+%token NODE RETURNS LET TEL VAR CONST ASSUME GUARANTEE
 /* %token ASSERT INCLUDE deprecated*/
 %token IF THEN ELSE
 /* %token PRE ARROW  deprecated*/
@@ -120,24 +120,11 @@ array_type :
  | typ CARET expr { PT_Array ($1, $3) }
 ;
 
+
 typ_list :
  | typ { [$1] }
  | typ COMMA typ_list { $1 :: $3 }
 ;
-
-
-
-/*
-eq_list :
- | ASSUME IDENT COLON expr SEMICOL { [Assume $4] }
- | ASSUME IDENT COLON expr SEMICOL eq_list { (Assume $4) :: $6 }  
- | GUARANTEE IDENT COLON expr SEMICOL { [Guarantee $4] }
- | GUARANTEE IDENT COLON expr SEMICOL eq_list { (Guarantee $4) :: $6 }
- | left_part EQ expr SEMICOL { [Eq (P_Eq ($1, $3))] }
- | left_part EQ expr SEMICOL eq_list { (Eq (P_Eq ($1, $3))) :: $5 }
-;
-*/
-
 
 
 eq_list :
@@ -152,53 +139,43 @@ eq :
 ;
 
 
-/*
-left_part :
- | IDENT { PLP_Ident $1 }
- | LPAREN IDENT COMMA id_list RPAREN { PLP_Tuple ($2 :: $4) }
- | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
-;
-*/
-
-
-
 left_part : 
  | LPAREN left_part RPAREN { $2 }
  | IDENT { PLP_Ident $1 }
  | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
 ;
 
+
 expr :
  | IDENT { PE_Ident $1 }
  | INT { PE_Value (Int $1) }
  | BOOL { PE_Value (Bool $1) }
  | REAL { PE_Value (Float $1) }
- | expr PLUS expr { PE_Bop (Op_add, $1, $3) }
- | expr MINUS expr { PE_Bop (Op_sub, $1, $3) }
- | expr MULT expr { PE_Bop (Op_mul, $1, $3) }
- | expr DIV expr { PE_Bop (Op_div_f, $1, $3) }
- | expr DIV_INT expr { PE_Bop (Op_div, $1, $3) }
- | expr MOD expr { PE_Bop (Op_mod, $1, $3) }
- | expr EQ expr { PE_Bop (Op_eq, $1, $3) }
- | expr NEQ expr { PE_Bop (Op_neq, $1, $3) }
- | expr INF expr { PE_Bop (Op_lt, $1, $3) }
- | expr INFEQ expr { PE_Bop (Op_le, $1, $3) }
- | expr SUP expr { PE_Bop (Op_gt, $1, $3) }
- | expr SUPEQ expr { PE_Bop (Op_ge, $1, $3) }
- | expr AND expr { PE_Bop (Op_and, $1, $3) }
- | expr OR expr { PE_Bop (Op_or, $1, $3) }
- | expr XOR expr { PE_Bop (Op_xor, $1, $3) }
- | MINUS expr { PE_Unop (Op_minus, $2) }
- | NOT expr { PE_Unop (Op_not, $2) }
+ | expr PLUS expr { PE_Op_Arith (Op_add, [$1; $3]) }
+ | expr MINUS expr { PE_Op_Arith (Op_sub, [$1; $3]) }
+ | expr MULT expr { PE_Op_Arith (Op_mul, [$1; $3]) }
+ | expr DIV expr { PE_Op_Arith (Op_div_f, [$1; $3]) }
+ | expr DIV_INT expr { PE_Op_Arith (Op_div, [$1; $3]) }
+ | expr MOD expr { PE_Op_Arith (Op_mod, [$1; $3]) }
+ | expr EQ expr { PE_Op_Arith (Op_eq, [$1; $3]) }
+ | expr NEQ expr { PE_Op_Arith (Op_neq, [$1; $3]) }
+ | expr INF expr { PE_Op_Arith (Op_lt, [$1; $3]) }
+ | expr INFEQ expr { PE_Op_Arith (Op_le, [$1; $3]) }
+ | expr SUP expr { PE_Op_Arith (Op_gt, [$1; $3]) }
+ | expr SUPEQ expr { PE_Op_Arith (Op_ge, [$1; $3]) }
+ | MINUS expr { PE_Op_Arith (Op_minus, [$2]) }
+ | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Logic (Op_sharp, ($3 :: $5)) }
+ | expr AND expr { PE_Op_Logic (Op_and, [$1; $3]) }
+ | expr OR expr { PE_Op_Logic (Op_or, [$1; $3]) }
+ | expr XOR expr { PE_Op_Logic (Op_xor, [$1; $3]) }
+ | NOT expr { PE_Op_Logic (Op_not, [$2]) }
  | FBY LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Fby ($3, $5, $7) }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
- | IDENT LPAREN expr_list RPAREN { PE_App ($1, $3) }
+ | IDENT LPAREN expr_list RPAREN { PE_Call ($1, $3) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
- | SHARP LPAREN expr COMMA expr_list RPAREN{ PE_Sharp ($3 :: $5) }
 ;
 
-/* For Call & Tuple */
 expr_list :
  |   { [] }
  | expr { [$1] }
@@ -219,7 +196,7 @@ array_list :
  | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4) :: $6 }
 ;
 
-/* In decl */
+
 semi_opt :
  |   { () }
  | SEMICOL { () }

@@ -25,9 +25,8 @@ let ident_of_expr expr =
   let rec idexpr_rec = function
     | NE_Ident iden -> id := L.add iden !id
     | NE_Value v -> ()
-    | NE_Bop (bop, e1, e2) -> idexpr_rec e1; idexpr_rec e2 
-    | NE_Unop (unop, exp) -> idexpr_rec exp
-    | NE_Sharp elist -> List.iter idexpr_rec elist
+    | NE_Op_Arith (_, e_list) -> List.iter idexpr_rec e_list
+    | NE_Op_Logic (_, e_list) -> List.iter idexpr_rec e_list
     | NE_Array array -> idarray_rec array
   and idarray_rec = function
     | NA_Def elist -> List.iter idexpr_rec elist
@@ -53,7 +52,7 @@ let ident_of_eq = function
     (ident_of_left a.n_alt_lp, ident_expr)
   | N_Registre r ->
     (L.add r.n_reg_lpid L.empty, L.empty)
-  | N_Fonction f ->
+  | N_Call f ->
     (ident_of_left f.n_fun_lp, List.fold_left (fun set e -> L.union set (ident_of_expr e)) L.empty f.n_fun_params)
   | N_Operation o ->
     (ident_of_left o.n_op_lp, ident_of_expr o.n_op_expr)

@@ -5,9 +5,8 @@ open Ast_base
 type n_expression =
   NE_Ident of ident
 | NE_Value of value
-| NE_Bop of bop * n_expression * n_expression
-| NE_Unop of unop * n_expression
-| NE_Sharp of n_expression list
+| NE_Op_Arith of op_arith * n_expression list
+| NE_Op_Logic of op_logic * n_expression list
 | NE_Array of n_array_expr
 
 and n_array_expr =
@@ -32,7 +31,7 @@ type n_alternative =
     n_alt_else: n_expression;
   }
 
-type n_fonction =
+type n_call =
   { n_fun_lp: n_left_part;
     n_fun_id: ident;
     n_fun_params: n_expression list;
@@ -53,7 +52,7 @@ type n_registre =
 
 type n_equation =
   N_Alternative of n_alternative
-| N_Fonction of n_fonction
+| N_Call of n_call
 | N_Operation of n_operation
 | N_Registre of n_registre
 

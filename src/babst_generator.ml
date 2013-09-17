@@ -5,20 +5,9 @@ open Ast_repr_b
 open Ast_base
 
 
-
-(* too naive, change that. *)
-let fun_cond = ref false 
-let var_cond = ref []
-
 let print_bid ppt id =
-  if !fun_cond = true then
-    let indice = 
-      try
-	"(" ^ (List.assoc id !var_cond) ^ ")"
-      with Not_found -> ""
-    in
-    fprintf ppt "%s%s" id indice
-  else fprintf ppt "%s" id
+  fprintf ppt "%s"
+    (if id.[0] = '_' then "V"^id  else id)
 
 let rec print_idlist_comma ppt = function
   | [] -> ()
@@ -30,7 +19,17 @@ let print_value ppt = function
   | Int i -> fprintf ppt "%d" i
   | Float f -> fprintf ppt "%f" f
 
-let rec print_e_list ppt = function 
+let rec print_opa_list op ppt = function 
+  | [] -> ()
+  | [v] -> fprintf ppt "%a %a" print_op_arith op print_expr v
+  | v::l -> fprintf ppt "%a %a" print_expr v print_e_list l
+
+and print_opl_list op ppt = function 
+  | [] -> ()
+  | [v] -> fprintf ppt "%a %a = TRUE" print_op_logic op print_expr v
+  | v::l -> fprintf ppt "%a %a = TRUE %a" print_op_logic op print_expr v print_e_list l
+
+and print_e_list ppt = function 
   | [] -> ()
   | [v] -> fprintf ppt "%a" print_expr v
   | v::l -> fprintf ppt "%a, %a" print_expr v print_e_list l
@@ -39,14 +38,26 @@ and print_expr ppt = function
   | BE_Ident id -> print_bid ppt id
   | BE_Value v -> print_value ppt v
   | BE_Array ar -> print_array ppt ar
-  | BE_Bop (bop, e1, e2) when bop = Op_xor -> fprintf ppt "xor(%a, %a)" print_expr e1 print_expr e2
-  | BE_Bop (bop, e1, e2) -> fprintf ppt "%a %a %a" print_expr e1 print_bop bop print_expr e2
-  | BE_Unop (unop, e) -> fprintf ppt "%a%a" print_unop unop print_expr e
-  | BE_Sharp e_list -> fprintf ppt "sharp(%a)" print_e_list e_list
+  | BE_Op_Arith (op, e_list) -> (
+      match op with 
+	| Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge ->
+	    fprintf ppt "bool(%a %a)" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
+	| Op_minus ->  
+	    fprintf ppt "(%a%a)" print_op_arith op print_expr (List.hd e_list)
+	| _ -> fprintf ppt "%a %a" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
+    )
+  | BE_Op_Logic (op, e_list) when op = Op_sharp -> 
+      fprintf ppt "sharp(%a)" print_e_list e_list
+  | BE_Op_Logic (op, e_list) when op = Op_xor -> 
+      fprintf ppt "xor(%a)" print_e_list e_list
+  | BE_Op_Logic (op, e_list) when op = Op_not -> 
+      fprintf ppt "%a(%a = TRUE)" print_op_logic op print_expr (List.hd e_list)
+  | BE_Op_Logic (op, e_list) -> 
+      fprintf ppt "%a = TRUE %a" print_expr (List.hd e_list) (print_opl_list op) (List.tl e_list)
 
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
-  | BA_Index (id, e_list) -> fprintf ppt "%a({%a})" print_bid id print_index_list e_list
+  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_index_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
   | BA_Concat (e1, e2) -> fprintf ppt "concat(%a, %a)" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id print_slice_list e_list
@@ -57,7 +68,7 @@ and print_def_list ppt e_list =
     | [v] -> fprintf ppt "%d |-> %a" n print_expr v
     | v::l -> fprintf ppt "%d |-> %a, %a" n print_expr v (fun_rec (n+1)) l
   in
-  fun_rec 1 ppt e_list
+  fun_rec 0 ppt e_list
 
 and print_slice_list ppt = function
   | [] -> ()
@@ -69,7 +80,8 @@ and print_index_list ppt = function
   | [(e)] -> fprintf ppt "%a" print_expr e
   | (e)::l -> fprintf ppt "%a, %a" print_expr e print_index_list l
 
-and print_bop ppt = function
+
+and print_op_arith ppt = function
   | Op_eq -> fprintf ppt "="
   | Op_neq -> fprintf ppt "/="
   | Op_lt -> fprintf ppt "<"
@@ -81,17 +93,16 @@ and print_bop ppt = function
   | Op_mul -> fprintf ppt "*"
   | Op_div -> fprintf ppt "/"
   | Op_mod -> fprintf ppt "mod"
-  | Op_add_f -> fprintf ppt "+"
-  | Op_sub_f -> fprintf ppt "-"
-  | Op_mul_f -> fprintf ppt "*"
   | Op_div_f -> fprintf ppt "/"
+  | Op_minus -> fprintf ppt "-"
+
+and print_op_logic ppt = function
   | Op_and -> fprintf ppt "&"
   | Op_or -> fprintf ppt "or"
-  | Op_xor -> assert false
-
-and print_unop ppt = function 
   | Op_not -> fprintf ppt "not "
-  | Op_minus -> fprintf ppt "-"
+  | Op_xor -> assert false
+  | Op_sharp -> assert false
+
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
@@ -101,11 +112,15 @@ let print_basetype ppt = function
 
 let rec print_dim_list ppt = function
   | [] -> ()
-  | [d] -> fprintf ppt "1 .. %a" print_expr d
-  | d :: l -> fprintf ppt "1 .. %a, %a " print_expr d print_dim_list l
+  | [BE_Value (Int i)] -> fprintf ppt "0 .. %a" print_value (Int (i-1))
+  | BE_Value (Int i) :: l -> fprintf ppt "0 .. %a, %a " print_value (Int (i-1)) print_dim_list l
+  | [d] -> fprintf ppt "0 .. (%a-1)" print_expr d
+  | d :: l -> fprintf ppt "0 .. (%a-1), %a " print_expr d print_dim_list l
+
 
 let print_array_type t ppt e_list =
-  fprintf ppt "{%a} --> %a" print_dim_list e_list print_basetype t
+  fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t
+
 
 let print_then_condition ppt = function
   | Base_expr (id, t, expr) -> 
@@ -122,19 +137,12 @@ let print_then_condition ppt = function
       print_bid id
       print_basetype t
   | Fun_expr (id, t, e_list, expr) ->
-    var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a :: { %a | %a : %a & !%s. (%s : {%a} => "
+    fprintf ppt "%a :: { %a | %a : %a & %a } "
       print_bid id
+      print_bid id 
       print_bid id
-      print_bid id
-      (print_array_type t) e_list
-      "iii"
-      "iii"
-      print_dim_list e_list;
-    fun_cond := true;    
-    fprintf ppt "%a )}" print_expr expr;
-    var_cond := List.tl !var_cond;
-    fun_cond := false
+      (print_array_type t) e_list 
+      print_expr expr;
   | Fun_no_expr (id, t, e_list) ->
     fprintf ppt "%a :: { %a | %a : %a }"
       print_bid id
@@ -142,10 +150,12 @@ let print_then_condition ppt = function
       print_bid id
       (print_array_type t) e_list
 
+
 let rec print_thenlist ppt = function
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_then_condition c
   | c::l -> fprintf ppt "%a||@,%a" print_then_condition c print_thenlist l 
+
 
 let print_pre_condition ppt = function
   | Base_expr (id, t, expr) -> 
@@ -158,21 +168,15 @@ let print_pre_condition ppt = function
 	print_bid id
 	print_basetype t
   | Fun_expr (id, t, e_list, expr) ->
-    var_cond := (id, "iii") :: !var_cond;
-    fprintf ppt "%a : %a & !%s. (%s : {%a} => "
+    fprintf ppt "%a : %a & %a "
       print_bid id
       (print_array_type t) e_list
-      "iii"
-      "iii"
-      print_dim_list e_list;
-    fun_cond := true;    
-    fprintf ppt "%a )" print_expr expr;
-    var_cond := List.tl !var_cond;
-    fun_cond := false
+      print_expr expr
   | Fun_no_expr (id, t, e_list) ->
     fprintf ppt "%a : %a"
       print_bid id
       (print_array_type t) e_list
+
 
 let rec print_prelist ppt = function 
   | [] -> ()

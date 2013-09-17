@@ -19,26 +19,22 @@ let imports_list = []
 let string_of_list l = 
   List.fold_left (fun res str -> res^", "^str ) (List.hd l) (List.tl l)
 
-(* idem for l of type: n_reg list *)
-(* let string_of_reglist l =  *)
-(*   let head = List.hd l in *)
-(*   List.fold_left (fun res reg -> res^", "^reg.reg_lp ) head.reg_lp (List.tl l) *)
-
 
 exception Two_ident of (string * string)
 
+
+(* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)
 let find_ident_in_pexpr expr =
   let id = ref "" in
   let rec ident_finder = function
     | PE_Ident iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
-    | PE_App (id, elist) -> List.iter ident_finder elist
-    | PE_Bop (bop, e1, e2) -> ident_finder e1; ident_finder e2
-    | PE_Unop (unop, exp) -> ident_finder exp
+    | PE_Call (_, elist) -> List.iter ident_finder elist
+    | PE_Op_Arith (_, elist) -> List.iter ident_finder elist
+    | PE_Op_Logic (_, elist) -> List.iter ident_finder elist
     | PE_Fby (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3
     | PE_If (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3
-    | PE_Sharp elist -> List.iter ident_finder elist
   and idarray_finder = function
     | PA_Def elist -> List.iter ident_finder elist
     | PA_Caret (e1, e2) -> ident_finder e1; ident_finder e2 
@@ -55,10 +51,8 @@ let rec rename_id_expr old new_i = function
   | NE_Ident i -> if i = old then NE_Ident new_i else NE_Ident i
   | NE_Value v -> NE_Value v
   | NE_Array ar -> NE_Array (rename_id_array old new_i ar)
-  | NE_Bop (bop, e1, e2) -> NE_Bop (bop, rename_id_expr old new_i e1, rename_id_expr old new_i e2)
-  | NE_Unop (unop, e) -> NE_Unop (unop, rename_id_expr old new_i e)
-  | NE_Sharp e_list -> NE_Sharp (List.map (rename_id_expr old new_i) e_list)
-
+  | NE_Op_Arith (op, e_list) -> NE_Op_Arith (op, (List.map (rename_id_expr old new_i) e_list))
+  | NE_Op_Logic (op, e_list) -> NE_Op_Logic (op, (List.map (rename_id_expr old new_i) e_list))
 and rename_id_array old new_i = function
   | NA_Def e_list -> NA_Def (List.map (rename_id_expr old new_i) e_list)
   | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
@@ -73,22 +67,7 @@ and rename_id_array old new_i = function
 
 
 
-(* In B, ids must be defined by more than 1 letter, if it has only 1 letter then we double it else it doesn't change.
-   we add a triplet (id, bid, n_type) in an Env.t set, and we check there is no doublon
-   id_and_bid_list returns an Env.t
-*)
-
-(* let id_and_bid_list id_list = *)
-(*   let rec add_with_check s ((id, b_id, t) as elt) =  *)
-(*     if N_Env.mem elt s *)
-(*     then  *)
-(*       add_with_check s (id, id^b_id, t) *)
-(*     else *)
-(*       N_Env.add elt s *)
-(*   in *)
-(*   List.fold_left (fun s (id, t) -> if (String.length id) > 1 then add_with_check s (id, id, t)  *)
-(* 		  else add_with_check s (id, id^id, t)) Env.empty id_list  *)
-
+(* Creation des environnements *)
 
 let make_n_env id_type_cond_list =
   List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list

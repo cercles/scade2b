@@ -15,14 +15,13 @@ let rec p_expr_to_n_expr = function
   | PE_Ident iden -> NE_Ident iden
   | PE_Value v -> NE_Value v
   | PE_Array array -> NE_Array (p_array_to_n_array array)
-  | PE_Bop (bop, e1, e2) -> NE_Bop (bop, p_expr_to_n_expr e1, p_expr_to_n_expr e2)
-  | PE_Unop (unop, e) -> NE_Unop (unop, p_expr_to_n_expr e)
-  | PE_Sharp elist -> NE_Sharp (List.map p_expr_to_n_expr elist)
+  | PE_Op_Arith (op, e_list) -> NE_Op_Arith (op, (List.map p_expr_to_n_expr e_list))
+  | PE_Op_Logic (op, e_list) -> NE_Op_Logic (op, (List.map p_expr_to_n_expr e_list))
   | _ -> raise (Normalisation_Error "Une equation n'est pas atomique") 
                (* ne devrait jamais arriver d'après la grammaire Scade *)
 
 and p_array_to_n_array = function
-  | PA_Def elist -> NA_Def (List.map p_expr_to_n_expr elist)
+  | PA_Def e_list -> NA_Def (List.map p_expr_to_n_expr e_list)
   | PA_Caret (e1, e2) -> NA_Caret (p_expr_to_n_expr e1, p_expr_to_n_expr e2)
   | PA_Concat (e1, e2) -> NA_Concat (p_expr_to_n_expr e1, p_expr_to_n_expr e2)
   | PA_Slice (id, l) -> 
@@ -96,12 +95,12 @@ let handle_alt = function
   | _ -> assert false
 
 (* Retourne un appel normalisé *)
-let handle_app = function
-  | lp, PE_App (id_app, elist) ->
-    N_Fonction { n_fun_lp = plp_to_nlp lp;
-		 n_fun_id = id_app;
-		 n_fun_params = List.map p_expr_to_n_expr elist;
-	       }
+let handle_call = function
+  | lp, PE_Call (id_call, elist) ->
+    N_Call { n_fun_lp = plp_to_nlp lp;
+	     n_fun_id = id_call;
+	     n_fun_params = List.map p_expr_to_n_expr elist;
+	   }
   | _ -> assert false
 
 (* Retourne une opération de base normalisée *)
@@ -120,7 +119,7 @@ let normalize_node node =
 	match expr with
 	| PE_Fby _ -> (handle_reg node eq) :: res
 	| PE_If _ -> (handle_alt eq) :: res
-	| PE_App _ -> (handle_app eq) :: res
+	| PE_Call _ -> (handle_call eq) :: res
 	| _ -> (handle_op eq) :: res
       end
   in 
@@ -168,4 +167,3 @@ let normalize prog main =
     with Not_found -> assert false
   in
   normalize_node main_node
-

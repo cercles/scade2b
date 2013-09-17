@@ -5,9 +5,8 @@ open Ast_base
 type b_expression =
   BE_Ident of ident
 | BE_Value of value
-| BE_Bop of bop * b_expression * b_expression
-| BE_Unop of unop * b_expression
-| BE_Sharp of b_expression list
+| BE_Op_Arith of op_arith * b_expression list
+| BE_Op_Logic of op_logic * b_expression list
 | BE_Array of array_expr
 
 and array_expr =
@@ -16,8 +15,6 @@ and array_expr =
 | BA_Concat of b_expression * b_expression
 | BA_Slice of ident * (b_expression * b_expression) list
 | BA_Index of ident * b_expression list
-
-(* TODO: remplacer bt_array en bt_fun, car on utilise plus des arrays mais des fonctions. *)
 
 type left_part =
   BLP_Ident of ident
@@ -30,13 +27,13 @@ type alternative =
     alt_else: b_expression;
   }
 
-type fonction =
-  { fun_lp: left_part;
-    fun_id: ident;
-    fun_params: b_expression list;
+type call =
+  { call_lp: left_part;
+    call_id: ident;
+    call_params: b_expression list;
   }
 
-type operation =
+type op_base =
   { op_lp: left_part;
     op_expr: b_expression;
   }
@@ -46,10 +43,10 @@ type registre =
     reg_val: b_expression;
   }
 
-type equation =
+type substitution =
   Alternative of alternative
-| Fonction of fonction
-| Operation of operation
+| Call of call
+| Op_Base of op_base
 
 type initialisation =
   ident * b_expression
@@ -69,7 +66,7 @@ type op_decl =
 type operations =
   { op_decl: op_decl;
     vars: ident list;
-    op_1: equation list;
+    op_1: substitution list;
     op_2: registre list;
   }
 

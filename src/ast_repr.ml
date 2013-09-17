@@ -6,12 +6,11 @@ type p_expression =
   PE_Ident of ident
 | PE_Value of value
 | PE_Array of p_array_expr
-| PE_App of ident * p_expression list
-| PE_Bop of bop * p_expression * p_expression
-| PE_Unop of unop * p_expression
+| PE_Call of ident * p_expression list
+| PE_Op_Arith of op_arith * p_expression list
+| PE_Op_Logic of op_logic * p_expression list
 | PE_Fby of p_expression * p_expression * p_expression
 | PE_If of p_expression * p_expression * p_expression
-| PE_Sharp of p_expression list
 
 and p_array_expr =
   (* Initialisation avec [e1, e2, ...] (ex: [3,4,5] ) *)

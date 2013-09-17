@@ -15,9 +15,8 @@ let rec print_expr ppt = function
   | NE_Ident id -> print_id ppt id
   | NE_Value v -> print_value ppt v
   | NE_Array ar -> print_array ppt ar
-  | NE_Bop (bop, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_bop bop print_expr e1 print_expr e2
-  | NE_Unop (unop, e) -> fprintf ppt "%a@[(%a)@]" print_unop unop print_expr e
-  | NE_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
+  | NE_Op_Arith (op, e_list) -> fprintf ppt "%a@[(%a)@]" print_op_arith op print_e_list e_list
+  | NE_Op_Logic (op, e_list) -> fprintf ppt "%a@[(%a)@]" print_op_logic op print_e_list e_list
 
 and print_array ppt = function
   | NA_Def e_list -> fprintf ppt "def[ %a ]" print_e_list e_list
@@ -43,7 +42,7 @@ and print_index_list ppt = function
   | [(e)] -> fprintf ppt "[%a]" print_expr e
   | (e)::l -> fprintf ppt "[%a]%a" print_expr e print_index_list l
 
-and print_bop ppt = function
+and print_op_arith ppt = function
   | Op_eq -> fprintf ppt "eq"
   | Op_neq -> fprintf ppt "neq"
   | Op_lt -> fprintf ppt "lt"
@@ -55,18 +54,15 @@ and print_bop ppt = function
   | Op_mul -> fprintf ppt "mul"
   | Op_div -> fprintf ppt "div"
   | Op_mod -> fprintf ppt "mod"
-  | Op_add_f -> fprintf ppt "add_f"
-  | Op_sub_f -> fprintf ppt "sub_f"
-  | Op_mul_f -> fprintf ppt "mul_f"
   | Op_div_f -> fprintf ppt "div_f"
+  | Op_minus -> fprintf ppt "-"
+
+and print_op_logic ppt = function
   | Op_and -> fprintf ppt "and"
   | Op_or -> fprintf ppt "or"
   | Op_xor -> fprintf ppt "xor"
-
-and print_unop ppt = function
   | Op_not -> fprintf ppt "~"
-  | Op_minus -> fprintf ppt "-"
-
+  | Op_sharp -> fprintf ppt "#"
 
 let rec print_type ppt = function
   | NT_Base b -> print_base_type ppt b
@@ -94,7 +90,7 @@ and print_eq ppt = function
 	print_expr a.n_alt_cond
 	print_expr a.n_alt_then
 	print_expr a.n_alt_else
-  | N_Fonction f -> 
+  | N_Call f -> 
       fprintf ppt "%a = @[%a(%a)@]" 
 	print_leftpart f.n_fun_lp 
 	print_id f.n_fun_id
