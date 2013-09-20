@@ -20,6 +20,73 @@ let string_of_list l =
   List.fold_left (fun res str -> res^", "^str ) (List.hd l) (List.tl l)
 
 
+(* Creation de l'environnement normalisé *)
+
+let make_n_env id_type_cond_list =
+  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list
+
+(*************************** IDENT COLLISION FUNCTIONS ***************************)
+
+exception Underscore of string
+exception Reserved of string
+exception Character of string
+exception Collision of string
+
+let reserved_b_words = ["ABSTRACT_CONSTANTS"; "ABSTRACT_VARIABLES"; "ANY"; "ASSERT"; "ASSERTIONS"; "BE"; "BEGIN"; "BOOL"; "CASE"; "CHOICE"; "CONCRETE_CONSTANTS"; "CONCRETE_VARIABLES"; "CONSTANTS"; "CONSTRAINTS"; "DEFINITIONS"; "DO"; "EITHER"; "ELSE"; "ELSIF"; "END"; "EXTENDS"; "FALSE"; "FIN"; "FIN1"; "IF"; "IMPLEMENTATION"; "IMPORTS"; "IN"; "INCLUDES"; "INITIALISATION"; "INT"; "INTEGER"; "INTER"; "INVARIANT"; "LET"; "LOCAL_OPERATIONS"; "MACHINE"; "MAXINT"; "MININT"; "NAT"; "NAT1"; "NATURAL"; "NATURAL1"; "OF"; "OPERATIONS"; "OR"; "PI"; "POW"; "POW1"; "PRE"; "PROMOTES"; "PROPERTIES"; "REFINES"; "REFINEMENT"; "SEES"; "SELECT"; "SETS"; "SIGMA"; "STRING"; "THEN"; "TRUE"; "UNION"; "USES"; "VALUES"; "VAR"; "VARIANT"; "VARIABLES"; "WHEN"; "WHERE"; "WHILE"; "arity"; "bin"; "bool"; "btree"; "card"; "closure"; "closure1"; "conc"; "const"; "dom"; "father"; "first"; "fnc"; "front"; "id"; "infix"; "inter"; "iseq"; "iseq1"; "iterate"; "last"; "left"; "max"; "min"; "mirror"; "mod"; "not"; "or"; "perm"; "postfix"; "pred"; "prefix"; "prj1"; "prj2"; "ran"; "rank"; "rec"; "rel"; "rev"; "right"; "seq"; "seq1"; "size"; "sizet"; "skip"; "son"; "sons"; "struct"; "subtree"; "succ"; "tail"; "top"; "tree"; "union"]
+
+let reserved_words = ["terminator_"; "ii_"]
+
+let is_reserved ident = List.mem ident (reserved_b_words @ reserved_words)
+
+let is_b_compliant ident = 
+  if String.length ident < 2 then raise (Character ident)
+  else if ident.[0] = '_' then raise (Underscore ident)
+  else if is_reserved ident then raise (Reserved ident)
+  else true
+
+let check_no_collision ident env =
+  if (Env.exists (fun _ (bid, _) -> ident = bid) env) then raise (Collision ident)
+  else true
+
+let make_b_ident ident env = 
+  let new_ident = ref "" in
+  let switch_underscore s = 
+    try 
+      new_ident := (String.sub s 1 ((String.length s)-1));
+      false
+    with 
+    | Invalid_argument _ -> failwith ("String error in switch_underscore(Utils) with " ^ s)
+  in
+  let double_character s = new_ident := s^s; false in
+  let add_underscore s = new_ident := s^"_"; false in
+  let ident_check ident =
+    try 
+      (is_b_compliant ident) && (check_no_collision ident env)
+    with
+    | Underscore s ->
+        switch_underscore s 
+    | Character s ->
+        double_character s
+    | Reserved s ->
+        add_underscore s
+    | Collision s ->
+        add_underscore s
+  in
+  let rec ident_generator ident =
+    if ident_check ident then ident else ident_generator !new_ident
+  in
+  ident_generator ident
+
+
+let make_env id_type_cond_list =
+  List.fold_left (fun env (id, _, c) -> Env.add id ((make_b_ident id env), c) env) Env.empty id_type_cond_list
+
+
+
+
+(*************************** DIVERS ***************************)
+
+
 exception Two_ident of (string * string)
 
 
@@ -65,18 +132,3 @@ and rename_id_array old new_i = function
     NA_Index ((if i = old then new_i else i), 
 	      (List.map (rename_id_expr old new_i) e_list))
 
-
-
-(* Creation des environnements *)
-
-let make_n_env id_type_cond_list =
-  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list
-
-let make_env id_type_cond_list =
-  let rec make_b_id env id = 
-    if (String.length id) > 1 && not(Env.exists (fun _ (bid, _) -> id = bid) env) then id else
-      if Env.exists (fun _ (bid, _) -> (id^id) = bid) env then make_b_id env (id^id) else (id^id) in
-  List.fold_left (fun env (id, _, c) -> Env.add id ((make_b_id env id), c) env) Env.empty id_type_cond_list
-
-
-(* let generate_var_name env = *)

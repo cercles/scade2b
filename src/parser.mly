@@ -65,6 +65,7 @@ prog :
 node_list :
  |   { [] }
  | node node_list { $1::$2 }
+;
 
 node :
  | NODE IDENT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN semi_opt
