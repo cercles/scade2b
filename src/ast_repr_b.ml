@@ -63,7 +63,7 @@ type op_decl =
     param_out: ident list;
   }
 
-type operations =
+type impl_operation =
   { op_decl: op_decl;
     vars: ident list;
     op_1: substitution list;
@@ -78,7 +78,7 @@ type b_impl =
     concrete_variables: ident list;
     invariant: condition list;
     initialisation: initialisation list;
-    operations: operations;
+    operation: impl_operation;
   }
 
 type abst_operation =

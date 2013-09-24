@@ -139,7 +139,6 @@ let rec print_eq_list ppt = function
   | [] -> ()
   | [eq] -> fprintf ppt "%a" print_eq eq
   | eq::l -> fprintf ppt "%a; @,%a" print_eq eq print_eq_list l 
-
   
 let print_registre ppt r =
   fprintf ppt "%a := %a"
@@ -175,6 +174,18 @@ let print_operation ppt operations =
     print_reg_list operations.op_2
     print_end
 
+
+let rec print_initialisation_list ppt = function
+  | [] -> ()
+  | [(id, e)] -> fprintf ppt "%a := %a" print_bid id print_expr e
+  | (id, e)::l -> fprintf ppt "%a := %a ; @,%a" print_bid id print_expr e print_initialisation_list l 
+
+let print_initialisation ppt ini_list = 
+  if (List.length ini_list) = 0 then () 
+  else 
+    fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]" print_initialisation_list ini_list 
+
+
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
   | T_Int -> fprintf ppt "%s" "INT"
@@ -187,20 +198,8 @@ let rec print_dim_list ppt = function
   | [d] -> fprintf ppt "0 .. (%a-1)" print_expr d
   | d :: l -> fprintf ppt "0 .. (%a-1), %a " print_expr d print_dim_list l
 
-
 let print_array_type t ppt e_list =
   fprintf ppt "%a --> (%a)" print_dim_list e_list print_basetype t
-
-let rec print_initialisation_list ppt = function
-  | [] -> ()
-  | [(id, e)] -> fprintf ppt "%a := %a" print_bid id print_expr e
-  | (id, e)::l -> fprintf ppt "%a := %a ; @,%a" print_bid id print_expr e print_initialisation_list l 
-
-let print_initialisation ppt ini_list = 
-  if (List.length ini_list) = 0 then () 
-  else 
-    fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]" print_initialisation_list ini_list 
-
 
 let print_condition ppt = function
   | Base_expr (id, t, expr) -> 
@@ -222,7 +221,6 @@ let print_condition ppt = function
       print_bid id
       (print_array_type t) e_list
 
-
 let rec print_invariant_list ppt = function 
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_condition c
@@ -239,22 +237,18 @@ let print_concrete_var ppt reg_list =
   else 
     fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
-
 let print_imports ppt imports_l =
   if (List.length imports_l) = 0 then () 
   else 
     fprintf ppt "IMPORTS %a" print_idlist_comma imports_l
-
 
 let print_sees ppt sees_l =
   if (List.length sees_l) = 0 then () 
   else 
     fprintf ppt "SEES %a" print_idlist_comma sees_l
 
-
 let print_refines ppt id =
   fprintf ppt "REFINES %s" id
-
 
 let print_implementation ppt impl_name =
   fprintf ppt "%s" impl_name
@@ -270,7 +264,8 @@ let print_machine ppt b_impl =
     print_concrete_var b_impl.concrete_variables
     print_invariant b_impl.invariant
     print_initialisation b_impl.initialisation
-    print_operation b_impl.operations
+    print_operation b_impl.operation
+
 
 let print_prog b_impl file =
   fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl

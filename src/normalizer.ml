@@ -1,16 +1,21 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
+
 open Ast_base
 open Ast_repr
 open Ast_repr_norm
 open Utils
+
 
 exception Assert_id_error of string
 exception Register_error
 exception Non_Atomic of string
 exception Normalisation_Error of string
 
-(* ast_repr to ast_repr_norm functions *)
+
+
+(******************** ast_repr to ast_repr_norm functions ********************)
+
 let rec p_expr_to_n_expr = function
   | PE_Ident iden -> NE_Ident iden
   | PE_Value v -> NE_Value v
@@ -40,11 +45,17 @@ let p_decl_to_n_decl declist =
   List.map (fun (id, p_type) -> (id, p_type_to_n_type p_type)) declist
 
 
-(* Find the type related to a variable *)
+
+
+
+(* Find the type related to a variable A METTRE DANS UTILS *)
 let rec find_type id declist =
   match declist with
   | [] -> None
   | (ident, typ)::l -> if ident = id then Some typ else find_type id l
+
+
+
 
 (* Cherche l'entrée liée à la condition expr, et retourne la condition normalisée *)
 let handle_assume node expr =
@@ -67,6 +78,8 @@ let handle_guarantee node expr =
   match find_type id node.p_param_out with
   | Some typ -> (id, p_type_to_n_type typ, Some (p_expr_to_n_expr expr))
   | None ->  raise (Assert_id_error id)
+
+
 
 
 (* Retourne un registre normalisé *) 
@@ -109,6 +122,7 @@ let handle_op = function
     N_Operation { n_op_lp = plp_to_nlp lp;
 		  n_op_expr =  p_expr_to_n_expr expr;
 		}
+
 
 
 (* Fonction principale de normalisation *)
@@ -157,6 +171,8 @@ let normalize_node node =
     n_pre = assumes; 
     n_post = guarantees;
     n_eqs = scheduled_eqs; }
+
+
 
 
 (* Retourne le noeud principal normalisé *)

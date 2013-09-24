@@ -5,26 +5,6 @@ open Ast_repr_norm
 open Ast_repr
 open Ast_base
 
-(* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
-let a_b_list_equals l=
-  List.for_all (fun (a, b) -> a = b) l
-
-(* Define the machines accessed in the SEES clause *)
-let sees_list = []
-(* Define the machines accessed in the IMPORT clause (A AUTOMATISER) *)
-let imports_list = []
-
-(* string_of_list (l: string list) returns the concat of every strings in list *)
-(* NOT USED *)
-let string_of_list l = 
-  List.fold_left (fun res str -> res^", "^str ) (List.hd l) (List.tl l)
-
-
-(* Creation de l'environnement normalisé *)
-
-let make_n_env id_type_cond_list =
-  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list
-
 (*************************** IDENT COLLISION FUNCTIONS ***************************)
 
 exception Underscore of string
@@ -87,8 +67,29 @@ let make_env id_type_cond_list =
 (*************************** DIVERS ***************************)
 
 
-exception Two_ident of (string * string)
+(* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
+let a_b_list_equals l=
+  List.for_all (fun (a, b) -> a = b) l
 
+(* Define the machines accessed in the SEES clause *)
+let sees_list = []
+(* Define the machines accessed in the IMPORT clause (A AUTOMATISER) *)
+let imports_list = []
+
+(* string_of_list (l: string list) returns the concat of every strings in list *)
+(* NOT USED *)
+let string_of_list l = 
+  List.fold_left (fun res str -> res^", "^str ) (List.hd l) (List.tl l)
+
+
+(* Creation de l'environnement normalisé *)
+
+let make_n_env id_type_cond_list =
+  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list
+
+
+
+exception Two_ident of (string * string)
 
 (* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)
 let find_ident_in_pexpr expr =

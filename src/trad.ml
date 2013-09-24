@@ -1,17 +1,28 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
+
 open Ast_base
 open Ast_repr_b
 open Ast_repr_norm
 open Utils
 
+
 exception Register_cond_error of string
 
+
+
+
 (* Traduction des expressions *)
+
 let id_to_bid env id =
 try
   let bid, _ = Env.find id env in bid
 with Not_found -> id
+
+
+
+
+(******************** ast_repr_norm to ast_repr_b functions ********************)
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
@@ -20,6 +31,7 @@ let rec n_expr_to_b_expr env = function
   | NE_Op_Arith (op, e_list) -> BE_Op_Arith (op, (List.map (n_expr_to_b_expr env) e_list))
   | NE_Op_Logic (op, e_list) -> BE_Op_Logic (op, (List.map (n_expr_to_b_expr env) e_list))
 
+(* A METTRE DANS UTILS *)
 and caret_to_def e1 e2 = 
   let rec funrec v dim acc =
     if dim = 0 then acc
@@ -38,7 +50,6 @@ and n_array_to_b_array env = function
 			     (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)) e_list))
   | NA_Index (id, e_list) -> 
       BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
-
 
 let nlp_to_blp env = function
   | NLP_Ident id -> BLP_Ident (id_to_bid env id)
@@ -69,7 +80,9 @@ let n_condition_to_condition env (id, t, e) =
 	  | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr))
 	
 
-(* Traduction des registres *)
+
+
+(******************** Traduction des registres ********************)
 
 let get_concrete_vars env reg = 
   id_to_bid env reg.n_reg_lpid
@@ -112,12 +125,19 @@ let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
 
 
+
+
+(******************** DIVERS ********************)
+
 let rec trad_list env to_call = function
   | [] -> []
   | elt::l -> (to_call env elt)::(trad_list env to_call l)
 
 
-(* Traduction du noeud vers l'implantation *)
+
+
+(******************** Traduction du noeud vers l'implantation ********************)
+
 let bimpl_translator env node =
   let implem_name = String.capitalize (node.n_id ^ "_i") in
   let refines = String.capitalize (node.n_id) in
@@ -172,7 +192,7 @@ let bimpl_translator env node =
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =
     List.filter (fun id -> not(List.mem id reg_ids)) vars in
-  let operations = { op_decl = op_decl;
+  let operation = { op_decl = op_decl;
 		     vars = vars_without_regs;
 		     op_1 = op_1;
 		     op_2 = op_2;
@@ -184,11 +204,14 @@ let bimpl_translator env node =
     concrete_variables = !concrete_vars;
     invariant = !invariant;
     initialisation = !initialisation;
-    operations = operations;
+    operation = operation;
   }
 
 
-(* Traduction du noeud vers la machine abstraite *)
+
+
+(******************** Traduction du noeud vers la machine abstraite ********************)
+
 let babst_translator env node =
   let machine = String.capitalize node.n_id in
   let sees = Utils.sees_list in
@@ -207,6 +230,10 @@ let babst_translator env node =
     abst_operation = abst_operation;
   }
 
+
+
+
+(******************** Traduction du noeud en un couple de machines B ********************)
 
 let translate node =
   let env = Utils.make_env (N_Env.elements node.n_env) in

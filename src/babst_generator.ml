@@ -109,14 +109,12 @@ let print_basetype ppt = function
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
 
-
 let rec print_dim_list ppt = function
   | [] -> ()
   | [BE_Value (Int i)] -> fprintf ppt "0 .. %a" print_value (Int (i-1))
   | BE_Value (Int i) :: l -> fprintf ppt "0 .. %a, %a " print_value (Int (i-1)) print_dim_list l
   | [d] -> fprintf ppt "0 .. (%a-1)" print_expr d
   | d :: l -> fprintf ppt "0 .. (%a-1), %a " print_expr d print_dim_list l
-
 
 let print_array_type t ppt e_list =
   fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t
@@ -150,7 +148,6 @@ let print_then_condition ppt = function
       print_bid id
       (print_array_type t) e_list
 
-
 let rec print_thenlist ppt = function
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_then_condition c
@@ -177,11 +174,11 @@ let print_pre_condition ppt = function
       print_bid id
       (print_array_type t) e_list
 
-
 let rec print_prelist ppt = function 
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_pre_condition c
   | c::l -> fprintf ppt "%a &@,%a" print_pre_condition c print_prelist l 
+
 
 let print_op_decl ppt op_decl =
   fprintf ppt "%a <-- %s(%a)"
@@ -196,6 +193,7 @@ let print_operation ppt abstop =
     print_prelist abstop.abstop_pre
     print_thenlist abstop.abstop_post
 
+
 (* The file list can be configured in utils.ml *)
 let print_sees ppt mach_list =
   if (List.length mach_list) = 0 then () 
@@ -205,12 +203,14 @@ let print_sees ppt mach_list =
 let print_id_machine ppt id_machine =
   fprintf ppt "%s" id_machine
 
+
 let print_machine ppt b_abst =
   fprintf ppt
     "MACHINE %a@\n%a@\n%a @\nEND"
     print_id_machine b_abst.machine
     print_sees b_abst.abst_sees
     print_operation b_abst.abst_operation
+
 
 let print_prog b_abst file =
   fprintf (formatter_of_out_channel file) "%a@." print_machine b_abst

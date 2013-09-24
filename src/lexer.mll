@@ -44,8 +44,6 @@ rule token = parse
 	  | "const"   { CONST }
 	  | "assume"  { ASSUME }
 	  | "guarantee" { GUARANTEE }
-	  (* | "include" { INCLUDE } *)
-	  (* | "assert"  { ASSERT } *)
 
 	  | "bool" { T_BOOL }
 	  | "int"  { T_INT }
@@ -55,8 +53,6 @@ rule token = parse
 	  | "then" { THEN }
 	  | "else" { ELSE }
 
-	  (* | "pre" { PRE } *)
-	  (* | "->"  { ARROW } *)
 	  | "fby" { FBY }
 
 	  | '+'   { PLUS }
