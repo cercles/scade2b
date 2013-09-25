@@ -93,17 +93,7 @@ type b_abst =
     abst_operation: abst_operation;
   }
 
-module Env = Map.Make(
-  struct
-    type t = ident
-    let compare = compare
-  end
-)
-
-type env = (ident * Ast_repr_norm.n_expression option) Env.t
-
 type prog =
-  { env: env;
-    machine_abstraite: b_abst;
+  { machine_abstraite: b_abst;
     implementation: b_impl;
   }

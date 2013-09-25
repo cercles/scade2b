@@ -63,18 +63,18 @@ type n_decl =
   ident * n_type
 
 
-module N_Env = Set.Make(
+module Env = Map.Make(
   struct
-    type t = n_condition
+    type t = ident
     let compare = compare
   end
 )
 
-type n_env = N_Env.t
+type env = n_condition Env.t
 
 type n_node =
   { n_id: ident;
-    n_env: n_env;
+    n_env: env;
     n_param_in: n_decl list;
     n_param_out: n_decl list;
     n_vars: n_decl list;

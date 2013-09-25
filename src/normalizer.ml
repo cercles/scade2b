@@ -11,8 +11,7 @@ exception Assert_id_error of string
 exception Register_error
 exception Non_Atomic of string
 exception Normalisation_Error of string
-
-
+exception Ident_Call_Error of string
 
 (******************** ast_repr to ast_repr_norm functions ********************)
 
@@ -48,12 +47,6 @@ let p_decl_to_n_decl declist =
 
 
 
-(* Find the type related to a variable A METTRE DANS UTILS *)
-let rec find_type id declist =
-  match declist with
-  | [] -> None
-  | (ident, typ)::l -> if ident = id then Some typ else find_type id l
-
 
 
 
@@ -64,7 +57,7 @@ let handle_assume node expr =
       Utils.find_ident_in_pexpr expr
     with Two_ident (id1, id2) -> raise (Assert_id_error id1)
   in
-  match find_type id node.p_param_in with
+  match Utils.find_type id node.p_param_in with
   | Some typ -> (id, p_type_to_n_type typ, Some (p_expr_to_n_expr expr))
   | None ->  raise (Assert_id_error id)
 
@@ -75,7 +68,7 @@ let handle_guarantee node expr =
       Utils.find_ident_in_pexpr expr
     with Two_ident (id1, id2) -> raise (Assert_id_error id1) 
   in
-  match find_type id node.p_param_out with
+  match Utils.find_type id node.p_param_out with
   | Some typ -> (id, p_type_to_n_type typ, Some (p_expr_to_n_expr expr))
   | None ->  raise (Assert_id_error id)
 
@@ -85,7 +78,7 @@ let handle_guarantee node expr =
 (* Retourne un registre normalisé *) 
 let handle_reg node = function
   | PLP_Ident lp_id, PE_Fby (PE_Ident id, delai, ini) ->
-    let typ = match find_type lp_id (node.p_param_in@node.p_param_out@node.p_vars) with
+    let typ = match Utils.find_type lp_id (node.p_param_in@node.p_param_out@node.p_vars) with
       | Some typ -> typ
       | None -> raise Register_error
     in
@@ -108,12 +101,17 @@ let handle_alt = function
   | _ -> assert false
 
 (* Retourne un appel normalisé *)
-let handle_call = function
+let handle_call env = function
   | lp, PE_Call (id_call, elist) ->
-    N_Call { n_fun_lp = plp_to_nlp lp;
-	     n_fun_id = id_call;
-	     n_fun_params = List.map p_expr_to_n_expr elist;
-	   }
+      let _ =
+	try
+	  (Utils.is_b_compliant id_call) && (Utils.check_no_collision id_call env)
+	with e -> raise (Ident_Call_Error id_call)
+      in
+      N_Call { n_fun_lp = plp_to_nlp lp;
+	       n_fun_id = id_call;
+	       n_fun_params = List.map p_expr_to_n_expr elist;
+	     }
   | _ -> assert false
 
 (* Retourne une opération de base normalisée *)
@@ -127,27 +125,10 @@ let handle_op = function
 
 (* Fonction principale de normalisation *)
 let normalize_node node =
-  let normalize_eq res = function
-    | lp, expr as eq -> 
-      begin
-	match expr with
-	| PE_Fby _ -> (handle_reg node eq) :: res
-	| PE_If _ -> (handle_alt eq) :: res
-	| PE_Call _ -> (handle_call eq) :: res
-	| _ -> (handle_op eq) :: res
-      end
-  in 
-  (* Normalisation des équations *)
-  let eqs = List.fold_left normalize_eq [] node.p_eqs in
   (* Normalisation des déclarations *)
   let inputs = p_decl_to_n_decl node.p_param_in in
   let outputs = p_decl_to_n_decl node.p_param_out in
   let vars = p_decl_to_n_decl node.p_vars in
-  (* Ordonnancement des équations *)
-  let scheduled_eqs =
-    let (id_inputs, _) = List.split inputs in
-    Scheduler.scheduler eqs (id_inputs)
-  in
   (* Normalisation des conditions *)
   let assumes = List.map (handle_assume node) node.p_assumes in
   let guarantees = List.map (handle_guarantee node) node.p_guarantees in
@@ -161,7 +142,24 @@ let normalize_node node =
   let assumes = add_non_existing_cond assumes inputs in
   let guarantees = add_non_existing_cond guarantees outputs in  
   (* Construction de l'environnement *)
-  let env = Utils.make_n_env (assumes@guarantees@vars_cond) in
+  let env = Utils.make_env (assumes@guarantees@vars_cond) in
+  let normalize_eq res = function
+    | lp, expr as eq -> 
+      begin
+	match expr with
+	| PE_Fby _ -> (handle_reg node eq) :: res
+	| PE_If _ -> (handle_alt eq) :: res
+	| PE_Call _ -> (handle_call env eq) :: res
+	| _ -> (handle_op eq) :: res
+      end
+  in 
+  (* Normalisation des équations *)
+  let eqs = List.fold_left normalize_eq [] node.p_eqs in
+  (* Ordonnancement des équations *)
+  let scheduled_eqs =
+    let (id_inputs, _) = List.split inputs in
+    Scheduler.scheduler eqs (id_inputs)
+  in
   (* Noeud normalisé *)
   { n_id = String.lowercase node.p_id;
     n_env = env;

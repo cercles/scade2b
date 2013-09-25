@@ -41,7 +41,6 @@ rule token = parse
 	  | "let"     { LET }
 	  | "tel"     { TEL }
 	  | "var"     { VAR }
-	  | "const"   { CONST }
 	  | "assume"  { ASSUME }
 	  | "guarantee" { GUARANTEE }
 
@@ -82,7 +81,6 @@ rule token = parse
 	  | ':'  { COLON }
 	  | ';'  { SEMICOL }
 	  | ','  { COMMA }
-	  | '"'  { QUOTES }
 	  | ".." { DOTDOT }
 	  | '.'  { DOT }
 	  | '^'  { CARET }

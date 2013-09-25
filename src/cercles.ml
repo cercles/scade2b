@@ -68,15 +68,17 @@ let () =
     ()
   with
   | Lexer.Lexical_error s ->
-      Format.eprintf "lexical error: %s\n@." s;
+      Format.eprintf "Lexical Error: %s\n@." s;
       handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
       exit 1
   | Parsing.Parse_error ->
-      Format.eprintf "syntax error\n@.";
+      Format.eprintf "Syntax Error\n@.";
       handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
       exit 1
   | Normalizer.Assert_id_error e ->
-      Format.eprintf "assert error: %s \n@." e
+      Format.eprintf "Error: Assert  %s.\n@." e
+  | Normalizer.Ident_Call_Error e ->
+      Format.eprintf "Error: The node name %s is reserved in B.\n@." e
   | Trad.Register_cond_error e ->
       Format.eprintf "Register condition error: %s isn't related to an input/output \n@." e
   | e ->

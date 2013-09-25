@@ -11,18 +11,12 @@ exception Register_cond_error of string
 
 
 
-
-(* Traduction des expressions *)
+(******************** ast_repr_norm to ast_repr_b functions ********************)
 
 let id_to_bid env id =
 try
-  let bid, _ = Env.find id env in bid
-with Not_found -> id
-
-
-
-
-(******************** ast_repr_norm to ast_repr_b functions ********************)
+  let bid, _, _ = Env.find id env in bid
+with Not_found -> assert false
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
@@ -31,17 +25,9 @@ let rec n_expr_to_b_expr env = function
   | NE_Op_Arith (op, e_list) -> BE_Op_Arith (op, (List.map (n_expr_to_b_expr env) e_list))
   | NE_Op_Logic (op, e_list) -> BE_Op_Logic (op, (List.map (n_expr_to_b_expr env) e_list))
 
-(* A METTRE DANS UTILS *)
-and caret_to_def e1 e2 = 
-  let rec funrec v dim acc =
-    if dim = 0 then acc
-    else funrec v (dim-1) (v :: acc)
-  in
-  NA_Def (funrec e1 e2 [])
-
 and n_array_to_b_array env = function
   | NA_Def e_list -> BA_Def (List.map (n_expr_to_b_expr env) e_list)
-  | NA_Caret (e1, NE_Value (Int i)) -> n_array_to_b_array env (caret_to_def e1 i)
+  | NA_Caret (e1, NE_Value (Int i)) -> n_array_to_b_array env (Utils.caret_to_def e1 i)
   | NA_Caret (e1, e2) -> BA_Caret (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
   | NA_Concat (e1, e2) -> BA_Concat (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
   | NA_Slice (id, e_list) -> 
@@ -102,14 +88,14 @@ let retrieve_cond_expr reg node env =
 		  let id_in, _ = List.find (fun (p_in, _) ->
 					      p_in = ide && idl = id_var) params_in in
 		  match Env.find id_in env with
-		    | _, Some c -> Some (Utils.rename_id_expr id_in reg.n_reg_lpid c) 
-		    | _, None -> raise Not_found
+		    | _, _, Some c -> Some (Utils.rename_id_expr id_in reg.n_reg_lpid c) 
+		    | _, _, None -> raise Not_found
 		with Not_found -> try
 		  let id_out, _ = List.find (fun (p_out, _) -> 
 					       p_out = idl && ide = id_var) params_out in
 		  match Env.find id_out env with
-		    | _, Some c -> Some (Utils.rename_id_expr id_out reg.n_reg_lpid c)
-		    | _, None -> raise Not_found
+		    | _, _, Some c -> Some (Utils.rename_id_expr id_out reg.n_reg_lpid c)
+		    | _, _, None -> raise Not_found
 		with Not_found -> condition
 	      end
 	    | _ -> condition
@@ -236,10 +222,9 @@ let babst_translator env node =
 (******************** Traduction du noeud en un couple de machines B ********************)
 
 let translate node =
-  let env = Utils.make_env (N_Env.elements node.n_env) in
+  let env = node.n_env in
   let babst = babst_translator env node in
   let bimpl = bimpl_translator env node in
-  { env = env;
-    machine_abstraite = babst;
+  { machine_abstraite = babst;
     implementation = bimpl;
   }

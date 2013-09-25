@@ -25,7 +25,7 @@ let is_b_compliant ident =
   else true
 
 let check_no_collision ident env =
-  if (Env.exists (fun _ (bid, _) -> ident = bid) env) then raise (Collision ident)
+  if (Env.exists (fun _ (bid, _, _) -> ident = bid) env) then raise (Collision ident)
   else true
 
 let make_b_ident ident env = 
@@ -58,8 +58,10 @@ let make_b_ident ident env =
   ident_generator ident
 
 
-let make_env id_type_cond_list =
-  List.fold_left (fun env (id, _, c) -> Env.add id ((make_b_ident id env), c) env) Env.empty id_type_cond_list
+let make_env id_type_expr_list =
+  List.fold_left
+    (fun env (ident, typ, expr) -> Env.add ident ((make_b_ident ident env), typ, expr) env)
+    Env.empty id_type_expr_list
 
 
 
@@ -82,10 +84,20 @@ let string_of_list l =
   List.fold_left (fun res str -> res^", "^str ) (List.hd l) (List.tl l)
 
 
-(* Creation de l'environnement normalisé *)
 
-let make_n_env id_type_cond_list =
-  List.fold_left (fun s elt -> N_Env.add elt s) N_Env.empty id_type_cond_list
+(* Find the type related to a variable (dans normalizer) *)
+let rec find_type id declist =
+  match declist with
+  | [] -> None
+  | (ident, typ)::l -> if ident = id then Some typ else find_type id l
+
+(* caret_to_def v n returns [v; ...; v] with n index  *)
+and caret_to_def e1 e2 = 
+  let rec funrec v dim acc =
+    if dim = 0 then acc
+    else funrec v (dim-1) (v :: acc)
+  in
+  NA_Def (funrec e1 e2 [])
 
 
 

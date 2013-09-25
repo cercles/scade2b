@@ -23,16 +23,14 @@
   type equation_type = Eq of p_equation | Assume of p_expression | Guarantee of p_expression
 %}
 
-%token NODE RETURNS LET TEL VAR CONST ASSUME GUARANTEE
-/* %token ASSERT INCLUDE deprecated*/
+%token NODE RETURNS LET TEL VAR ASSUME GUARANTEE
 %token IF THEN ELSE
-/* %token PRE ARROW  deprecated*/
 %token FBY
 %token PLUS MINUS MULT DIV DIV_INT MOD
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
-%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA QUOTES DOT
-%token DOTDOT CARET CONCAT /* these three are array ops */
+%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOT
+%token DOTDOT CARET CONCAT
 %token T_BOOL T_INT T_REAL
 %token <bool> BOOL
 %token <int> INT
