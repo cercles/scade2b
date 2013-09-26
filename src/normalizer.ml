@@ -123,6 +123,19 @@ let handle_op = function
 
 
 
+(* Supprime les équations contenant un terminator *)
+let remove_terminator eq_list =
+  let remover acc = function
+    | lp, _ as eq -> (
+      match lp with
+      | PLP_Ident id when id = "_"-> acc
+      | _ -> eq::acc
+    )
+  in
+  List.fold_left remover [] eq_list
+
+  
+
 (* Fonction principale de normalisation *)
 let normalize_node node =
   (* Normalisation des déclarations *)
@@ -143,6 +156,7 @@ let normalize_node node =
   let guarantees = add_non_existing_cond guarantees outputs in  
   (* Construction de l'environnement *)
   let env = Utils.make_env (assumes@guarantees@vars_cond) in
+  let eq_list = remove_terminator node.p_eqs in
   let normalize_eq res = function
     | lp, expr as eq -> 
       begin
@@ -154,7 +168,7 @@ let normalize_node node =
       end
   in 
   (* Normalisation des équations *)
-  let eqs = List.fold_left normalize_eq [] node.p_eqs in
+  let eqs = List.fold_left normalize_eq [] eq_list in
   (* Ordonnancement des équations *)
   let scheduled_eqs =
     let (id_inputs, _) = List.split inputs in
