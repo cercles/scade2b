@@ -52,10 +52,10 @@ type initialisation =
   ident * b_expression
 
 type condition =
-  Base_no_expr of ident * base_type
-| Fun_no_expr of ident * base_type * b_expression list
-| Base_expr of ident * base_type * b_expression
-| Fun_expr of ident * base_type * b_expression list * b_expression
+  Base_no_expr of ident * base_type * ident
+| Fun_no_expr of ident * base_type * b_expression list * ident
+| Base_expr of ident * base_type * b_expression * ident
+| Fun_expr of ident * base_type * b_expression list * b_expression * ident
 
 type op_decl =
   { id: ident;

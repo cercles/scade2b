@@ -6,8 +6,7 @@ open Ast_base
 
 
 let print_bid ppt id =
-  fprintf ppt "%s"
-    (if id.[0] = '_' then "V"^id  else id)
+  fprintf ppt "%s" id
 
 let rec print_idlist_comma ppt = function
   | [] -> ()
@@ -121,31 +120,31 @@ let print_array_type t ppt e_list =
 
 
 let print_then_condition ppt = function
-  | Base_expr (id, t, expr) -> 
+  | Base_expr (id, t, expr, ens_id) -> 
     fprintf ppt "%a :: { %a | %a : %a & %a }"
       print_bid id
-      print_bid id
-      print_bid id
+      print_bid ens_id
+      print_bid ens_id
       print_basetype t
       print_expr expr
-  | Base_no_expr (id, t) -> 
+  | Base_no_expr (id, t, ens_id) -> 
     fprintf ppt "%a :: { %a | %a : %a }"
       print_bid id
-      print_bid id
-      print_bid id
+      print_bid ens_id
+      print_bid ens_id
       print_basetype t
-  | Fun_expr (id, t, e_list, expr) ->
+  | Fun_expr (id, t, e_list, expr, ens_id) ->
     fprintf ppt "%a :: { %a | %a : %a & %a } "
       print_bid id
-      print_bid id 
-      print_bid id
+      print_bid ens_id 
+      print_bid ens_id
       (print_array_type t) e_list 
       print_expr expr;
-  | Fun_no_expr (id, t, e_list) ->
+  | Fun_no_expr (id, t, e_list, ens_id) ->
     fprintf ppt "%a :: { %a | %a : %a }"
       print_bid id
-      print_bid id
-      print_bid id
+      print_bid ens_id
+      print_bid ens_id
       (print_array_type t) e_list
 
 let rec print_thenlist ppt = function
@@ -155,21 +154,21 @@ let rec print_thenlist ppt = function
 
 
 let print_pre_condition ppt = function
-  | Base_expr (id, t, expr) -> 
+  | Base_expr (id, t, expr, _) -> 
     fprintf ppt "%a : %a & %a"
       print_bid id
       print_basetype t
       print_expr expr 
-  | Base_no_expr (id, t) ->
+  | Base_no_expr (id, t, _) ->
       fprintf ppt "%a : %a"
 	print_bid id
 	print_basetype t
-  | Fun_expr (id, t, e_list, expr) ->
+  | Fun_expr (id, t, e_list, expr, _) ->
     fprintf ppt "%a : %a & %a "
       print_bid id
       (print_array_type t) e_list
       print_expr expr
-  | Fun_no_expr (id, t, e_list) ->
+  | Fun_no_expr (id, t, e_list, _) ->
     fprintf ppt "%a : %a"
       print_bid id
       (print_array_type t) e_list

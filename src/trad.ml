@@ -54,16 +54,22 @@ let n_condition_to_condition env (id, t, e) =
     in
     (!base_t, fun_rec a)
   in
+  let compr_ens_ident = Utils.make_b_ident "ii" env in
   match t with 
     | NT_Base typ ->  (
 	match e with 
-	  | None -> Base_no_expr (id_to_bid env id, typ)
-	  | Some expr -> Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr))
+	  | None -> Base_no_expr (id_to_bid env id, typ, compr_ens_ident)
+	  | Some expr -> 
+	      let env2 = Env.add id (compr_ens_ident, t, None) env in
+	      Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env2 expr, compr_ens_ident))
     | NT_Array (_, _) -> (
 	let typ, dims = flatten_array env t in
+	(* let index_tab_ident = Utils.make_b_ident "jj" env in *)
 	match e with 
-	  | None -> Fun_no_expr (id_to_bid env id, typ, dims)
-	  | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr))
+	  | None -> Fun_no_expr (id_to_bid env id, typ, dims, compr_ens_ident)
+	  | Some expr -> 
+	      let env2 = Env.add id (compr_ens_ident, t, None) env in
+	      Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env2 expr, compr_ens_ident))
 	
 
 
