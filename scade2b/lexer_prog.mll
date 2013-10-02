@@ -10,10 +10,13 @@
     let pos = lexbuf.lex_curr_p in
     lexbuf.lex_curr_p <-
     { pos with pos_lnum = pos.pos_lnum + 1; pos_bol = pos.pos_cnum }
+
+  let buf = Buffer.create 500
+  let count_let = ref 0
 }
 
 let line_cmt = "--" [^'\n']* ['\n']
-let sep = ['\t' '\r']+
+let sep = ['\t' '\r' ' ']+
 
 let digit = ['0'-'9']
 let exponent = ('e' | 'E') ('+' | '-')? digit+
@@ -25,18 +28,38 @@ let ident = alpha (digit|alpha)*
 let pragma_simpl = '#'(digit|alpha)+
 
 rule token = parse
-          | sep  { token lexbuf }
-	  | '\n' { newline lexbuf;
-		   token lexbuf } 
-	  | line_cmt { newline lexbuf;
-		       token lexbuf }
-	  | "/*"     { comment lexbuf;
-		       token lexbuf }
+          | sep          { token lexbuf }
+	  | '\n'         { newline lexbuf;
+			   token lexbuf } 
+	  | line_cmt     { newline lexbuf;
+			   token lexbuf }
+	  | "/*"         { comment lexbuf;
+			   token lexbuf }
 	  | "#pragma"    { pragma lexbuf;
 			   token lexbuf }
 	  | pragma_simpl { token lexbuf }
 
-	  | (("node "|"function ") (ident as id) ("tel" | (_ _ _))* ) as node { NODE (id, node) }
+	  | "node " (pragma_simpl)? (ident as id)
+	                               { Buffer.reset buf;
+					 Buffer.add_string buf "node ";
+					 Buffer.add_string buf id;
+					 node_text lexbuf;
+					 NODE (id, (Buffer.contents buf)) }
+	  | "function " (pragma_simpl)? (ident as id)  
+                                       { Buffer.reset buf;
+					 Buffer.add_string buf "function ";
+					 Buffer.add_string buf id;
+					 node_text lexbuf;
+					 FUNCTION (id, (Buffer.contents buf)) }
+
+	  | "package " ident         { 
+				       token lexbuf }
+	  | "end;"                   { 
+				       token lexbuf }
+	  | "open " ident ";"        { 
+				       token lexbuf }
+	  | "type " ident " =" { typ lexbuf; token lexbuf }  
+
 	  | "const" { CONST }
 
 	  | "bool" { T_BOOL }
@@ -62,7 +85,17 @@ rule token = parse
 	  | ident as id { IDENT (id) }
 
 	  | eof { EOF }
-	  | _ { raise (Lexical_error "Lexical error : ") }
+	  | _ { token lexbuf }
+
+and node_text = parse
+    | "let"     { Buffer.add_string buf "let";
+		  count_let := !count_let + 1;
+		  node_text lexbuf }
+    | "tel"     { Buffer.add_string buf "tel";
+		  count_let := !count_let - 1;
+		  if !count_let = 0 then () else node_text lexbuf }
+    | _ as char { Buffer.add_char buf char;
+		  node_text lexbuf }
 
 and comment = parse
     | "*/" { () }
@@ -76,6 +109,9 @@ and pragma = parse
     | _      { pragma lexbuf }
     | eof    { raise (Lexical_error "unterminated pragma") }
 
+and typ = parse
+    | ";" {()}
+    | _ { typ lexbuf } 
 
 {
 }

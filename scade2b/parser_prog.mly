@@ -21,13 +21,14 @@
     else
       PA_Slice (id, elist)
 
-  type node_or_const = Node of (string * string) | Const of t_const
+  type node_or_const = Node of (string * string) | Function of (string * string) | Const of t_const
 
   let prog_builder node_const_list =
     let (node_map, cst_list) = 
       List.fold_left (fun (acc_node, acc_const) n_or_c -> 
 	match  n_or_c with
 	| Node (id, node) -> (T_Node.add id node acc_node, acc_const)
+	| Function (id, node) -> (T_Node.add id node acc_node, acc_const)
 	| Const cst -> (acc_node, cst :: acc_const)
       ) (T_Node.empty, []) node_const_list
     in
@@ -35,8 +36,9 @@
 %}
 
 
-%token <string * string> NODE 
+%token <string * string> NODE FUNCTION
 %token CONST
+%token <char> CHAR
 %token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOT DOTDOT
 %token CARET EQ
 %token T_BOOL T_INT T_REAL
@@ -62,6 +64,7 @@ node_const_list :
  |   { [] }
  | const node_const_list { (Const $1) :: $2 }
  | NODE node_const_list { (Node $1) :: $2 }
+ | FUNCTION node_const_list { (Function $1) :: $2 }
 ;
 
 const :
