@@ -142,3 +142,15 @@ and rename_id_array old new_i = function
     NA_Index ((if i = old then new_i else i), 
 	      (List.map (rename_id_expr old new_i) e_list))
 
+
+
+(**************************** MAP XML ****************************)
+
+module XML_prog = Map.Make(
+  struct
+    type t = ident
+    let compare = compare
+  end
+)
+
+type xml_prog = ident list XML_prog.t

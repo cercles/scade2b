@@ -1,84 +1,61 @@
 %{
   (* Florian Thibord  --  Projet CERCLES *)
 
+  open Utils
+
 %}
 
-
-%token CHEV_IN CHEV_OUT NOEXPNODE NODEINSTANCE ROOTNODE SCADENAME
-%token QUOTES EQ
+%token <string * string>OPTION
+%token NOEXPNODE NODEINSTANCE ROOTNODE SCADENAME MODEL
+%token QUOTES EQ SLASH CHEV_IN CHEV_OUT 
 %token <string> IDENT
 %token EOF
 
-%start prog
-%type <(*TODO*)> prog
+%start model
+%type <Utils.xml_prog> model
+
+
 
 %%
 
-prog :
- | node_const_list EOF { prog_builder $1 }
+model :
+ | CHEV_IN MODEL option_list CHEV_OUT balise_model_list CHEV_IN SLASH MODEL CHEV_OUT EOF 
+     { $5 }
 ;
 
-node_const_list :
+balise_model_list :
+ |   { XML_prog.empty }
+ | CHEV_IN NOEXPNODE option_list CHEV_OUT balise_node_list CHEV_IN SLASH NOEXPNODE CHEV_OUT balise_model_list
+     { XML_prog.add (List.hd $3) $5 $10 }
+ | CHEV_IN ROOTNODE option_list CHEV_OUT balise_node_list CHEV_IN SLASH ROOTNODE CHEV_OUT balise_model_list
+     { XML_prog.add (List.hd $3) $5 $10 }
+ | balise_dummy balise_model_list { $2 }
+;
+
+balise_node_list :
  |   { [] }
- | const node_const_list { (Const $1) :: $2 }
- | NODE node_const_list { (Node $1) :: $2 }
- | FUNCTION node_const_list { (Function $1) :: $2 }
+ | CHEV_IN NODEINSTANCE option_list CHEV_OUT balise_dummy_list CHEV_IN SLASH NODEINSTANCE CHEV_OUT balise_node_list
+     { (List.hd $3) :: $10 }
+ | CHEV_IN NODEINSTANCE option_list SLASH CHEV_OUT balise_node_list
+     { (List.hd $3) :: $6 }
+ | balise_dummy balise_node_list { $2 }
 ;
 
-const :
- | CONST IDENT COLON typ EQ expr SEMICOL { {id = $2;
-					    typ = $4;
-					    expr = $6;} }
+balise_dummy_list :
+ |   { () }
+ | balise_dummy balise_dummy_list { () }
 ;
 
-typ :
- | base_type { PT_Base $1 }
- | array_type { $1 }
+balise_dummy :
+ | CHEV_IN IDENT option_list CHEV_OUT { () }
+ | CHEV_IN IDENT option_list SLASH CHEV_OUT { () }
+ | CHEV_IN SLASH IDENT CHEV_OUT { () }
 ;
 
-base_type :
- | T_BOOL { T_Bool }
- | T_INT { T_Int }
- | T_REAL { T_Float }
-;
-
-/* 2 facons de déclarer un tableau */
-array_type :
- | LBRACKET typ_list RBRACKET { let type_list = $2 in
-				let typ = check_type type_list in
-				PT_Array (typ, PE_Value (Int (List.length type_list))) }
- | typ CARET expr { PT_Array ($1, $3) }
-;
-
-typ_list :
- | typ { [$1] }
- | typ COMMA typ_list { $1 :: $3 }
-;
-
-expr :
- | INT { PE_Value (Int $1) }
- | BOOL { PE_Value (Bool $1) }
- | REAL { PE_Value (Float $1) }
- | array_expr { PE_Array $1 }
-;
-
-expr_list :
+option_list :
  |   { [] }
- | expr { [$1] }
- | expr COMMA expr_list { $1 :: $3 }
-;
-
-array_expr :
- | LBRACKET expr_list RBRACKET { PA_Def $2 } 
- | IDENT array_list { handle_slice $1 $2 }
- | expr CARET expr { PA_Caret ($1, $3) }
-;
-
-array_list :
- | LBRACKET expr RBRACKET { [($2, $2)] }
- | LBRACKET expr DOTDOT expr RBRACKET { [($2, $4)] }
- | LBRACKET expr RBRACKET array_list { ($2, $2) :: $4 }
- | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4) :: $6 }
+ | SCADENAME EQ QUOTES IDENT QUOTES option_list { $4 :: $6 }
+ | OPTION option_list { $2 }
 ;
 
 %%

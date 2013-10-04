@@ -9,6 +9,7 @@ open Parser_prog
 (* open Parser_xml *)
 open Ast_repr_b
 open Ast_prog
+open Utils 
 
 let usage = "usage: "^Sys.argv.(0)^" [options] dir/project/"
 
@@ -43,28 +44,32 @@ let scade_file, xml_file =
   in
   Arg.parse spec set usage;
   (match !dir with 
-    Some n -> n^"/KCG/kcg_xml_filter_out.scade", n^"/KCG/kcg_traces.xml"
+    Some n -> n^"KCG/kcg_xml_filter_out.scade", n^"KCG/kcg_trace.xml"
   | None -> Arg.usage spec usage; exit 1)
 
 (* MAIN *)
 let () =
-(*
+
 (* Récupération des noms de noeuds, et des noeuds importés pour chaque noeud, à partir du xml *) 
   let channel = open_in xml_file in
   let lexbuf = Lexing.from_channel channel in
+  let (xml_map) =
   try
-    let (xml_map) = Parser_xml.prog Lexer_xml.token lexbuf in
-    close_in channel;
+    Parser_xml.model Lexer_xml.token lexbuf
   with
   | Lexer_xml.Lexical_error s ->
-    Format.eprintf "Lexical Error: %s\n@." s;
+    Format.eprintf "Lexical Error XML: %s\n@." s;
     handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
     exit 1
-  | Parsing_xml.Parse_error ->
-    Format.eprintf "Syntax Error\n@.";
+  | Parsing.Parse_error ->
+    Format.eprintf "Syntax Error XML\n@.";
     handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
     exit 1
-*)
+  in
+  XML_prog.iter(fun id node_list -> 
+    Printf.printf "NEW_\n\n %s \n %s\n\n" id (Utils.string_of_list node_list)) xml_map;
+  close_in channel;
+
 (* Récupération d'une map de noeuds qui sont indexés par leur nom, ainsi qu'une map de constantes également indexées par leur nom. *)
   let channel = open_in scade_file in
   let lexbuf = Lexing.from_channel channel in
@@ -72,15 +77,15 @@ let () =
     let prog = Parser_prog.prog Lexer_prog.token lexbuf in
     close_in channel;
     
-    T_Node.iter (fun id node ->
-    Printf.printf "NEW________________________________\n\n %s \n\n %s\n\n" id node) prog.node_map
+    (* T_Node.iter (fun id node -> *)
+    (* Printf.printf "NEW________________________________\n\n %s \n\n %s\n\n" id node) prog.node_map *)
   with
   | Lexer_prog.Lexical_error s ->
-    Format.eprintf "Lexical Error: %s\n@." s;
+    Format.eprintf "Lexical Error kcg file: %s\n@." s;
     handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
     exit 1
   | Parsing.Parse_error ->
-    Format.eprintf "Syntax Error\n@.";
+    Format.eprintf "Syntax Error kcg file \n@.";
     handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
     exit 1
 

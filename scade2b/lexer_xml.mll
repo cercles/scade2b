@@ -24,9 +24,9 @@ let real = digit+ '.' digit+ exponent?
   | digit* '.' digit+ exponent?
   | digit+ exponent
 let alpha = ['a'-'z''A'-'Z''_']
-let ident = alpha (digit|alpha)*
+let ident = (digit|alpha) (digit|alpha|['-'':''/''\\''.'' '])*
 
-let balise = '<' '/'? ident " " (ident'=\"' ident '\"' ' '?)* '/'? '>'
+let option_list = (' '? ident '=''"' ident '"')+
 
 rule token = parse
           | sep              { token lexbuf }
@@ -38,18 +38,20 @@ rule token = parse
 			       token lexbuf }
 	  | "<?" [^'>']* '>' { token lexbuf }
 
-	  | '<'              { CHEV_IN }
-	  | '>'              { CHEV_OUT }
+	  | (ident as op) '=''"' (ident as v) '"'  { OPTION(op, v) }
+
 	  | "NoExpNode"      { NOEXPNODE }
 	  | "NodeInstance"   { NODEINSTANCE }
 	  | "RootNode"       { ROOTNODE }
 	  | "scadeName"      { SCADENAME }
+	  | "Model"          { MODEL }
 
-	  | balise           { BALISE } (*TOCHANGE*)
-
-	  | '"'  { QUOTES }
-	  | '='  { EQ }
-
+	  | '"'              { QUOTES }
+	  | '='              { EQ }
+	  | '/'              { SLASH }
+	  | '<'              { CHEV_IN }
+	  | '>'              { CHEV_OUT }
+	  
 	  | ident as id { IDENT (id) }
 
 	  | eof { EOF }
