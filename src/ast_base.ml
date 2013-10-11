@@ -19,3 +19,9 @@ type op_arith =
 
 type op_logic =
   Op_and | Op_or | Op_xor | Op_not | Op_sharp
+
+type const =
+  { ident: ident;
+    typ: base_type;
+    expr: value;
+  }

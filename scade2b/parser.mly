@@ -52,17 +52,12 @@
 %left CARET CONCAT
 
 %start prog
-%type <Ast_repr.p_prog> prog
+%type <Ast_repr.p_node> prog
 
 %%
 
 prog :
- | node_list EOF { $1 }
-;
-
-node_list :
- |   { [] }
- | node node_list { $1::$2 }
+ | node EOF { $1 }
 ;
 
 node :
@@ -119,12 +114,10 @@ array_type :
  | typ CARET expr { PT_Array ($1, $3) }
 ;
 
-
 typ_list :
  | typ { [$1] }
  | typ COMMA typ_list { $1 :: $3 }
 ;
-
 
 eq_list :
  |   { [] }
@@ -137,13 +130,11 @@ eq :
  | left_part EQ expr SEMICOL { Eq ($1, $3) }
 ;
 
-
 left_part : 
  | LPAREN left_part RPAREN { $2 }
  | IDENT { PLP_Ident $1 }
  | IDENT COMMA id_list { PLP_Tuple ($1 :: $3) }
 ;
-
 
 expr :
  | IDENT { PE_Ident $1 }
@@ -194,7 +185,6 @@ array_list :
  | LBRACKET expr RBRACKET array_list { ($2, $2) :: $4 }
  | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4) :: $6 }
 ;
-
 
 semi_opt :
  |   { () }

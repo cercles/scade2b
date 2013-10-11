@@ -15,7 +15,6 @@
   let count_let = ref 0
 }
 
-let line_cmt = "--" [^'\n']* ['\n']
 let sep = ['\t' '\r' ' ']+
 
 let digit = ['0'-'9']
@@ -24,21 +23,18 @@ let real = digit+ '.' digit+ exponent?
   | digit* '.' digit+ exponent?
   | digit+ exponent
 let alpha = ['a'-'z''A'-'Z''_']
-let ident = (digit|alpha) (digit|alpha|['-'':''/''\\''.'' '])*
+let ident = (digit|alpha)+
 
-let option_list = (' '? ident '=''"' ident '"')+
+let unused = "Input" | "Output" | "Local" | "OutCtxVar" | "OutCtxType" | "InCtxVar" | "InCtxType" | "Constant" | "Init" | "Package" | "Option" | "PredefType" | "StructType" | "Field" | "EnumType" | "EnumVal" | "NamedType"
+
 
 rule token = parse
           | sep              { token lexbuf }
 	  | '\n'             { newline lexbuf;
-			       token lexbuf } 
-	  | line_cmt         { newline lexbuf;
 			       token lexbuf }
 	  | "<!--"           { comment lexbuf;
 			       token lexbuf }
 	  | "<?" [^'>']* '>' { token lexbuf }
-
-	  | (ident as op) '=''"' (ident as v) '"'  { OPTION(op, v) }
 
 	  | "NoExpNode"      { NOEXPNODE }
 	  | "NodeInstance"   { NODEINSTANCE }
@@ -46,22 +42,33 @@ rule token = parse
 	  | "scadeName"      { SCADENAME }
 	  | "Model"          { MODEL }
 
-	  | '"'              { QUOTES }
+
 	  | '='              { EQ }
 	  | '/'              { SLASH }
 	  | '<'              { CHEV_IN }
 	  | '>'              { CHEV_OUT }
 	  
-	  | ident as id { IDENT (id) }
+	  | unused           { UNUSED }
 
-	  | eof { EOF }
-	  | _ { raise (Lexical_error "Anomaly in kcg_traces.xml") }
+	  | ident as id      { IDENT (id) }
+
+	  | '"'              { Buffer.reset buf;
+			       option_value lexbuf;
+			       VALUE (Buffer.contents buf) }
+
+	  | eof              { EOF }
+	  | _                { raise (Lexical_error "Anomaly in kcg_traces.xml") }
 
 and comment = parse
     | "-->" { () }
     | '\n' { Lexing.new_line lexbuf; comment lexbuf }
     | _    { comment lexbuf }
     | eof  { raise (Lexical_error "unterminated comment") }
+
+and option_value = parse
+  | '"'        { () }
+  | _ as char  { Buffer.add_char buf char;
+		 option_value lexbuf }
 
 {
 }

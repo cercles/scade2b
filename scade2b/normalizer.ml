@@ -3,6 +3,7 @@
 
 open Ast_base
 open Ast_repr
+open Ast_prog
 open Ast_repr_norm
 open Utils
 
@@ -137,7 +138,7 @@ let remove_terminator eq_list =
   
 
 (* Fonction principale de normalisation *)
-let normalize_node node =
+let normalize_node node const_list =
   (* Normalisation des déclarations *)
   let inputs = p_decl_to_n_decl node.p_param_in in
   let outputs = p_decl_to_n_decl node.p_param_out in
@@ -151,11 +152,12 @@ let normalize_node node =
       if (List.exists (fun (id_bis, _, _) -> id = id_bis) cond_l)
       then cond_l else (id, t, None) :: cond_l) cond_list decl_list
   in
+  (* Construction de l'environnement *)
   let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
   let assumes = add_non_existing_cond assumes inputs in
   let guarantees = add_non_existing_cond guarantees outputs in  
-  (* Construction de l'environnement *)
-  let env = Utils.make_env (assumes@guarantees@vars_cond) in
+  let const_env = List.map (fun const -> (const.id, (p_type_to_n_type const.typ), None)) const_list in
+  let env = Utils.make_env (assumes@guarantees@vars_cond@const_env) in
   let eq_list = remove_terminator node.p_eqs in
   let normalize_eq res = function
     | lp, expr as eq -> 
@@ -172,7 +174,8 @@ let normalize_node node =
   (* Ordonnancement des équations *)
   let scheduled_eqs =
     let (id_inputs, _) = List.split inputs in
-    Scheduler.scheduler eqs (id_inputs)
+    let id_consts = List.map (fun cst -> cst.id) const_list in
+    Scheduler.scheduler eqs (id_inputs @ id_consts)
   in
   (* Noeud normalisé *)
   { n_id = String.lowercase node.p_id;
@@ -183,15 +186,3 @@ let normalize_node node =
     n_pre = assumes; 
     n_post = guarantees;
     n_eqs = scheduled_eqs; }
-
-
-
-
-(* Retourne le noeud principal normalisé *)
-let normalize prog main =
-  let main_node =
-    try 
-      List.find (fun node -> node.p_id = main) prog
-    with Not_found -> assert false
-  in
-  normalize_node main_node

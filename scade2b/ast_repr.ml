@@ -43,5 +43,3 @@ type p_node =
      p_vars: p_decl list;
      p_eqs: p_equation list; 
   }
-
-type p_prog = p_node list

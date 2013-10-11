@@ -4,10 +4,28 @@
   open Ast_repr
   open Ast_base
 
+
+  module Map_node = Map.Make(
+    struct
+      type t = ident
+      let compare = compare
+    end
+  )
+
+  type map_node = string Map_node.t
+
+  (* Check if all the types in the list are the same. Used to check array coherence *)
+  let check_type list =
+    let typ = List.hd list in
+    List.iter
+      (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
+    typ
+
 %}
 
+
 %token NODE TEL CONST
-%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA QUOTES DOT
+%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA
 %token CARET 
 %token T_BOOL T_INT T_REAL
 %token <bool> BOOL
@@ -19,25 +37,26 @@
 %left CARET 
 
 %start prog
-%type string
+%type (* TO CHANGE *) 
 
 %%
 
 prog :
- | node_list EOF { $1 }
+ | node_const_list EOF { $1 }
 ;
 
-node_list :
- |   { [] }
- | node node_list { $1::$2 }
+node_const_list :
+ |   { }
+ | node node_const_list { }
+ | const node_const_list { }
 ;
 
 node :
- | NODE IDENT TEXT TEL semi_opt
+ | NODE IDENT TEXT TEL semi_opt {  }
 ;
 
 const :
- | CONST IDENT COLON typ EQ expr SEMICOL
+ | CONST IDENT COLON typ EQ expr SEMICOL {  }
 ;
 
 id_list :
@@ -76,24 +95,15 @@ expr :
  | array_expr { PE_Array $1 }
 ;
 
+array_expr :
+ | LBRACKET expr_list RBRACKET { PA_Def $2 } /* OK POUR TABLEAU MULTI-DIM */
+ | expr CARET expr { PA_Caret ($1, $3) }
+;
+
 expr_list :
  |   { [] }
  | expr { [$1] }
  | expr COMMA expr_list { $1 :: $3 }
-;
-
-array_expr :
- | LBRACKET expr_list RBRACKET { PA_Def $2 } /* OK POUR TABLEAU MULTI-DIM */
- | IDENT array_list { handle_slice $1 $2 }
- | expr CARET expr { PA_Caret ($1, $3) }
- | expr CONCAT expr { PA_Concat ($1, $3) }
-;
-
-array_list :
- | LBRACKET expr RBRACKET { [($2, $2)] }
- | LBRACKET expr DOTDOT expr RBRACKET { [($2, $4)] }
- | LBRACKET expr RBRACKET array_list { ($2, $2) :: $4 }
- | LBRACKET expr DOTDOT expr RBRACKET array_list { ($2, $4) :: $6 }
 ;
 
 semi_opt :

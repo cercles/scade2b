@@ -37,42 +37,12 @@ rule token = parse
 	  | pragma_simpl { token lexbuf }
 
 	  | "node"|"function"  { NODE }
-	  | "returns" { RETURNS }
-	  | "let"     { LET }
-	  | "tel"     { TEL }
-	  | "var"     { VAR }
-	  | "assume"  { ASSUME }
-	  | "guarantee" { GUARANTEE }
+	  | "tel" { TEL }
+	  | "const" { CONST }
 
 	  | "bool" { T_BOOL }
 	  | "int"  { T_INT }
 	  | "real" { T_REAL }
-
-	  | "if"   { IF }
-	  | "then" { THEN }
-	  | "else" { ELSE }
-
-	  | "fby" { FBY }
-
-	  | '+'   { PLUS }
-	  | '-'   { MINUS }
-	  | '*'   { MULT }
-	  | '/'   { DIV }    
-	  | "div" { DIV_INT }
-	  | "mod" { MOD } 
-
-	  | '='  { EQ }
-	  | "<>" { NEQ }
-	  | '<'  { INF }
-	  | "<=" { INFEQ }
-	  | '>'  { SUP }
-	  | ">=" { SUPEQ }
-
-	  | "and" { AND }
-	  | "or"  { OR }
-	  | "not" { NOT }
-	  | "xor" { XOR }
-	  | '#'   { SHARP }
 
 	  | '('  { LPAREN }
 	  | ')'  { RPAREN }
@@ -81,10 +51,7 @@ rule token = parse
 	  | ':'  { COLON }
 	  | ';'  { SEMICOL }
 	  | ','  { COMMA }
-	  | ".." { DOTDOT }
-	  | '.'  { DOT }
 	  | '^'  { CARET }
-	  | '|'  { CONCAT } 
 
 	  | "true"      { BOOL (true) }
 	  | "false"     { BOOL (false) }
@@ -93,7 +60,7 @@ rule token = parse
 	  | ident as id { IDENT (id) }
 
 	  | eof { EOF }
-	  | _   { raise (Lexical_error "lexical error") }
+	  | _ { }
 
 and comment = parse
     | "*/" { () }
