@@ -128,4 +128,12 @@ let () =
 
   if not(Sys.file_exists main_dir) then Unix.mkdir main_dir 0o764; 
 
+  (* Création d'une machine pour les constantes. *)
+  let bconst_file = 
+    open_out (Filename.concat (Filename.dirname main_dir) ("M_Consts.mch")) in
+  Bconst_generator.print_machine prog.const_list babst_file;
+
   T_Node.iter (fun name node -> if XML_prog.mem name xml_map then node_translator name node) prog.node_map
+
+
+  
