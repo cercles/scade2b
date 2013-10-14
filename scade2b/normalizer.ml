@@ -134,7 +134,6 @@ let remove_terminator eq_list =
     )
   in
   List.fold_left remover [] eq_list
-
   
 
 (* Fonction principale de normalisation *)
@@ -178,7 +177,7 @@ let normalize_node node const_list =
     Scheduler.scheduler eqs (id_inputs @ id_consts)
   in
   (* Noeud normalisé *)
-  { n_id = String.lowercase node.p_id;
+  { n_id = node.p_id;
     n_env = env;
     n_param_in = inputs;
     n_param_out = outputs;

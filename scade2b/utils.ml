@@ -66,14 +66,12 @@ let make_env id_type_expr_list =
 (*************************** DIVERS ***************************)
 
 
+let sees_list env const_list =
+  if List.exists (fun cst -> Env.mem cst env) const_list then ["M_Consts"] else []
+
 (* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
 let a_b_list_equals l=
   List.for_all (fun (a, b) -> a = b) l
-
-(* Define the machines accessed in the SEES clause *)
-let sees_list = []
-(* Define the machines accessed in the IMPORT clause (A AUTOMATISER) *)
-let imports_list = []
 
 (* string_of_list (l: string list) returns the concat of every strings in list *)
 (* NOT USED *)

@@ -130,11 +130,11 @@ let rec trad_list env to_call = function
 
 (******************** Traduction du noeud vers l'implantation ********************)
 
-let bimpl_translator env node =
-  let implem_name = String.capitalize (node.n_id ^ "_i") in
-  let refines = String.capitalize (node.n_id) in
-  let sees = Utils.sees_list in
-  let imports = Utils.imports_list in
+let bimpl_translator env node imports const_list =
+  let implem_name = "M_" ^ node.n_id ^ "_i" in
+  let refines = "M_" ^ node.n_id in
+  let sees = Utils.sees_list env const_list in
+  let imports = List.map (fun name -> "M_" ^ name ) imports in
   let concrete_vars = ref [] in
   let invariant = ref [] in
   let initialisation = ref [] in
@@ -204,9 +204,9 @@ let bimpl_translator env node =
 
 (******************** Traduction du noeud vers la machine abstraite ********************)
 
-let babst_translator env node =
-  let machine = String.capitalize node.n_id in
-  let sees = Utils.sees_list in
+let babst_translator env node const_list =
+  let machine = "M_" ^ node.n_id in
+  let sees = Utils.sees_list env const_list in
   let abstop_decl = { id = node.n_id;
 		      param_in = trad_list env n_decl_to_decl node.n_param_in;
 		      param_out = trad_list env n_decl_to_decl node.n_param_out;
@@ -227,10 +227,10 @@ let babst_translator env node =
 
 (******************** Traduction du noeud en un couple de machines B ********************)
 
-let translate node =
+let translate node imports const_list =
   let env = node.n_env in
-  let babst = babst_translator env node in
-  let bimpl = bimpl_translator env node in
+  let babst = babst_translator env node const_list in
+  let bimpl = bimpl_translator env node imports const_list in
   { machine_abstraite = babst;
     implementation = bimpl;
   }

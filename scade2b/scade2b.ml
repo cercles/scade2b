@@ -78,26 +78,28 @@ let () =
 	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
 	  exit 1
   in
-  close_in channel;
+  close_in channel;  
 
-  
+  let id_consts = List.map (fun cst -> cst.id) prog.const_list in
 
   (* Traduction de chaque noeud du programme *)
   let node_translator node_name node =
-    let import_list = try 
-      XML_prog.find node_name xml_map 
-    with Not_found -> []
+    let import_list = 
+      try 
+	XML_prog.find node_name xml_map 
+      with Not_found -> []
     in
-   (* ne pas oublier const_list dans normalizer *)
+    (* ne pas oublier const_list dans normalizer *)
     let lexbuf = Lexing.from_string node in
     try
       let ast = Parser.prog Lexer.token lexbuf in
       let ast_n = Normalizer.normalize_node ast prog.const_list in
-      let ast_b = Trad.translate ast_n in
-      let babst_file = open_out (Filename.concat (Filename.dirname main_dir) (String.capitalize(node_name^".mch"))) in
+      let ast_b = Trad.translate ast_n import_list id_consts in   
+      let babst_file = 
+	open_out (Filename.concat (Filename.dirname main_dir) ("M_" ^ node_name ^ ".mch")) in
       Babst_generator.print_prog ast_b.machine_abstraite babst_file;
-      Printf.printf "%s" (Filename.concat (main_dir) (String.capitalize(node_name^".mch")));
-      let bimpl_file = open_out (Filename.concat (Filename.dirname main_dir) (String.capitalize(node_name^"_i.imp"))) in
+      let bimpl_file = 
+	open_out (Filename.concat (Filename.dirname main_dir) ("M_" ^ node_name ^ "_i.imp")) in
       Bimpl_generator.print_prog ast_b.implementation bimpl_file;
       close_out babst_file;
       close_out bimpl_file
@@ -120,4 +122,10 @@ let () =
 	  Format.eprintf "Anomaly: %s\n@." (Printexc.to_string e);
 	  exit 2
   in
+
+
+  (* Création du répertoire contenant les fichiers de sorties *)
+
+  if not(Sys.file_exists main_dir) then Unix.mkdir main_dir 0o764; 
+
   T_Node.iter (fun name node -> if XML_prog.mem name xml_map then node_translator name node) prog.node_map

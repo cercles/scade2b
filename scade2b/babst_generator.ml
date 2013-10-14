@@ -192,8 +192,6 @@ let print_operation ppt abstop =
     print_prelist abstop.abstop_pre
     print_thenlist abstop.abstop_post
 
-
-(* The file list can be configured in utils.ml *)
 let print_sees ppt mach_list =
   if (List.length mach_list) = 0 then () 
   else 
