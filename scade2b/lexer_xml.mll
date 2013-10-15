@@ -25,7 +25,7 @@ let real = digit+ '.' digit+ exponent?
 let alpha = ['a'-'z''A'-'Z''_']
 let ident = (digit|alpha)+
 
-let unused = "Input" | "Output" | "Local" | "OutCtxVar" | "OutCtxType" | "InCtxVar" | "InCtxType" | "Constant" | "Init" | "Package" | "Option" | "PredefType" | "StructType" | "Field" | "EnumType" | "EnumVal" | "NamedType"
+let unused = "Input" | "Output" | "Local" | "OutCtxVar" | "OutCtxType" | "InCtxVar" | "InCtxType" | "Constant" | "Init" | "Package" | "Option" | "PredefType" | "StructType" | "Field" | "EnumType" | "EnumVal" | "NamedType" | "ExpNode" | "Iterator" | "NodeInlining" | "ArrayType" | "Memory" | "Automaton" | "State" | "Fork" | "Condition" | "Transition" | "ActiveState" | "NextState" | "SelectedState" | "Clock" | "ResetActiveState" | "ResetNextState"  
 
 
 rule token = parse

@@ -133,6 +133,7 @@ let () =
     open_out (Filename.concat (Filename.dirname main_dir) ("M_Consts.mch")) in
   Bconst_generator.print_m_const prog.const_list bconst_file;
 
+
   T_Node.iter (fun name node -> if XML_prog.mem name xml_map then node_translator name node) prog.node_map
 
 
