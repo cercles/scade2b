@@ -155,7 +155,10 @@ let normalize_node node const_list =
   let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
   let assumes = add_non_existing_cond assumes inputs in
   let guarantees = add_non_existing_cond guarantees outputs in  
-  let const_env = List.map (fun const -> (const.id, (p_type_to_n_type const.typ), None)) const_list in
+  let const_env = 
+    List.map 
+      (fun const -> (const.c_id, (p_type_to_n_type const.c_typ), Some (p_expr_to_n_expr const.c_expr))) 
+      const_list in
   let env = Utils.make_env (assumes@guarantees@vars_cond@const_env) in
   let eq_list = remove_terminator node.p_eqs in
   let normalize_eq res = function
@@ -173,7 +176,7 @@ let normalize_node node const_list =
   (* Ordonnancement des équations *)
   let scheduled_eqs =
     let (id_inputs, _) = List.split inputs in
-    let id_consts = List.map (fun cst -> cst.id) const_list in
+    let id_consts = List.map (fun cst -> cst.c_id) const_list in
     Scheduler.scheduler eqs (id_inputs @ id_consts)
   in
   (* Noeud normalisé *)

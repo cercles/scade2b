@@ -21,7 +21,7 @@
     else
       PA_Slice (id, elist)
 
-  type node_or_const = Node of (string * string) | Function of (string * string) | Const of t_const
+  type node_or_const = Node of (string * string) | Function of (string * string) | Const of p_const
 
   let prog_builder node_const_list =
     let (node_map, cst_list) = 
@@ -68,9 +68,9 @@ node_const_list :
 ;
 
 const :
- | CONST IDENT COLON typ EQ expr SEMICOL { {id = $2;
-					    typ = $4;
-					    expr = $6;} }
+ | CONST IDENT COLON typ EQ expr SEMICOL { {c_id = $2;
+					    c_typ = $4;
+					    c_expr = $6;} }
 ;
 
 typ :

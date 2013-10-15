@@ -4,6 +4,7 @@ open Ast_repr_b
 open Ast_repr_norm
 open Ast_repr
 open Ast_base
+open Ast_prog
 
 (*************************** IDENT COLLISION FUNCTIONS ***************************)
 
@@ -142,6 +143,54 @@ and rename_id_array old new_i = function
 
 
 
+(* ast_repr to ast_repr_b functions  TODO : TROUVER ALTERNATIVE POUR CONSTANTES *)
+let rec p_expr_to_b_expr = function
+  | PE_Ident id ->  BE_Ident id
+  | PE_Value v -> BE_Value v
+  | PE_Array ar -> BE_Array (p_array_to_b_array ar)
+  | PE_Op_Arith (op, e_list) -> BE_Op_Arith (op, (List.map p_expr_to_b_expr e_list))
+  | PE_Op_Logic (op, e_list) -> BE_Op_Logic (op, (List.map p_expr_to_b_expr e_list))
+  | _ -> assert false
+
+and p_array_to_b_array = function
+  | PA_Def e_list -> BA_Def (List.map p_expr_to_b_expr e_list)
+  | PA_Caret (e1, PE_Value (Int i)) -> p_array_to_b_array (caret_to_def_bis e1 i)
+  | PA_Caret (e1, e2) -> BA_Caret (p_expr_to_b_expr e1, p_expr_to_b_expr e2)
+  | PA_Concat (e1, e2) -> BA_Concat (p_expr_to_b_expr e1, p_expr_to_b_expr e2)
+  | PA_Slice (id, e_list) -> 
+      BA_Slice (id, 
+		(List.map (fun (e1, e2) -> 
+			     (p_expr_to_b_expr e1, p_expr_to_b_expr e2)) e_list))
+  | PA_Index (id, e_list) -> 
+      BA_Index (id, (List.map p_expr_to_b_expr e_list))
+
+and caret_to_def_bis e1 e2 = 
+  let rec funrec v dim acc =
+    if dim = 0 then acc
+    else funrec v (dim-1) (v :: acc)
+  in
+  PA_Def (funrec e1 e2 [])
+
+
+let p_const_to_b_const const =
+  let flatten_array a =
+    let base_t = ref T_Bool in (* default ref *)
+    let rec fun_rec = function
+      | PT_Base t -> base_t := t; []
+      | PT_Array (t, expr) -> (p_expr_to_b_expr expr) :: (fun_rec t)
+    in
+    (!base_t, fun_rec a)
+  in
+
+  let (id, t, e) = (const.c_id, const.c_typ, const.c_expr) in 
+  match t with 
+    | PT_Base typ -> Const_Base (id, typ, p_expr_to_b_expr e)
+    | PT_Array (_, _) -> (
+      let typ, dims = flatten_array t in 
+      Const_Fun (id, typ, dims, p_expr_to_b_expr e))
+
+
+
 (**************************** MAP XML ****************************)
 
 module XML_prog = Map.Make(
@@ -152,3 +201,5 @@ module XML_prog = Map.Make(
 )
 
 type xml_prog = ident list XML_prog.t
+
+
