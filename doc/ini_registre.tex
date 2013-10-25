@@ -1,0 +1,255 @@
+% -*- coding: utf-8; ispell-dictionary: "french"; -*-
+\documentclass{cercles2}
+\usepackage{float}
+\usepackage{alltt}
+\usepackage{multicol}
+
+% Macros locales
+\newcommand{\cercles}{\textsf{CERCLES{\raisebox{0.5ex}{\small 2}}}}
+
+% Définitions obligatoires (mais qui peuvent être "vides")
+
+\Dtache{}
+\Dtitre{Documentation du traducteur Scade2B}
+\Dstatut{préliminaire} %préliminaire % en revue % final
+\Ddate{octobre 2013}
+\Dversion{}
+\Dorganisation{PPS}
+\Dcourriel{florian.thibord@\ pps.univ-paris-diderot.fr}
+\Dcontact{Florian Thibord}
+\Dtelfax{Tél:~\mbox{+33 6 85 14 54 89}}
+
+% Auteurs du document
+
+%% \ajoutAuteur{\Ccontact}{\Corganisation}{\Ccourriel}
+%% \ajoutAuteur{Florian Thibord}{PPS}{florian.thibord@\ pps.univ-paris-diderot.fr}
+
+% Historique
+
+%% \ajoutHistorique{0.1}{3~déc.~2012}{Création}{toutes}
+%% \ajoutHistorique{0.2}{5~déc.~2012}{Paragraphe \textit{Schéma de
+%%     traduction} et cosmétique}{toutes}
+%% \ajoutHistorique{0.3}{5~déc.~2012}{Schéma de
+%%     traduction 1 et 2; autres cosmétiques}{toutes}
+%% \ajoutHistorique{\Cversion}{17~déc.~2012}{Contraintes annexes de
+%%   typages et assertions; toujours du cosmétique}{toutes}
+%% \ajoutHistorique{\Cversion}{13~sep.~2013}{Ajouts et synthèse en vue du rapport final}{toutes}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\begin{quote}
+  Cette documentation vise à décrire le fonctionnement et l'évolution
+  du traducteur Scade2B.
+\end{quote}
+
+
+\chapter{Initialisation d'un registre à partir d'une entrée d'un composant}
+
+\section{Exemple: \texttt{integrateur\_sature}}
+
+Jusqu'à présent, les registres étaient initialisé uniquement avec des
+constantes, or nous aimerions pouvoir utiliser une entrée du composant
+pour initialiser un registre.
+
+Considérons l'exemple \texttt{integrateur\_sature} suivant:
+
+%% \begin{figure}[h]
+%% \caption{nav1d/integrateur\_sature}
+%% \label{fig:integ_sat_graph}
+%% \vspace{-1ex}
+%% \begin{center}
+%% \includegraphics[scale=0.5]{integ_sat.pdf}
+%% \end{center}
+%% \vspace{-2ex}
+%% \end{figure}
+
+\emph{Planche à venir...}
+
+Ce noeud contient une opération \texttt{fby}, dont l'initialisation
+correspond à l'entrée \texttt{P\_INITIALISATION}. La version textuelle
+de ce noeud est la suivante:
+
+\begin{figure}[h]
+\label{fig:integ_sat_text}
+\caption{Version textuelle du composant \texttt{integrateur\_sature}}
+\begin{verbatim}
+node integrateur_sature(incr : int; P_INITIALISATION : int; P_SATURATION : int)
+  returns (integr : int; integr_m1 : int)
+var
+  _L1 : int;
+  _L2 : int;
+  _L3 : int;
+  _L7 : bool;
+  _L6 : int;
+  _L8 : int;
+  _L9 : int;
+let
+  _L1= incr;
+  integr= _L6;
+  integr_m1= _L3;
+  _L2= _L1 + _L3;
+  _L3= fby(_L6; 1; _L8);
+  _= _L7;
+  _L6, _L7= #1 saturation(_L2, _L9);
+  _L8= P_INITIALISATION;
+  _L9= P_SATURATION;
+tel
+\end{verbatim}
+\end{figure}
+
+\newpage
+
+Si on traduit ce noeud dans l'état actuel du traducteur, on obtiendra
+le couple de machines B suivantes :
+
+\begin{figure}[h]
+\label{fig:integ_sat_B}
+\caption{Machines B de \texttt{integrateur\_sature}}
+\setlength{\columnseprule}{0.05cm}
+\begin{multicols}{2}
+\begin{verbatim}
+MACHINE M_integrateur_sature
+SEES M_Consts
+OPERATIONS
+
+integr,integr_m1<--integrateur_sature(
+  incr,P_INITIALISATION,P_SATURATION)=
+ PRE
+   P_SATURATION : INT &
+   P_INITIALISATION : INT &
+   incr : INT
+ THEN
+   integr_m1 :: { ii | ii : INT }||
+   integr :: { ii | ii : INT }
+ END 
+END
+\end{verbatim}
+
+\columnbreak
+
+\begin{verbatim}
+ IMPLEMENTATION M_integrateur_sature_i
+ REFINES M_integrateur_sature
+ SEES M_Consts
+ IMPORTS M_saturation
+
+ CONCRETE_VARIABLES L3
+ INVARIANT 
+    L3 : INT
+ INITIALISATION 
+    L3 := L8
+
+ OPERATIONS
+
+ integr,integr_m1<--integrateur_sature(
+   incr,P_INITIALISATION,P_SATURATION)=
+  VAR L1, L2, L7, L6, L8, L9 IN
+    integr_m1 := L3; 
+    L9 := P_SATURATION; 
+    L8 := P_INITIALISATION; 
+    L1 := incr; 
+    L2 := L1 + L3; 
+    L6, L7 <-- saturation(L2, L9); 
+    integr := L6;
+    L3 := L6
+  END 
+ END
+\end{verbatim}
+\end{multicols}
+\end{figure}
+
+L'implémentation n'est pas correctement initialisée. Dans la clause
+\texttt{INITIALISATION}, la variable \texttt{L8} n'est pas définie,
+car c'est une variable locale de l'opération qui reçoit le flux
+d'entrée \texttt{P\_INITIALISATION}. 
+\noindent
+Plusieurs solutions permettent de résoudre ce problème:
+\begin{itemize}
+%% \item Solution 1 : Traduire le composant \texttt{integrateur\_sature} par une
+%%   machine paramétrée, avec la variable \texttt{L8} comme paramètre, et
+%%   supprimer cette dernière de la liste des variables locales.
+\item Solution 1 : Déclarer une nouvelle variable d'état
+  \texttt{temps}, de type \texttt{INT}, initialisée à 0, et réaliser
+  l'initialisation du registre non plus dans la clause
+  \texttt{INITIALISATION}, mais en début d'opération.
+\item Solution 2 : A la place de la variable \texttt{L8} comme paramètre de la
+  machine, utiliser l'entrée \texttt{P\_INITIALISATION}, et supprimer
+  cette entrée de la liste des paramètres d'entrées de l'opération. 
+\end{itemize} 
+
+%% ANNULER SOLUTION 1, NE METTRE QUE LES SOLUTIONS 2 et 3!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+\subsection{Solution 1}
+
+En utilisant une substitution \textsf{Condition} en début d'opération,
+on peut tester la valeur de la variable d'état \texttt{temps} et
+affecter la valeur du registre en conséquence:\\
+\begin{verbatim}
+    IF temps = 0 THEN L3 := L8 ELSE L3 := L3 END;
+\end{verbatim}
+Or, en début d'opération, \texttt{L8} n'a pas encore été affectée, il
+faut donc placer la substitution dans laquelle \texttt{L8} est
+affectée d'une valeur avant la condition. Ainsi l'opération de cette
+machine est correcte. \\
+
+Cependant, quelle valeur donner au registre \texttt{L3} dans la clause
+\texttt{INITIALISATION}? Cette valeur d'initialisation ne sera pas
+prise en compte par l'opération car la première \texttt{L3} sera
+immédiatement affectée par la valeur d'initialisation dans la
+substitution \textsf{condition}. Mais pour les obligations de preuves,
+il faut que les substitutions de la clause \texttt{INITIALISATION}
+respectent l'\texttt{INVARIANT} de la machine. Si un invariant est lié au registre L3, 
+on ne peut pas lui affecter une valeur d'initialisation
+aléatoire.
+Dans l'exemple, le registre est lié à la sortie
+\texttt{integr\_m1}. Si on pose la condition suivante sur cette sortie:
+\begin{verbatim}
+    guarantee G_1 : integr_m1 < 10 and integr_m1 != 0 
+\end{verbatim}
+Elle sera traduite par l'invariant B:
+\begin{verbatim}
+    INVARIANT 
+        L3 : INT & L3 < 10 & L3 <> 0 
+\end{verbatim}
+Il faut donc initialiser le registre à une valeur respectant cet
+invariant, alors que cette valeur ne sera jamais utilisée.
+Une solution n'ayant pas ce genre de contrainte est donc préférable.
+
+
+
+\subsection{Solution 2}
+
+En utilisant des machines paramétrées, on peut alors directement
+initialiser les variables d'état de la  machine avec les paramètres
+donnés. On a alors plus besoin d'une substitution \textsf{condition}
+en début d'opération. 
+Cette solution consiste à paramétrer la machine avec la variable
+\texttt{L8}, qui ne sera plus une variable locale de l'opération mais
+un paramètre de la machine. 
+Pour que la machine IMPLEMENTATION soit correcte, il faut ajouter une
+clause \texttt{CONSTRAINTS} dans laquelle on indique le type et les
+restrictions liées aux différents paramètres de la machine, sous forme
+de prédicat.
+
+Dans la clause \texttt{INITIALISATION}, \texttt{L8} sera alors défini,
+et les obligations de preuves s'appuieront sur le prédicat défini dans
+la clause \texttt{CONSTRAINTS} pour vérifier la correction de
+l'initialisation de la machine.
+
+Dans l'opération, \texttt{L8} est affectée par l'entrée de l'opération
+\texttt{P\_INITIALISATION}, et les deux
+
+
+\subsection{Solution 2}
+
+
+
+
+\section{Utilisation de machines paramétrées}
+
+
+
+\end{document}
