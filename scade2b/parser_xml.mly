@@ -35,9 +35,9 @@ balise_node_list :
  | CHEV_IN SLASH NOEXPNODE CHEV_OUT { [] }
  | CHEV_IN SLASH ROOTNODE CHEV_OUT { [] }
  | CHEV_IN NODEINSTANCE option_list CHEV_OUT balise_dummy balise_node_list
-     { (List.hd $3) :: $6 }
+     { {node_name = (List.hd $3); params_m = None} :: $6 }
  | CHEV_IN NODEINSTANCE option_list SLASH CHEV_OUT balise_node_list
-     { (List.hd $3) :: $6 }
+     { {node_name = (List.hd $3); params_m = None} :: $6 }
  | balise_dummy balise_node_list { $2 }
 ;
 

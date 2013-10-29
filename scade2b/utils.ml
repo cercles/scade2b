@@ -193,6 +193,8 @@ let p_const_to_b_const const =
 
 (**************************** MAP XML ****************************)
 
+type import_t = {node_name : ident; params_m : int list option} 
+
 module XML_prog = Map.Make(
   struct
     type t = ident
@@ -200,6 +202,6 @@ module XML_prog = Map.Make(
   end
 )
 
-type xml_prog = ident list XML_prog.t
+type xml_prog = import_t list XML_prog.t
 
 

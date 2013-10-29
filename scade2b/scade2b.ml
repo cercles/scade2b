@@ -134,7 +134,9 @@ let () =
   Bconst_generator.print_m_const prog.const_list bconst_file;
 
 
+  (* Creation de la liste de noeuds ordonnée selon l'ordre des IMPORTS *)
+  (* let node_list =  *)
+
+
+
   T_Node.iter (fun name node -> if XML_prog.mem name xml_map then node_translator name node) prog.node_map
-
-
-  
