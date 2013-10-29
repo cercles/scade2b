@@ -94,7 +94,7 @@ let () =
     try
       let ast = Parser.prog Lexer.token lexbuf in
       let ast_n = Normalizer.normalize_node ast prog.const_list in
-      let ast_b = Trad.translate ast_n import_list id_consts in   
+      let ast_b = Trad.translate ast_n (List.map (fun {node_name=ident; params_m=param} -> ident) import_list) id_consts in   
       let babst_file = 
 	open_out (Filename.concat (Filename.dirname main_dir) ("M_" ^ node_name ^ ".mch")) in
       Babst_generator.print_prog ast_b.machine_abstraite babst_file;
@@ -135,8 +135,22 @@ let () =
 
 
   (* Creation de la liste de noeuds ordonnée selon l'ordre des IMPORTS *)
-  (* let node_list =  *)
 
-
-
+  let node_list =
+    let xml_imports_list = XML_prog.bindings xml_map in
+    let remove_param_from_imports l =
+      List.map (fun (elt, l2) -> List.map (fun {node_name=ident; params_m=param} -> ident) l2) l 
+    in
+    let to_schedule = remove_param_from_imports xml_imports_list in
+    let rec scheduler not_ordered ordered =
+      match not_ordered with
+      | [] -> ordered
+      | (node, imports) :: l ->  if List.for_all (fun ident -> List.mem ident ordered) imports 
+	then scheduler not_ordered (ordered @ [node])
+	else scheduler (l @ [(node, imports)]) ordered
+    in
+    scheduler to_schedule []
+  in
+      
+      
   T_Node.iter (fun name node -> if XML_prog.mem name xml_map then node_translator name node) prog.node_map
