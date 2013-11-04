@@ -179,8 +179,11 @@ let normalize_node node const_list =
     let id_consts = List.map (fun cst -> cst.c_id) const_list in
     Scheduler.scheduler eqs (id_inputs @ id_consts)
   in
+  (* Initialisation d'un registre par une entrée *)
+  let inputs, assumes, lambdas = Utils.search_input_in_reg scheduled_eqs inputs assumes [] in
   (* Noeud normalisé *)
-  { n_id = node.p_id;
+  { n_id = node.p_id; 
+    n_lambdas = lambdas;
     n_env = env;
     n_param_in = inputs;
     n_param_out = outputs;

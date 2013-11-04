@@ -63,6 +63,62 @@ let make_env id_type_expr_list =
 
 
 
+(*************************** NORMALISATION : ***************************)
+(*   Reconnaissance de l'initialisation d'un registre par une entrée   *)
+
+let is_linked eqs ins v =
+  let linked_fold = function
+    N_Operation op -> (Printf.printf "\nreg : %s\n" v;
+      match op.n_op_lp, op.n_op_expr with 
+	  NLP_Ident lp, NE_Ident i when lp = v -> 
+	    if List.exists (fun (id, typ) -> id = i) ins then Some i else None
+	| _ -> None )
+    | _ -> None
+  in
+  List.fold_left (fun id eq -> match linked_fold eq with Some i -> Some i | None -> id) None eqs
+
+let rec search_input_in_reg eqs ins pres lambdas = 
+  match eqs with
+    | [] -> (ins, pres, lambdas) 
+    | eq :: eqs_bis -> begin
+	match eq with 
+	  | N_Registre reg -> (
+	      match reg.n_reg_ini with
+		  NE_Ident v ->
+		    (  match is_linked eqs ins v with
+			 Some i -> Printf.printf "\nreg : %s\n" i;
+			   let pres, cond = remove_from_pres pres i in
+			   let ins, index = remove_from_ins ins i in
+			   search_input_in_reg eqs_bis ins pres ((build_lambda cond index) :: lambdas)
+		       | None -> search_input_in_reg eqs_bis ins pres lambdas
+		    )
+		| _ -> search_input_in_reg eqs_bis ins pres lambdas )
+	  | _ -> search_input_in_reg eqs_bis ins pres lambdas
+      end
+	
+and remove_from_ins ins i =
+  let index_ref = ref 0 in
+  let ins, _ = List.fold_left (fun (acc, index) (ident, typ) -> 
+				 if i = ident then (index_ref := index; (acc, index + 1))
+				 else ((ident, typ) :: acc, index + 1)
+			      ) ([], 1) ins in
+  ins, !index_ref
+
+and remove_from_pres pres i =
+  let cond_ref = ref ("", NT_Base T_Bool, None) in
+  let pres =  List.fold_left (fun acc ((ident, _ , _) as pre) -> 
+		    if i = ident then (cond_ref := pre; acc) 
+		    else pre :: acc) [] pres in
+  pres, !cond_ref
+    
+and build_lambda cond index = 
+  let id, typ, expr = cond in
+  Printf.printf "\n ojbefojznefonzef : %s %d\n\n " id index;
+  { n_l_ident = id;
+    n_l_expr = expr;
+    n_l_type = typ;
+    n_l_index = index;
+  }
 
 (*************************** DIVERS ***************************)
 

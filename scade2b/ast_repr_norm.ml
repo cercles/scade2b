@@ -62,6 +62,12 @@ type n_condition =
 type n_decl =
   ident * n_type
 
+type n_lambda =
+    { n_l_ident: ident;
+      n_l_expr: n_expression option;
+      n_l_type: n_type;
+      n_l_index: int;
+    }
 
 module Env = Map.Make(
   struct
@@ -74,6 +80,7 @@ type env = n_condition Env.t
 
 type n_node =
   { n_id: ident;
+    n_lambdas: n_lambda list;
     n_env: env;
     n_param_in: n_decl list;
     n_param_out: n_decl list;
