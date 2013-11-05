@@ -63,6 +63,16 @@ type op_decl =
     param_out: ident list;
   }
 
+module MAP_import = Map.Make(
+  struct
+    type t = ident
+    let compare = compare
+  end
+)
+
+type b_import = b_expression list option MAP_import.t
+
+
 type impl_operation =
   { op_decl: op_decl;
     vars: ident list;
@@ -72,9 +82,10 @@ type impl_operation =
 
 type b_impl =
   { name: ident;
+    params: ident list;
     refines: ident;
     sees: ident list;
-    imports: ident list;
+    imports: b_import list;
     concrete_variables: ident list;
     invariant: condition list;
     initialisation: initialisation list;
@@ -89,6 +100,8 @@ type abst_operation =
 
 type b_abst =
   { machine: ident;
+    abst_params: ident list;
+    abst_constraints: condition list;
     abst_sees: ident list;
     abst_operation: abst_operation;
   }

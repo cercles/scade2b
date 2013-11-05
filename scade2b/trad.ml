@@ -132,9 +132,10 @@ let rec trad_list env to_call = function
 
 let bimpl_translator env node imports const_list =
   let implem_name = "M_" ^ node.n_id ^ "_i" in
+  let params_id = List.map (fun l -> l.n_l_ident) node.n_lambdas in
   let refines = "M_" ^ node.n_id in
   let sees = Utils.sees_list env const_list in
-  let imports = List.map (fun name -> "M_" ^ name ) imports in
+  (* let imports = List.map (fun name -> "M_" ^ name ) imports in *)
   let concrete_vars = ref [] in
   let invariant = ref [] in
   let initialisation = ref [] in
@@ -148,9 +149,9 @@ let bimpl_translator env node imports const_list =
     		    }
       | N_Call f ->
 	Call { call_lp = nlp_to_blp env f.n_fun_lp;
-		   call_id = f.n_fun_id;
-		   call_params = List.map (n_expr_to_b_expr env) f.n_fun_params;
-		 }
+	       call_id = f.n_fun_id;
+	       call_params = List.map (n_expr_to_b_expr env) f.n_fun_params;
+	     }
       | N_Operation o ->
 	Op_Base { op_lp = nlp_to_blp env o.n_op_lp;
 		  op_expr = n_expr_to_b_expr env o.n_op_expr;
@@ -180,6 +181,7 @@ let bimpl_translator env node imports const_list =
     (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
+  let eqs, imports = check_import_params imports eqs in (* NEW *)
   let reg_ids = !concrete_vars in
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =
@@ -190,6 +192,7 @@ let bimpl_translator env node imports const_list =
 		     op_2 = op_2;
 		   } in
   { name = implem_name;
+    params = params_id;
     refines = refines;
     sees = sees;
     imports = imports;
@@ -206,7 +209,11 @@ let bimpl_translator env node imports const_list =
 
 let babst_translator env node const_list =
   let machine = "M_" ^ node.n_id in
+  let params_id, params_cond = List.split (List.map (fun {n_l_ident = ident; 
+							  n_l_cond = cond; 
+							  n_l_index = _; } -> ident, cond) node.n_lambdas) in
   let sees = Utils.sees_list env const_list in
+  let constraints = trad_list env n_condition_to_condition params_cond in
   let abstop_decl = { id = node.n_id;
 		      param_in = trad_list env n_decl_to_decl node.n_param_in;
 		      param_out = trad_list env n_decl_to_decl node.n_param_out;
@@ -218,6 +225,8 @@ let babst_translator env node const_list =
 			 abstop_post = abstop_post;
 		       } in
   { machine = machine;
+    abst_params = params_id;
+    abst_constraints = constraints;
     abst_sees = sees;
     abst_operation = abst_operation;
   }

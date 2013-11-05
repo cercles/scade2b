@@ -62,13 +62,13 @@ let make_env id_type_expr_list =
     Env.empty id_type_expr_list
 
 
+(*** RECONNAISSANCE DE L'INITIALISATION D'UN REGISTRE PAR UNE ENTREE ***)
 
-(*************************** NORMALISATION : ***************************)
-(*   Reconnaissance de l'initialisation d'un registre par une entrée   *)
+(*                          1) Normalisation                           *)
 
 let is_linked eqs ins v =
   let linked_fold = function
-    N_Operation op -> (Printf.printf "\nreg : %s\n" v;
+    N_Operation op -> (
       match op.n_op_lp, op.n_op_expr with 
 	  NLP_Ident lp, NE_Ident i when lp = v -> 
 	    if List.exists (fun (id, typ) -> id = i) ins then Some i else None
@@ -86,7 +86,7 @@ let rec search_input_in_reg eqs ins pres lambdas =
 	      match reg.n_reg_ini with
 		  NE_Ident v ->
 		    (  match is_linked eqs ins v with
-			 Some i -> Printf.printf "\nreg : %s\n" i;
+			 Some i -> 
 			   let pres, cond = remove_from_pres pres i in
 			   let ins, index = remove_from_ins ins i in
 			   search_input_in_reg eqs_bis ins pres ((build_lambda cond index) :: lambdas)
@@ -112,13 +112,39 @@ and remove_from_pres pres i =
   pres, !cond_ref
     
 and build_lambda cond index = 
-  let id, typ, expr = cond in
-  Printf.printf "\n ojbefojznefonzef : %s %d\n\n " id index;
+  let id, _, _ = cond in
   { n_l_ident = id;
-    n_l_expr = expr;
-    n_l_type = typ;
+    n_l_cond = cond;
     n_l_index = index;
   }
+
+(*                          2) Traduction                           *)
+
+(* TODO : transformer imports en map_import *)
+
+
+let check_imports_params imports eqs =
+  let import_map = ref MAP_import.empty in
+  let rec fun_rec eq =
+    match eq with
+      Call c -> 
+	if MAP_import.mem c.call_id imports then (
+	  let params = MAP_import.find c.call_id in 
+	  match params with 
+	    Some indexs ->
+	      let _, params = List.fold_left (fun (index, params_op, params_m) param -> 
+		if List.mem index indexs then (index+1, acc)
+		else (index+1, 
+		      
+		)))
+    | _ ->
+  in
+  List.map fun_rec eqs
+
+
+
+
+
 
 (*************************** DIVERS ***************************)
 
@@ -260,4 +286,10 @@ module XML_prog = Map.Make(
 
 type xml_prog = import_t list XML_prog.t
 
-
+let update_xml_map xml_map ast =
+  let node_ident = ast.n_id in
+  let params_index = List.map (fun l -> l.n_l_index) ast.n_lambdas in
+  XML_prog.map (fun import_list -> 
+    List.map (fun import ->
+      if import.node_name = node_ident then {import with params_m = Some params_index}
+      else import) import_list) xml_map

@@ -197,15 +197,27 @@ let print_sees ppt mach_list =
   else 
     fprintf ppt "SEES %a" print_idlist_comma mach_list
 
+let print_constraints ppt constraints =
+  if (List.length constraints) = 0 then () 
+  else 
+    fprintf ppt "CONSTRAINTS@\n  %a" print_prelist constraints
+
+let print_params_machine ppt params_machine =
+  if (List.length params_machine) = 0 then () 
+  else 
+    fprintf ppt "(%a)" print_idlist_comma params_machine
+
 let print_id_machine ppt id_machine =
   fprintf ppt "%s" id_machine
 
 
 let print_machine ppt b_abst =
   fprintf ppt
-    "MACHINE %a@\n%a@\n%a @\nEND"
+    "MACHINE %a%a@\n%a@\n%a@\n%a @\nEND"
     print_id_machine b_abst.machine
+    print_params_machine b_abst.abst_params
     print_sees b_abst.abst_sees
+    print_constraints b_abst.abst_constraints
     print_operation b_abst.abst_operation
 
 

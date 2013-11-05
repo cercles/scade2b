@@ -248,14 +248,20 @@ let print_sees ppt sees_l =
 let print_refines ppt id =
   fprintf ppt "REFINES %s" id
 
+let print_params_machine ppt params_machine =
+  if (List.length params_machine) = 0 then () 
+  else 
+    fprintf ppt "(%a)" print_idlist_comma params_machine
+
 let print_implementation ppt impl_name =
   fprintf ppt "%s" impl_name
 
 
 let print_machine ppt b_impl =
   fprintf ppt
-    "IMPLEMENTATION %a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
+    "IMPLEMENTATION %a%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
     print_implementation b_impl.name
+    print_params_machine b_impl.params
     print_refines b_impl.refines
     print_sees b_impl.sees
     print_imports b_impl.imports

@@ -64,8 +64,7 @@ type n_decl =
 
 type n_lambda =
     { n_l_ident: ident;
-      n_l_expr: n_expression option;
-      n_l_type: n_type;
+      n_l_cond: n_condition; 
       n_l_index: int;
     }
 

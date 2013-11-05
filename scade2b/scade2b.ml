@@ -96,8 +96,8 @@ let () =
     let lexbuf = Lexing.from_string node in
     try
       let ast = Parser.prog Lexer.token lexbuf in
-      let ast_n = Normalizer.normalize_node ast prog.const_list in
-      let ast_b = Trad.translate ast_n (List.map (fun {node_name=ident; params_m=param} -> ident) import_list) id_consts in
+      let ast_n = Normalizer.normalize_node ast prog.const_list in      
+      let ast_b = Trad.translate ast_n import_list id_consts in
       let babst_file = 
 	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
       Babst_generator.print_prog ast_b.machine_abstraite babst_file;
@@ -106,7 +106,7 @@ let () =
       Bimpl_generator.print_prog ast_b.implementation bimpl_file;
       close_out babst_file;
       close_out bimpl_file;
-      xml_map
+      update_xml_map xml_map ast_n
     with
       | Lexer.Lexical_error s ->
 	  Format.eprintf "Lexical Error: %s\n@." s;
@@ -142,7 +142,7 @@ let () =
   let node_list =
     let xml_imports_list = XML_prog.bindings xml_map in
     let remove_param_from_imports l =
-      List.map (fun (elt, l2) -> elt, (List.map (fun {node_name=ident; params_m=param} -> ident)) l2) l 
+      List.map (fun (elt, l2) -> elt, (List.map (fun import -> import.node_name)) l2) l 
     in
     let to_schedule = remove_param_from_imports xml_imports_list in
     let rec scheduler not_ordered ordered =
