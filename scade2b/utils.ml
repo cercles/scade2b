@@ -62,6 +62,30 @@ let make_env id_type_expr_list =
     Env.empty id_type_expr_list
 
 
+
+(**************************** MAP XML ****************************)
+
+type import_t = {node_name : ident; params_m : int list option} 
+
+module XML_prog = Map.Make(
+  struct
+    type t = ident
+    let compare = compare
+  end
+)
+
+type xml_prog = import_t list XML_prog.t
+
+let update_xml_map xml_map ast =
+  let node_ident = ast.n_id in
+  let params_index = List.map (fun l -> l.n_l_index) ast.n_lambdas in
+  XML_prog.map (fun import_list -> 
+    List.map (fun import ->
+      if import.node_name = node_ident then {import with params_m = Some params_index}
+      else import) import_list) xml_map
+
+
+
 (*** RECONNAISSANCE DE L'INITIALISATION D'UN REGISTRE PAR UNE ENTREE ***)
 
 (*                          1) Normalisation                           *)
@@ -101,7 +125,7 @@ and remove_from_ins ins i =
   let ins, _ = List.fold_left (fun (acc, index) (ident, typ) -> 
 				 if i = ident then (index_ref := index; (acc, index + 1))
 				 else ((ident, typ) :: acc, index + 1)
-			      ) ([], 1) ins in
+			      ) ([], 0) ins in
   ins, !index_ref
 
 and remove_from_pres pres i =
@@ -122,26 +146,38 @@ and build_lambda cond index =
 
 (* TODO : transformer imports en map_import *)
 
+let imports_list_to_map imports =
+  List.fold_left (fun map import -> match import.params_m with
+		    | Some p when (List.length p) > 0 -> MAP_import.add import.node_name p map
+		    | _ -> map ) MAP_import.empty imports
 
 let check_imports_params imports eqs =
-  let import_map = ref MAP_import.empty in
+  let import_map_in = imports_list_to_map imports in
+  let import_map_out = ref MAP_import.empty in
   let rec fun_rec eq =
     match eq with
-      Call c -> 
-	if MAP_import.mem c.call_id imports then (
-	  let params = MAP_import.find c.call_id in 
-	  match params with 
-	    Some indexs ->
-	      let _, params = List.fold_left (fun (index, params_op, params_m) param -> 
-		if List.mem index indexs then (index+1, acc)
-		else (index+1, 
-		      
-		)))
-    | _ ->
+      Call c ->
+	if MAP_import.mem c.call_id import_map_in then (
+	  let params_index_list = MAP_import.find c.call_id import_map_in in
+	  let _, params_op, params_m =
+	    List.fold_left (fun (index, params_op, params_m) param ->
+			      if index = param then (Printf.printf "\n test\n";(index+1, params_op, (List.nth c.call_params index) :: params_m))
+			      else (index+1, (List.nth c.call_params index) :: params_op, params_m)
+			   ) (0, [], []) params_index_list in
+	  import_map_out := MAP_import.add c.call_id (Some params_m) !import_map_out;
+	  Call {c with call_params = params_op}
+	)
+	else (import_map_out := MAP_import.add c.call_id None !import_map_out; eq)
+    | _ -> eq
   in
-  List.map fun_rec eqs
+  List.map fun_rec eqs, !import_map_out
 
-
+(*
+  1) récupérer liste imports avec paramètres !!
+  2) match des équations correspondantes (Call c when List.mem C.call_id imports)
+  3) modification des équations, récupération des paramètres en référence
+  4) retourne liste des équations + imports
+*)
 
 
 
@@ -273,23 +309,3 @@ let p_const_to_b_const const =
 
 
 
-(**************************** MAP XML ****************************)
-
-type import_t = {node_name : ident; params_m : int list option} 
-
-module XML_prog = Map.Make(
-  struct
-    type t = ident
-    let compare = compare
-  end
-)
-
-type xml_prog = import_t list XML_prog.t
-
-let update_xml_map xml_map ast =
-  let node_ident = ast.n_id in
-  let params_index = List.map (fun l -> l.n_l_index) ast.n_lambdas in
-  XML_prog.map (fun import_list -> 
-    List.map (fun import ->
-      if import.node_name = node_ident then {import with params_m = Some params_index}
-      else import) import_list) xml_map

@@ -235,10 +235,10 @@ let print_concrete_var ppt reg_list =
   else 
     fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
-let print_imports ppt imports_l =
-  if (List.length imports_l) = 0 then () 
-  else 
-    fprintf ppt "IMPORTS %a" print_idlist_comma imports_l
+(* let print_imports ppt imports_l = *)
+(*   if (List.length imports_l) = 0 then ()  *)
+(*   else  *)
+(*     fprintf ppt "IMPORTS %a" print_idlist_comma imports_l *)
 
 let print_sees ppt sees_l =
   if (List.length sees_l) = 0 then () 
@@ -259,12 +259,12 @@ let print_implementation ppt impl_name =
 
 let print_machine ppt b_impl =
   fprintf ppt
-    "IMPLEMENTATION %a%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
+    "IMPLEMENTATION %a%a@\n%a@\n%a@\n@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
     print_implementation b_impl.name
     print_params_machine b_impl.params
     print_refines b_impl.refines
     print_sees b_impl.sees
-    print_imports b_impl.imports
+    (* print_imports b_impl.imports *)
     print_concrete_var b_impl.concrete_variables
     print_invariant b_impl.invariant
     print_initialisation b_impl.initialisation

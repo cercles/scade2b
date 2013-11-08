@@ -70,8 +70,8 @@ module MAP_import = Map.Make(
   end
 )
 
-type b_import = b_expression list option MAP_import.t
-
+type b_import_expr = b_expression list option MAP_import.t
+type b_import_index = int list option MAP_import.t
 
 type impl_operation =
   { op_decl: op_decl;
@@ -85,7 +85,7 @@ type b_impl =
     params: ident list;
     refines: ident;
     sees: ident list;
-    imports: b_import list;
+    imports: b_import_expr;
     concrete_variables: ident list;
     invariant: condition list;
     initialisation: initialisation list;

@@ -135,7 +135,6 @@ let bimpl_translator env node imports const_list =
   let params_id = List.map (fun l -> l.n_l_ident) node.n_lambdas in
   let refines = "M_" ^ node.n_id in
   let sees = Utils.sees_list env const_list in
-  (* let imports = List.map (fun name -> "M_" ^ name ) imports in *)
   let concrete_vars = ref [] in
   let invariant = ref [] in
   let initialisation = ref [] in
@@ -181,7 +180,8 @@ let bimpl_translator env node imports const_list =
     (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
-  let eqs, imports = check_import_params imports eqs in (* NEW *)
+  let eqs, imports = Utils.check_imports_params imports op_1 in (* NEW *)
+  (* let imports = List.map (fun name -> "M_" ^ name ) imports in *)
   let reg_ids = !concrete_vars in
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =
