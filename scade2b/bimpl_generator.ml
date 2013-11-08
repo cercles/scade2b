@@ -57,7 +57,7 @@ and print_expr ppt = function
   
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
-  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_index_list e_list
+  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_expr_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
   | BA_Concat (e1, e2) -> fprintf ppt "concat(%a, %a)" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id print_slice_list e_list
@@ -75,10 +75,10 @@ and print_slice_list ppt = function
   | [(e1, e2)] -> fprintf ppt "(%a, %a)" print_expr e1 print_expr e2
   | (e1, e2)::l -> fprintf ppt "(%a, %a), %a" print_expr e1 print_expr e2 print_slice_list l
 
-and print_index_list ppt = function
+and print_expr_list ppt = function
   | [] -> ()
   | [(e)] -> fprintf ppt "%a" print_expr e
-  | (e)::l -> fprintf ppt "%a, %a" print_expr e print_index_list l
+  | (e)::l -> fprintf ppt "%a, %a" print_expr e print_expr_list l
 
 
 and print_op_arith ppt = function
@@ -235,10 +235,20 @@ let print_concrete_var ppt reg_list =
   else 
     fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
-let print_imports ppt imports_l =
-  if (List.length imports_l) = 0 then () 
+let print_imports ppt imports_m =
+  let print_import ppt import =
+    match import with
+    | id, None -> fprintf "%a" print_id id
+    | id, Some p -> fprintf "%a(%a)" print_id id print_expr_list p
+  in 
+  let rec print_import_list_comma ppt = function
+  | [] -> ()
+  | [import] -> fprintf ppt "%a" print_import id
+  | import :: l -> fprintf ppt "%a, %a" print_import id print_import_list_comma l
+  in
+  if MAP_import.is_empty imports_m then () 
   else 
-    fprintf ppt "IMPORTS %a" print_idlist_comma imports_l
+    fprintf ppt "IMPORTS %a" print_import_list_comma (MAP_import.bindings import_list)
 
 let print_sees ppt sees_l =
   if (List.length sees_l) = 0 then () 

@@ -130,10 +130,10 @@ let () =
 	  exit 2
   in
 
-
+  
   (* Création d'une machine pour les constantes. *)
   let bconst_file = 
-    open_out (Filename.concat (Filename.dirname main_dir) ("M_Consts.mch")) in
+    open_out (Filename.concat main_dir ("M_Consts.mch")) in
   Bconst_generator.print_m_const prog.const_list bconst_file;
 
 
@@ -154,16 +154,16 @@ let () =
     in
     scheduler to_schedule []
   in
-        
-  (* List.iter (fun node_ident ->  *)
-  (* 	       try node_translator node_ident (T_Node.find node_ident prog.node_map xml_map) *)
-  (* 	       with Not_found -> Printf.printf "Scade2b error, node_ident not found in node_map\n" *)
-  (* 	    ) node_list *)
-
+  
   ignore(
   List.fold_left (fun map node_ident -> 
 		    try node_translator node_ident (T_Node.find node_ident prog.node_map) map
 		    with Not_found -> (Printf.printf "Scade2b error, node_ident not found in node_map\n"; map)
 		 ) xml_map node_list)
 
-(* AJOUTER une fonction dans utils de mise à jour de la map. *)
+
+(*
+  todo: vérifier initialisation des registres
+  -> regarder quand un registre est initialisé par une entrée de la machine
+  -> remplacer variable locale de l'initialisation par l'entrée de la machine
+*)
