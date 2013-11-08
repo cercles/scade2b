@@ -180,8 +180,9 @@ let bimpl_translator env node imports const_list =
     (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
-  let eqs, imports = Utils.check_imports_params imports op_1 in (* NEW *)
-  (* let imports = List.map (fun name -> "M_" ^ name ) imports in *)
+  let op_1, imports = Utils.check_imports_params imports op_1 in (* NEW *)
+  let imports = MAP_import.fold 
+    (fun name value acc -> MAP_import.add ("M_" ^ name) value acc) imports MAP_import.empty in 
   let reg_ids = !concrete_vars in
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =
@@ -192,7 +193,7 @@ let bimpl_translator env node imports const_list =
 		     op_2 = op_2;
 		   } in
   { name = implem_name;
-    params = params_id;
+    params = List.map (id_to_bid env) params_id;
     refines = refines;
     sees = sees;
     imports = imports;
@@ -225,7 +226,7 @@ let babst_translator env node const_list =
 			 abstop_post = abstop_post;
 		       } in
   { machine = machine;
-    abst_params = params_id;
+    abst_params = List.map (id_to_bid env) params_id;
     abst_constraints = constraints;
     abst_sees = sees;
     abst_operation = abst_operation;

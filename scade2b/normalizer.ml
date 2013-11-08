@@ -180,7 +180,8 @@ let normalize_node node const_list =
     Scheduler.scheduler eqs (id_inputs @ id_consts)
   in
   (* Initialisation d'un registre par une entrée *)
-  let inputs, assumes, lambdas = Utils.search_input_in_reg scheduled_eqs inputs assumes [] in
+  let inputs, assumes, lambdas, scheduled_eqs = Utils.search_input_in_reg scheduled_eqs inputs assumes [] in
+  let env = make_params_ident env lambdas in
   (* Noeud normalisé *)
   { n_id = node.p_id; 
     n_lambdas = lambdas;
