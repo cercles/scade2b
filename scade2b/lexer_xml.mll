@@ -42,7 +42,6 @@ rule token = parse
 	  | "scadeName"      { SCADENAME }
 	  | "Model"          { MODEL }
 
-
 	  | '='              { EQ }
 	  | '/'              { SLASH }
 	  | '<'              { CHEV_IN }
