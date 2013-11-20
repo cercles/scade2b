@@ -3,6 +3,16 @@
 
   open Utils
 
+  let remove_package_name s =
+    try 
+      let index = String.index s ':' in
+      if s.[index+1] = ':' then 
+	String.sub s (index+2) ((String.length s) - (index+2))
+      else s
+    with 
+    | Not_found -> s
+    | Invalid_argument e -> Printf.printf "\n!Warning : invalid argument in node package name"; s
+      
 %}
 
 %token NOEXPNODE NODEINSTANCE ROOTNODE SCADENAME MODEL
@@ -14,6 +24,8 @@
 
 %start model
 %type <Utils.xml_prog> model
+
+
 
 %%
 
@@ -56,7 +68,7 @@ balise_dummy :
 
 option_list :
  |   { [] }
- | SCADENAME EQ VALUE option_list { $3 :: $4 }
+ | SCADENAME EQ VALUE option_list { (remove_package_name $3) :: $4 }
  | IDENT EQ VALUE option_list { $4 }
 ;
 

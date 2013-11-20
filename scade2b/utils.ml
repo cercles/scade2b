@@ -272,7 +272,8 @@ and rename_id_array old new_i = function
 
 
 
-(* ast_repr to ast_repr_b functions  TODO : TROUVER ALTERNATIVE POUR CONSTANTES *)
+
+(* ast_repr to ast_repr_b functions *)
 let rec p_expr_to_b_expr = function
   | PE_Ident id ->  BE_Ident id
   | PE_Value v -> BE_Value v
@@ -300,7 +301,6 @@ and caret_to_def_bis e1 e2 =
   in
   PA_Def (funrec e1 e2 [])
 
-
 let p_const_to_b_const const =
   let flatten_array a =
     let base_t = ref T_Bool in (* default ref *)
@@ -310,7 +310,6 @@ let p_const_to_b_const const =
     in
     (!base_t, fun_rec a)
   in
-
   let (id, t, e) = (const.c_id, const.c_typ, const.c_expr) in 
   match t with 
     | PT_Base typ -> Const_Base (id, typ, p_expr_to_b_expr e)

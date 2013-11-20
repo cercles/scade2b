@@ -23,7 +23,6 @@ let rec p_expr_to_n_expr = function
   | PE_Op_Arith (op, e_list) -> NE_Op_Arith (op, (List.map p_expr_to_n_expr e_list))
   | PE_Op_Logic (op, e_list) -> NE_Op_Logic (op, (List.map p_expr_to_n_expr e_list))
   | _ -> raise (Normalisation_Error "Une equation n'est pas atomique") 
-               (* ne devrait jamais arriver d'après la grammaire Scade *)
 
 and p_array_to_n_array = function
   | PA_Def e_list -> NA_Def (List.map p_expr_to_n_expr e_list)
