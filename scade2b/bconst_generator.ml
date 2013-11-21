@@ -43,6 +43,8 @@ and print_expr ppt = function
 	    fprintf ppt "bool(%a %a)" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
 	| Op_minus ->  
 	    fprintf ppt "(%a%a)" print_op_arith op print_expr (List.hd e_list)
+	| Op_to_real ->  
+	    fprintf ppt "(%a %a)" print_op_arith op print_expr (List.hd e_list)
 	| _ -> fprintf ppt "%a %a" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
     )
   | BE_Op_Logic (op, e_list) when op = Op_sharp -> 
@@ -93,6 +95,7 @@ and print_op_arith ppt = function
   | Op_mod -> fprintf ppt "mod"
   | Op_div_f -> fprintf ppt "/"
   | Op_minus -> fprintf ppt "-"
+  | Op_to_real -> fprintf ppt "REAL"
 
 and print_op_logic ppt = function
   | Op_and -> fprintf ppt "&"

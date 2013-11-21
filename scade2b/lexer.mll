@@ -36,6 +36,10 @@ rule token = parse
 			   token lexbuf }
 	  | pragma_simpl { token lexbuf }
 
+	  | "<<" { DOUBLE_CHEVIN }
+	  | ">>" { DOUBLE_CHEVOUT }
+	  | "::" { DOUBLE_COLON }
+
 	  | "node"|"function"  { NODE }
 	  | "returns" { RETURNS }
 	  | "let"     { LET }

@@ -146,22 +146,22 @@ let normalize_node node const_list =
   let guarantees = List.map (handle_guarantee node) node.p_guarantees in
   (* Si une entrée/sortie n'a pas de condition, on ajoute une condition vide *)
   let add_non_existing_cond cond_list decl_list =
-    List.fold_left (fun cond_l (id, t) -> 
+    List.fold_left (fun cond_l (id, t) ->
       if (List.exists (fun (id_bis, _, _) -> id = id_bis) cond_l)
       then cond_l else (id, t, None) :: cond_l) cond_list decl_list
   in
   (* Construction de l'environnement *)
   let vars_cond = List.map (fun (id, t) -> (id, t, None)) vars in
   let assumes = add_non_existing_cond assumes inputs in
-  let guarantees = add_non_existing_cond guarantees outputs in  
-  let const_env = 
-    List.map 
-      (fun const -> (const.c_id, (p_type_to_n_type const.c_typ), Some (p_expr_to_n_expr const.c_expr))) 
+  let guarantees = add_non_existing_cond guarantees outputs in
+  let const_env =
+    List.map
+      (fun const -> (const.c_id, (p_type_to_n_type const.c_typ), Some (p_expr_to_n_expr const.c_expr)))
       const_list in
   let env = Utils.make_env (assumes@guarantees@vars_cond@const_env) in
   let eq_list = remove_terminator node.p_eqs in
   let normalize_eq res = function
-    | lp, expr as eq -> 
+    | lp, expr as eq ->
       begin
 	match expr with
 	| PE_Fby _ -> (handle_reg node eq) :: res
@@ -169,7 +169,7 @@ let normalize_node node const_list =
 	| PE_Call _ -> (handle_call env eq) :: res
 	| _ -> (handle_op eq) :: res
       end
-  in 
+  in
   (* Normalisation des équations *)
   let eqs = List.fold_left normalize_eq [] eq_list in
   (* Ordonnancement des équations *)

@@ -24,6 +24,7 @@
 %}
 
 %token NODE RETURNS LET TEL VAR ASSUME GUARANTEE
+%token DOUBLE_CHEVIN DOUBLE_CHEVOUT DOUBLE_COLON
 %token IF THEN ELSE
 %token FBY
 %token PLUS MINUS MULT DIV DIV_INT MOD
@@ -154,6 +155,7 @@ expr :
  | expr SUP expr { PE_Op_Arith (Op_gt, [$1; $3]) }
  | expr SUPEQ expr { PE_Op_Arith (Op_ge, [$1; $3]) }
  | MINUS expr { PE_Op_Arith (Op_minus, [$2]) }
+ | T_REAL expr { PE_Op_Arith (Op_to_real, [$2]) }
  | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Logic (Op_sharp, ($3 :: $5)) }
  | expr AND expr { PE_Op_Logic (Op_and, [$1; $3]) }
  | expr OR expr { PE_Op_Logic (Op_or, [$1; $3]) }
@@ -161,6 +163,8 @@ expr :
  | NOT expr { PE_Op_Logic (Op_not, [$2]) }
  | FBY LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Fby ($3, $5, $7) }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
+ | LPAREN IDENT DOUBLE_COLON IDENT DOUBLE_CHEVIN expr_list DOUBLE_CHEVOUT RPAREN LPAREN expr_list RPAREN 
+     { PE_Call ($4, $10) }
  | IDENT LPAREN expr_list RPAREN { PE_Call ($1, $3) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }

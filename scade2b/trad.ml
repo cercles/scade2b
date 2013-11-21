@@ -111,7 +111,7 @@ let retrieve_cond_expr reg node env =
   List.fold_left eqs_folder None eqs
   
 let get_invariant env node reg =
-  n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env) 
+  n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env)
   
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)

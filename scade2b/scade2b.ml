@@ -113,9 +113,9 @@ let () =
   	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
   	  exit 1
       | Parsing.Parse_error ->
-  	  Format.eprintf "Syntax Error \n@.";
+  	  Format.eprintf "Syntax Error in %s\n@." node_name;
   	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
-  	  exit 1
+  	  xml_map
       | Normalizer.Assert_id_error e ->
   	  Format.eprintf "Error: Assert  %s.\n@." e;
   	  exit 1
@@ -149,9 +149,10 @@ let () =
     let rec scheduler not_ordered ordered =
       match not_ordered with
       | [] -> ordered
-      | (node, imports) :: l -> if List.for_all (fun ident -> List.mem ident ordered) imports
-  	then (Printf.printf "\nbranche then %s\n" node; scheduler l (ordered @ [node]))
-  	else (Printf.printf "\nbranche if %s \n" node; scheduler (l @ [(node, imports)]) ordered)
+      | (node, imports) :: l -> 
+	  if List.for_all (fun ident -> (ident = "$+$" or ident = "$*$") or (List.mem ident ordered)) imports
+  	  then scheduler l (ordered @ [node])
+  	  else scheduler (l @ [(node, imports)]) ordered
     in
     scheduler to_schedule []
   in
@@ -159,6 +160,6 @@ let () =
   ignore(
     List.fold_left (fun map node_ident ->
       try node_translator node_ident (T_Node.find node_ident prog.node_map) map
-      with Not_found -> (Printf.printf "Scade2b error, node_ident not found in node_map\n"; map)
+      with Not_found -> (Printf.printf "Scade2b error, node %s not found in node_map\n" node_ident; map)
     ) xml_map node_list)
     

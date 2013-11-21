@@ -15,7 +15,7 @@ type base_type =
 type op_arith =
   Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge
 | Op_add | Op_sub | Op_mul | Op_div | Op_mod
-| Op_div_f | Op_minus 
+| Op_div_f | Op_minus | Op_to_real
 
 type op_logic =
   Op_and | Op_or | Op_xor | Op_not | Op_sharp

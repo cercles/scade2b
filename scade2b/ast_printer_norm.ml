@@ -56,6 +56,7 @@ and print_op_arith ppt = function
   | Op_mod -> fprintf ppt "mod"
   | Op_div_f -> fprintf ppt "div_f"
   | Op_minus -> fprintf ppt "-"
+  | Op_minus -> fprintf ppt "REAL"
 
 and print_op_logic ppt = function
   | Op_and -> fprintf ppt "and"
