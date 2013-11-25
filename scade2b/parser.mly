@@ -49,6 +49,7 @@
 %left EQ NEQ INF INFEQ SUP SUPEQ
 %left PLUS MINUS
 %left MULT DIV DIV_INT MOD
+%nonassoc T_REAL
 %nonassoc NOT PRE
 %left CARET CONCAT
 
@@ -155,7 +156,7 @@ expr :
  | expr SUP expr { PE_Op_Arith (Op_gt, [$1; $3]) }
  | expr SUPEQ expr { PE_Op_Arith (Op_ge, [$1; $3]) }
  | MINUS expr { PE_Op_Arith (Op_minus, [$2]) }
- | T_REAL expr { PE_Op_Arith (Op_to_real, [$2]) }
+ | T_REAL expr { PE_Op_Arith (Op_to_real, [$2]) } 
  | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Logic (Op_sharp, ($3 :: $5)) }
  | expr AND expr { PE_Op_Logic (Op_and, [$1; $3]) }
  | expr OR expr { PE_Op_Logic (Op_or, [$1; $3]) }

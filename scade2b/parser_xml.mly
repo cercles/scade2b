@@ -1,45 +1,46 @@
 %{
   (* Florian Thibord  --  Projet CERCLES *)
 
-  open Utils
+  open Ast_xml
 
-  let remove_package_name s =
-    try 
-      let index = String.index s ':' in
-      if s.[index+1] = ':' then 
-	String.sub s (index+2) ((String.length s) - (index+2))
-      else s
-    with 
-    | Not_found -> s
-    | Invalid_argument e -> Printf.printf "\n!Warning : invalid argument in node package name"; s
-      
+  let make_opt value = function 
+    | "scadeName" -> Some (ScadeName value)
+    | "instName" -> Some (InstName value)
+    | "targetName" -> Some (TargetName value)
+    | "targetType" -> Some (TargetType value)
+    | "cellType" -> Some (CellType value)
+    | "size" -> Some (Size value)
+    | _ -> None
+    
 %}
 
-%token NOEXPNODE NODEINSTANCE ROOTNODE SCADENAME MODEL
+%token MODEL ROOTNODE NOEXPNODE NODEINSTANCE INPUT OUTPUT LOCAL ARRAYTYPE
+%token SCADENAME INSTNAME TARGETTYPE TARGETNAME CELLTYPE SIZE
 %token UNUSED
-%token EQ SLASH CHEV_IN CHEV_OUT 
+%token EQ SLASH CHEV_IN CHEV_OUT
 %token <string> VALUE
 %token <string> IDENT
 %token EOF
 
 %start model
-%type <Utils.xml_prog> model
-
+%type <Ast_xml.xml_prog> model
 
 
 %%
 
 model :
- | CHEV_IN MODEL option_list CHEV_OUT balise_model_list EOF 
+ | CHEV_IN MODEL option_list CHEV_OUT balise_model_list EOF
      { $5 }
 ;
 
 balise_model_list :
- | CHEV_IN SLASH MODEL CHEV_OUT { XML_prog.empty }
+ | CHEV_IN SLASH MODEL CHEV_OUT { [] }
  | CHEV_IN NOEXPNODE option_list CHEV_OUT balise_node_list balise_model_list
-     { XML_prog.add (List.hd $3) $5 $6 }
+     { (Node ($3, $5)) :: $6 }
  | CHEV_IN ROOTNODE option_list CHEV_OUT balise_node_list balise_model_list
-     { XML_prog.add (List.hd $3) $5 $6 }
+     { (Root ($3, $5)) :: $6 }
+ | CHEV_IN ARRAYTYPE option_list SLASH CHEV_OUT balise_model_list
+     { (ArrayType $3) :: $6 }
  | balise_dummy balise_model_list { $2 }
 ;
 
@@ -47,29 +48,39 @@ balise_node_list :
  | CHEV_IN SLASH NOEXPNODE CHEV_OUT { [] }
  | CHEV_IN SLASH ROOTNODE CHEV_OUT { [] }
  | CHEV_IN NODEINSTANCE option_list CHEV_OUT balise_dummy balise_node_list
-     { {node_name = (List.hd $3); params_m = None} :: $6 }
+     { (NodeInstance $3) :: $6 }
  | CHEV_IN NODEINSTANCE option_list SLASH CHEV_OUT balise_node_list
-     { {node_name = (List.hd $3); params_m = None} :: $6 }
+     { (NodeInstance $3) :: $6 }
+ | CHEV_IN INPUT option_list SLASH CHEV_OUT balise_node_list 
+     { (Input $3) :: $6 }
+ | CHEV_IN OUTPUT option_list SLASH CHEV_OUT balise_node_list
+     { (Output $3) :: $6 }
+ | CHEV_IN LOCAL option_list SLASH CHEV_OUT balise_node_list
+     { (Local $3) :: $6 }
  | balise_dummy balise_node_list { $2 }
-;
-
-/*
-balise_dummy_list :
- |   { () }
- | balise_dummy balise_dummy_list { $2 }
-;*/
-
-balise_dummy :
- | CHEV_IN SLASH NODEINSTANCE CHEV_OUT { () }
- | CHEV_IN UNUSED option_list CHEV_OUT { () }
- | CHEV_IN UNUSED option_list SLASH CHEV_OUT { () }
- | CHEV_IN SLASH UNUSED CHEV_OUT { () }
 ;
 
 option_list :
  |   { [] }
- | SCADENAME EQ VALUE option_list { (remove_package_name $3) :: $4 }
- | IDENT EQ VALUE option_list { $4 }
+/* | SCADENAME EQ VALUE option_list { (ScadeName $3) :: $4 }
+ | INSTNAME EQ VALUE option_list { (InstName $3) :: $4 }
+ | TARGETTYPE EQ VALUE option_list { (TargetType $3) :: $4 }
+ | TARGETNAME EQ VALUE option_list { (TargetName $3) :: $4 }
+ | CELLTYPE EQ VALUE option_list { (CellType $3) :: $4 }
+ | SIZE EQ VALUE option_list { (Size $3) :: $4 } */
+ | IDENT EQ VALUE option_list 
+     { match make_opt $1 $3 with
+     | Some a -> a :: $4
+     | None -> $4 
+     }
+;
+
+balise_dummy :
+ |   { () }
+/* | CHEV_IN SLASH NODEINSTANCE CHEV_OUT { () } */
+ | CHEV_IN IDENT option_list CHEV_OUT { () }
+ | CHEV_IN IDENT option_list SLASH CHEV_OUT { () }
+ | CHEV_IN SLASH IDENT CHEV_OUT { () }
 ;
 
 %%

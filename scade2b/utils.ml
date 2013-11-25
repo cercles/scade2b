@@ -66,30 +66,6 @@ let make_params_ident env lambda_list =
     Env.add lambda.n_l_ident ((String.uncapitalize param), typ, expr) env) env lambda_list
 
 
-
-(**************************** MAP XML ****************************)
-
-type import_t = {node_name : ident; params_m : int list option} 
-
-module XML_prog = Map.Make(
-  struct
-    type t = ident
-    let compare = compare
-  end
-)
-
-type xml_prog = import_t list XML_prog.t
-
-let update_xml_map xml_map ast =
-  let node_ident = ast.n_id in
-  let params_index = List.map (fun l -> l.n_l_index) ast.n_lambdas in
-  XML_prog.map (fun import_list -> 
-    List.map (fun import ->
-      if import.node_name = node_ident then {import with params_m = Some params_index}
-      else import) import_list) xml_map
-
-
-
 (*** RECONNAISSANCE DE L'INITIALISATION D'UN REGISTRE PAR UNE ENTREE ***)
 
 (*                          1) Normalisation                           *)
@@ -129,71 +105,71 @@ let build_lambda cond index =
   }
 
 
-let search_input_in_reg eqs ins pres lambdas =
-  let eqs_out = ref [] in
-  let rec fun_rec eqs ins pres lambdas = 
-    match eqs with
-    | [] -> (ins, pres, lambdas, (List.rev !eqs_out)) 
-    | eq :: eqs_bis -> begin
-      match eq with 
-      | N_Registre reg -> (
-	match reg.n_reg_ini with
-	  NE_Ident v -> (
-	    match is_linked eqs ins v with
-	      Some i -> 
-		let pres, cond = remove_from_pres pres i in
-		let ins, index = remove_from_ins ins i in
-		eqs_out := (N_Registre {reg with n_reg_ini = NE_Ident i}) :: !eqs_out;
-		fun_rec eqs_bis ins pres ((build_lambda cond index) :: lambdas)
-	    | None -> 
-	      eqs_out := eq :: !eqs_out;
-	      fun_rec eqs_bis ins pres lambdas
-	    )
-	| _ -> 
-	  eqs_out := eq :: !eqs_out;
-	  fun_rec eqs_bis ins pres lambdas)
-      | _ as eq -> 
-	eqs_out := eq :: !eqs_out; 
-	fun_rec eqs_bis ins pres lambdas
-    end
-  in
-  fun_rec eqs ins pres lambdas
+(* let search_input_in_reg eqs ins pres lambdas = *)
+(*   let eqs_out = ref [] in *)
+(*   let rec fun_rec eqs ins pres lambdas =  *)
+(*     match eqs with *)
+(*     | [] -> (ins, pres, lambdas, (List.rev !eqs_out))  *)
+(*     | eq :: eqs_bis -> begin *)
+(*       match eq with  *)
+(*       | N_Registre reg -> ( *)
+(* 	match reg.n_reg_ini with *)
+(* 	  NE_Ident v -> ( *)
+(* 	    match is_linked eqs ins v with *)
+(* 	      Some i ->  *)
+(* 		let pres, cond = remove_from_pres pres i in *)
+(* 		let ins, index = remove_from_ins ins i in *)
+(* 		eqs_out := (N_Registre {reg with n_reg_ini = NE_Ident i}) :: !eqs_out; *)
+(* 		fun_rec eqs_bis ins pres ((build_lambda cond index) :: lambdas) *)
+(* 	    | None ->  *)
+(* 	      eqs_out := eq :: !eqs_out; *)
+(* 	      fun_rec eqs_bis ins pres lambdas *)
+(* 	    ) *)
+(* 	| _ ->  *)
+(* 	  eqs_out := eq :: !eqs_out; *)
+(* 	  fun_rec eqs_bis ins pres lambdas) *)
+(*       | _ as eq ->  *)
+(* 	eqs_out := eq :: !eqs_out;  *)
+(* 	fun_rec eqs_bis ins pres lambdas *)
+(*     end *)
+(*   in *)
+(*   fun_rec eqs ins pres lambdas *)
 	
-(*                          2) Traduction                           *)
+(* (\*                          2) Traduction                           *\) *)
 
-let imports_list_to_map imports =
-  List.fold_left (fun map import -> match import.params_m with
-		    | Some p when (List.length p) > 0 -> MAP_import.add import.node_name p map
-		    | None -> map
-		    | _ -> map ) MAP_import.empty imports
+(* let imports_list_to_map imports = *)
+(*   List.fold_left (fun map import -> match import.params_m with *)
+(* 		    | Some p when (List.length p) > 0 -> MAP_import.add import.node_name p map *)
+(* 		    | None -> map *)
+(* 		    | _ -> map ) MAP_import.empty imports *)
 
-let check_imports_params imports eqs =
-  let import_map_in = imports_list_to_map imports in
-  let import_map_out = ref MAP_import.empty in
-  let rec fun_rec eq =
-    match eq with
-      Call c ->
-	if MAP_import.mem c.call_id import_map_in then (
-	  let params_index_list = MAP_import.find c.call_id import_map_in in
-	  let _, params_op, params_m =
-	    List.fold_left (fun (index, params_op, params_m) param_expr ->
-			      if List.mem index params_index_list then 
-				(index+1, params_op, (List.nth c.call_params index) :: params_m)
-			      else 
-				(index+1, (List.nth c.call_params index) :: params_op, params_m)
-			   ) (0, [], []) c.call_params in
-	  import_map_out := MAP_import.add c.call_id (Some params_m) !import_map_out;
-	  Call {c with call_params = params_op}
-	)
-	else (import_map_out := MAP_import.add c.call_id None !import_map_out; eq)
-    | _ -> eq
-  in
-  List.map fun_rec eqs, !import_map_out
-
-
+(* let check_imports_params imports eqs = *)
+(*   let import_map_in = imports_list_to_map imports in *)
+(*   let import_map_out = ref MAP_import.empty in *)
+(*   let rec fun_rec eq = *)
+(*     match eq with *)
+(*       Call c -> *)
+(* 	if MAP_import.mem c.call_id import_map_in then ( *)
+(* 	  let params_index_list = MAP_import.find c.call_id import_map_in in *)
+(* 	  let _, params_op, params_m = *)
+(* 	    List.fold_left (fun (index, params_op, params_m) param_expr -> *)
+(* 			      if List.mem index params_index_list then  *)
+(* 				(index+1, params_op, (List.nth c.call_params index) :: params_m) *)
+(* 			      else  *)
+(* 				(index+1, (List.nth c.call_params index) :: params_op, params_m) *)
+(* 			   ) (0, [], []) c.call_params in *)
+(* 	  import_map_out := MAP_import.add c.call_id (Some params_m) !import_map_out; *)
+(* 	  Call {c with call_params = params_op} *)
+(* 	) *)
+(* 	else (import_map_out := MAP_import.add c.call_id None !import_map_out; eq) *)
+(*     | _ -> eq *)
+(*   in *)
+(*   List.map fun_rec eqs, !import_map_out *)
 
 
-(*************************** DIVERS ***************************)
+
+
+(* (\*************************** DIVERS ***************************\) *)
 
 
 let sees_list env const_list =
