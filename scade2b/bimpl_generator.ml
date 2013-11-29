@@ -238,6 +238,26 @@ let print_concrete_var ppt reg_list =
   else 
     fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
+let print_imports_root sees ppt imports_m =
+  let print_import ppt import =
+    match import with
+    | id, None -> fprintf ppt "%a" print_bid id
+    | id, Some p -> fprintf ppt "%a(%a)" print_bid id print_expr_list p
+  in 
+  let rec print_import_list_comma ppt = function
+  | [] -> ()
+  | [import] -> fprintf ppt "%a" print_import import
+  | import :: l -> fprintf ppt "%a, %a" print_import import print_import_list_comma l
+  in
+  let print_sees_import ppt sees =
+    if (List.length sees) = 0 then () else 
+      fprintf ppt ", %a" print_idlist_comma sees
+  in
+  if (MAP_import.is_empty imports_m) && ((List.length sees) = 0) then () 
+  else 
+    fprintf ppt "IMPORTS %a %a" print_import_list_comma (MAP_import.bindings imports_m)  
+      print_sees_import sees
+
 let print_imports ppt imports_m =
   let print_import ppt import =
     match import with
@@ -270,6 +290,18 @@ let print_implementation ppt impl_name =
   fprintf ppt "%s" impl_name
 
 
+let print_root_machine ppt b_impl =
+  fprintf ppt
+    "IMPLEMENTATION %a%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
+    print_implementation b_impl.name
+    print_params_machine b_impl.params
+    print_refines b_impl.refines
+    (print_imports_root b_impl.sees) b_impl.imports
+    print_concrete_var b_impl.concrete_variables
+    print_invariant b_impl.invariant
+    print_initialisation b_impl.initialisation
+    print_operation b_impl.operation
+
 let print_machine ppt b_impl =
   fprintf ppt
     "IMPLEMENTATION %a%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
@@ -284,5 +316,8 @@ let print_machine ppt b_impl =
     print_operation b_impl.operation
 
 
-let print_prog b_impl file =
-  fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl
+let print_prog b_impl file is_root =
+  if is_root then
+    fprintf (formatter_of_out_channel file) "%a@." print_root_machine b_impl
+  else 
+    fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl

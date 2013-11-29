@@ -1,7 +1,7 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Format
-open Ast_prog
+open Ast_kcg
 open Ast_base
 open Ast_repr_b
 

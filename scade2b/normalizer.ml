@@ -3,7 +3,7 @@
 
 open Ast_base
 open Ast_repr
-open Ast_prog
+open Ast_kcg
 open Ast_repr_norm
 open Utils
 

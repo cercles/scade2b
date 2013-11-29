@@ -3,7 +3,7 @@
 
   open Ast_repr
   open Ast_base
-  open Ast_prog
+  open Ast_kcg
 
   (* Check if all the types in the list are the same. Used to check array coherence *)
   let check_type list =
@@ -21,25 +21,32 @@
     else
       PA_Slice (id, elist)
 
-  type node_or_const = Node of (string * string) | Function of (string * string) | Const of p_const
+  type node_const_enum = 
+      Node of (string * string) 
+    | Function of (string * string) 
+    | Const of p_const
+    | Enum of p_enum
 
-  let prog_builder node_const_list =
-    let (node_map, cst_list) = 
-      List.fold_left (fun (acc_node, acc_const) n_or_c -> 
-	match  n_or_c with
-	| Node (id, node) -> (T_Node.add id node acc_node, acc_const)
-	| Function (id, node) -> (T_Node.add id node acc_node, acc_const)
-	| Const cst -> (acc_node, cst :: acc_const)
-      ) (T_Node.empty, []) node_const_list
+  let prog_builder node_const_enum_list =
+    let (node_map, cst_list, enu_list) = 
+      List.fold_left (fun (acc_node, acc_const, acc_enum) n_c_e -> 
+	match  n_c_e with
+	| Node (id, node) -> (T_Node.add id node acc_node, acc_const, acc_enum)
+	| Function (id, node) -> (T_Node.add id node acc_node, acc_const, acc_enum)
+	| Const cst -> (acc_node, cst :: acc_const, acc_enum)
+	| Enum e -> (acc_node, acc_const, e :: acc_enum)
+      ) (T_Node.empty, [], []) node_const_enum_list
     in
-    { node_map = node_map; const_list = cst_list}
+    { node_map = node_map; const_list = cst_list; enum_list = enu_list }
+
 %}
 
 
 %token <string * string> NODE FUNCTION
 %token CONST
+%token <string> ENUM
 %token <char> CHAR
-%token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOT DOTDOT
+%token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE COLON SEMICOL COMMA DOT DOTDOT
 %token CARET EQ
 %token T_BOOL T_INT T_REAL
 %token <bool> BOOL
@@ -48,29 +55,39 @@
 %token <string> IDENT
 %token EOF
 
-
 %left CARET 
 
 %start prog
-%type <Ast_prog.t_prog> prog
+%type <Ast_kcg.t_prog> prog
 
 %%
 
 prog :
- | node_const_list EOF { prog_builder $1 }
+ | node_const_enum_list EOF { prog_builder $1 }
 ;
 
-node_const_list :
+node_const_enum_list :
  |   { [] }
- | const node_const_list { (Const $1) :: $2 }
- | NODE node_const_list { (Node $1) :: $2 }
- | FUNCTION node_const_list { (Function $1) :: $2 }
+ | const node_const_enum_list { (Const $1) :: $2 }
+ | NODE node_const_enum_list { (Node $1) :: $2 }
+ | FUNCTION node_const_enum_list { (Function $1) :: $2 }
+ | enum node_const_enum_list { (Enum $1) :: $2 }
+;
+
+enum :
+ | ENUM LBRACE id_list RBRACE SEMICOL { { p_enum_id = $1; 
+					  p_enum_list = $3; } }
+;
+
+id_list :
+ | IDENT { [$1] } 
+ | IDENT COMMA id_list { $1 :: $3 }
 ;
 
 const :
- | CONST IDENT COLON typ EQ expr SEMICOL { {c_id = $2;
-					    c_typ = $4;
-					    c_expr = $6;} }
+ | CONST IDENT COLON typ EQ expr SEMICOL { { c_id = $2;
+					     c_typ = $4;
+					     c_expr = $6; } }
 ;
 
 typ :
@@ -124,3 +141,4 @@ array_list :
 ;
 
 %%
+

@@ -24,11 +24,6 @@ let real = digit+ '.' digit+ exponent?
 let alpha = ['a'-'z''A'-'Z''_']
 let ident = (digit|alpha)+
 
-(* let unused = "OutCtxVar" | "OutCtxType" | "InCtxVar" | "InCtxType" | "Constant" | "Init" | "Package" | "Option"  | "StructType" | "Field" | "EnumType" | "EnumVal" | "NamedType" | "ExpNode" | "Iterator" | "NodeInlining" | "Memory" | "Automaton" | "State" | "Fork" | "Condition" | "Transition" | "ActiveState" | "NextState" | "SelectedState" | "Clock" | "ResetActiveState" | "ResetNextState" *)
-
-
-(* "Input" | "Output" | "Local" | "PredefType" | "ArrayType" *)
-
 
 rule token = parse
           | sep              { token lexbuf }
@@ -44,22 +39,14 @@ rule token = parse
 	  | "NodeInstance"   { NODEINSTANCE }
 	  | "Input"          { INPUT }
 	  | "Output"         { OUTPUT }
+	  | "Local"          { LOCAL }
 	  | "ArrayType"      { ARRAYTYPE }
-	  (* | "PredefType"     { PREDEFTYPE } *)
-
-	  | "scadeName"      { SCADENAME }
-	  | "instName"       { INSTNAME }
-	  | "targetType"     { TARGETTYPE }
-	  | "targetName"     { TARGETNAME }
-	  | "cellType"       { CELLTYPE }
-	  | "size"           { SIZE }
 
 	  | '='              { EQ }
 	  | '/'              { SLASH }
 	  | '<'              { CHEV_IN }
 	  | '>'              { CHEV_OUT }
 
-	  (* | unused           { UNUSED } *)
 	  | ident as id      { IDENT (id) }
 
 	  | '"'              { Buffer.reset buf;

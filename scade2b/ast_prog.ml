@@ -1,30 +1,46 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
-
 open Ast_base
-open Ast_repr
-open Ast_repr_b
+
+
+type p_enum = 
+  { p_enum_id : ident;
+    p_enum_list : ident list;
+  }
 
 type p_const = 
   { c_id : ident;
     c_typ : p_type;
     c_expr : p_expression;
   }
- 
-type b_const =
-  Const_Base of ident * base_type * b_expression
-| Const_Fun of ident * base_type * b_expression list * b_expression
 
-module T_Node = Map.Make(
-  struct
-    type t = ident
-    let compare = compare
-  end
-)
+type instance =
+  { inst_name : ident;
+    inst_id : ident;
+  }
 
-type t_node_map = string T_Node.t
+type var_decl =
+  { var_id : ident;
+    var_type : ident;
+  }
 
-type t_prog = 
-  { node_map : t_node_map;
-    const_list : p_const list;
+type locals =
+  { local_id : ident;
+    local_var : ident;
+  }
+
+type node_decl =
+  { node_name : ident;
+    
+    is_root : bool;
+    ins : var_decl list;
+    outs : var_decl list;
+    locals : locals list;
+    instances : instance list;
+  }
+
+type prog =
+  { nodes : node list;
+    enum_types : enum_types list;
+    consts : const list;
   }

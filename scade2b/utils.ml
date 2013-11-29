@@ -4,7 +4,8 @@ open Ast_repr_b
 open Ast_repr_norm
 open Ast_repr
 open Ast_base
-open Ast_prog
+open Ast_kcg
+open Xml_utils
 
 (*************************** IDENT COLLISION FUNCTIONS ***************************)
 
@@ -105,66 +106,66 @@ let build_lambda cond index =
   }
 
 
-(* let search_input_in_reg eqs ins pres lambdas = *)
-(*   let eqs_out = ref [] in *)
-(*   let rec fun_rec eqs ins pres lambdas =  *)
-(*     match eqs with *)
-(*     | [] -> (ins, pres, lambdas, (List.rev !eqs_out))  *)
-(*     | eq :: eqs_bis -> begin *)
-(*       match eq with  *)
-(*       | N_Registre reg -> ( *)
-(* 	match reg.n_reg_ini with *)
-(* 	  NE_Ident v -> ( *)
-(* 	    match is_linked eqs ins v with *)
-(* 	      Some i ->  *)
-(* 		let pres, cond = remove_from_pres pres i in *)
-(* 		let ins, index = remove_from_ins ins i in *)
-(* 		eqs_out := (N_Registre {reg with n_reg_ini = NE_Ident i}) :: !eqs_out; *)
-(* 		fun_rec eqs_bis ins pres ((build_lambda cond index) :: lambdas) *)
-(* 	    | None ->  *)
-(* 	      eqs_out := eq :: !eqs_out; *)
-(* 	      fun_rec eqs_bis ins pres lambdas *)
-(* 	    ) *)
-(* 	| _ ->  *)
-(* 	  eqs_out := eq :: !eqs_out; *)
-(* 	  fun_rec eqs_bis ins pres lambdas) *)
-(*       | _ as eq ->  *)
-(* 	eqs_out := eq :: !eqs_out;  *)
-(* 	fun_rec eqs_bis ins pres lambdas *)
-(*     end *)
-(*   in *)
-(*   fun_rec eqs ins pres lambdas *)
+let search_input_in_reg eqs ins pres lambdas =
+  let eqs_out = ref [] in
+  let rec fun_rec eqs ins pres lambdas =
+    match eqs with
+    | [] -> (ins, pres, lambdas, (List.rev !eqs_out))
+    | eq :: eqs_bis -> begin
+      match eq with
+      | N_Registre reg -> (
+	match reg.n_reg_ini with
+	  NE_Ident v -> (
+	    match is_linked eqs ins v with
+	      Some i ->
+		let pres, cond = remove_from_pres pres i in
+		let ins, index = remove_from_ins ins i in
+		eqs_out := (N_Registre {reg with n_reg_ini = NE_Ident i}) :: !eqs_out;
+		fun_rec eqs_bis ins pres ((build_lambda cond index) :: lambdas)
+	    | None ->
+	      eqs_out := eq :: !eqs_out;
+	      fun_rec eqs_bis ins pres lambdas
+	    )
+	| _ ->
+	  eqs_out := eq :: !eqs_out;
+	  fun_rec eqs_bis ins pres lambdas)
+      | _ as eq ->
+	eqs_out := eq :: !eqs_out;
+	fun_rec eqs_bis ins pres lambdas
+    end
+  in
+  fun_rec eqs ins pres lambdas
 	
-(* (\*                          2) Traduction                           *\) *)
+(*                          2) Traduction                           *)
 
-(* let imports_list_to_map imports = *)
-(*   List.fold_left (fun map import -> match import.params_m with *)
-(* 		    | Some p when (List.length p) > 0 -> MAP_import.add import.node_name p map *)
-(* 		    | None -> map *)
-(* 		    | _ -> map ) MAP_import.empty imports *)
+let imports_list_to_map imports =
+  List.fold_left (fun map import -> match import.params_m with
+		    | Some p when (List.length p) > 0 -> MAP_import.add import.node_name p map
+		    | None -> map
+		    | _ -> map ) MAP_import.empty imports
 
-(* let check_imports_params imports eqs = *)
-(*   let import_map_in = imports_list_to_map imports in *)
-(*   let import_map_out = ref MAP_import.empty in *)
-(*   let rec fun_rec eq = *)
-(*     match eq with *)
-(*       Call c -> *)
-(* 	if MAP_import.mem c.call_id import_map_in then ( *)
-(* 	  let params_index_list = MAP_import.find c.call_id import_map_in in *)
-(* 	  let _, params_op, params_m = *)
-(* 	    List.fold_left (fun (index, params_op, params_m) param_expr -> *)
-(* 			      if List.mem index params_index_list then  *)
-(* 				(index+1, params_op, (List.nth c.call_params index) :: params_m) *)
-(* 			      else  *)
-(* 				(index+1, (List.nth c.call_params index) :: params_op, params_m) *)
-(* 			   ) (0, [], []) c.call_params in *)
-(* 	  import_map_out := MAP_import.add c.call_id (Some params_m) !import_map_out; *)
-(* 	  Call {c with call_params = params_op} *)
-(* 	) *)
-(* 	else (import_map_out := MAP_import.add c.call_id None !import_map_out; eq) *)
-(*     | _ -> eq *)
-(*   in *)
-(*   List.map fun_rec eqs, !import_map_out *)
+let check_imports_params imports eqs =
+  let import_map_in = imports_list_to_map imports in
+  let import_map_out = ref MAP_import.empty in
+  let rec fun_rec eq =
+    match eq with
+      Call c ->
+	if MAP_import.mem c.call_id import_map_in then (
+	  let params_index_list = MAP_import.find c.call_id import_map_in in
+	  let _, params_op, params_m =
+	    List.fold_left (fun (index, params_op, params_m) param_expr ->
+			      if List.mem index params_index_list then
+				(index+1, params_op, (List.nth c.call_params index) :: params_m)
+			      else
+				(index+1, (List.nth c.call_params index) :: params_op, params_m)
+			   ) (0, [], []) c.call_params in
+	  import_map_out := MAP_import.add c.call_id (Some params_m) !import_map_out;
+	  Call {c with call_params = params_op}
+	)
+	else (import_map_out := MAP_import.add c.call_id None !import_map_out; eq)
+    | _ -> eq
+  in
+  List.map fun_rec eqs, !import_map_out
 
 
 
@@ -173,7 +174,7 @@ let build_lambda cond index =
 
 
 let sees_list env const_list =
-  if List.exists (fun cst -> Env.mem cst env) const_list then ["M_Consts"] else []
+  if List.exists (fun cst -> Env.mem cst env) const_list then ["M_Consts"; "M_Enum"] else ["M_Enum"]
 
 (* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
 let a_b_list_equals l=

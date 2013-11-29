@@ -30,34 +30,3 @@ type xml_prog_balise =
 type xml_prog = xml_prog_balise list
 
 
-
-(*   PREMIER JET DE L'ENV
-type xml_instance =
-  { xml_inst_name : ident;
-    xml_inst_id : ident;
-  }
-
-type xml_var_decl =
-  { xml_var_id : ident;
-    xml_var_type : ident;
-  }
-
-type xml_locals =
-  { xml_local_id : ident;
-    xml_local_var : ident;
-  }
-
-type xml_node_decl =
-  { xml_node_name : ident;
-    xml_is_root : bool;
-    xml_ins : xml_var_decl list;
-    xml_outs : xml_var_decl list;
-    xml_locals : xml_locals list;
-    xml_instances : instance list;
-  }
-
-type xml_prog =
-  { xml_nodes : xml_node_decl list;
-    xml_types : xml_types list;
-  }
-*)
