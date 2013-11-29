@@ -22,7 +22,6 @@ let real = digit+ '.' digit+ exponent?
   | digit+ exponent
 let alpha = ['a'-'z''A'-'Z''_']
 let ident = alpha (digit|alpha)*
-let pragma_simpl = '#'(digit|alpha)+
 
 rule token = parse
           | sep  { token lexbuf }
@@ -34,7 +33,7 @@ rule token = parse
 		       token lexbuf }
 	  | "#pragma"    { pragma lexbuf;
 			   token lexbuf }
-	  | pragma_simpl { token lexbuf }
+	  | '#' ((digit|alpha)+ as id) { PRAGMA(id) }
 
 	  | "<<" { DOUBLE_CHEVIN }
 	  | ">>" { DOUBLE_CHEVOUT }

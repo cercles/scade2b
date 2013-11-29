@@ -139,8 +139,9 @@ let search_input_in_reg eqs ins pres lambdas =
 (*                          2) Traduction                           *)
 
 let imports_list_to_map imports =
-  List.fold_left (fun map import -> match import.params_m with
-		    | Some p when (List.length p) > 0 -> MAP_import.add import.node_name p map
+  List.fold_left (fun map import -> match import.i_params_m with
+		    | Some p when (List.length p) > 0 -> 
+		        MAP_import.add import.i_node_name {map_int = p; map_iident = import.instance} map
 		    | None -> map
 		    | _ -> map ) MAP_import.empty imports
 
@@ -151,26 +152,70 @@ let check_imports_params imports eqs =
     match eq with
       Call c ->
 	if MAP_import.mem c.call_id import_map_in then (
-	  let params_index_list = MAP_import.find c.call_id import_map_in in
-	  let _, params_op, params_m =
-	    List.fold_left (fun (index, params_op, params_m) param_expr ->
-			      if List.mem index params_index_list then
-				(index+1, params_op, (List.nth c.call_params index) :: params_m)
-			      else
-				(index+1, (List.nth c.call_params index) :: params_op, params_m)
-			   ) (0, [], []) c.call_params in
-	  import_map_out := MAP_import.add c.call_id (Some params_m) !import_map_out;
-	  Call {c with call_params = params_op}
+	  let imp = MAP_import.find c.call_id import_map_in in
+	  let params_index_list, instname = imp.map_int, imp.map_iident in
+	  if instname = c.call_instance then
+	    begin
+	      let _, params_op, params_m =
+		List.fold_left (fun (index, params_op, params_m) param_expr ->
+		  if List.mem index params_index_list then
+		    (index+1, params_op, (List.nth c.call_params index) :: params_m)
+		  else
+		    (index+1, (List.nth c.call_params index) :: params_op, params_m)
+		) (0, [], []) c.call_params in
+	      import_map_out := 
+		MAP_import.add c.call_id {map_expr = Some params_m; map_ident = instname} !import_map_out;
+	      Call {c with call_params = params_op}
+	    end
+	  else 
+	    (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = instname} !import_map_out; eq)
 	)
-	else (import_map_out := MAP_import.add c.call_id None !import_map_out; eq)
+	else 
+	  (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = c.call_instance} !import_map_out; eq)
     | _ -> eq
   in
   List.map fun_rec eqs, !import_map_out
 
 
+(********************************************************************************************************************************************
+
+TODO!!! 
+
+*)
+let check_rennaming imports eqs =
+  let import_map_out = ref MAP_import.empty in
+  let rec fun_rec eq =
+    match eq with
+      Call c ->
+	if MAP_import.mem c.call_id import_map_in then (
+	  let imp = MAP_import.find c.call_id import_map_in in
+	  let params_index_list, instname = imp.map_int, imp.map_iident in
+	  if instname = c.call_instance then
+	    begin
+	      let _, params_op, params_m =
+		List.fold_left (fun (index, params_op, params_m) param_expr ->
+		  if List.mem index params_index_list then
+		    (index+1, params_op, (List.nth c.call_params index) :: params_m)
+		  else
+		    (index+1, (List.nth c.call_params index) :: params_op, params_m)
+		) (0, [], []) c.call_params in
+	      import_map_out := 
+		MAP_import.add c.call_id {map_expr = Some params_m; map_ident = instname} !import_map_out;
+	      Call {c with call_params = params_op}
+	    end
+	  else 
+	    (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = instname} !import_map_out; eq)
+	)
+	else 
+	  (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = c.call_instance} !import_map_out; eq)
+    | _ -> eq
+  in
+  List.map fun_rec eqs, !import_map_out
+  
 
 
-(* (\*************************** DIVERS ***************************\) *)
+
+(*************************** DIVERS ***************************)
 
 
 let sees_list env const_list =
@@ -212,7 +257,7 @@ let find_ident_in_pexpr expr =
     | PE_Ident iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
-    | PE_Call (_, elist) -> List.iter ident_finder elist
+    | PE_Call (_, _, elist) -> List.iter ident_finder elist
     | PE_Op_Arith (_, elist) -> List.iter ident_finder elist
     | PE_Op_Logic (_, elist) -> List.iter ident_finder elist
     | PE_Fby (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3

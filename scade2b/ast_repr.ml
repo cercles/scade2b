@@ -6,7 +6,7 @@ type p_expression =
   PE_Ident of ident
 | PE_Value of value
 | PE_Array of p_array_expr
-| PE_Call of ident * p_expression list
+| PE_Call of ident * ident * p_expression list
 | PE_Op_Arith of op_arith * p_expression list
 | PE_Op_Logic of op_logic * p_expression list
 | PE_Fby of p_expression * p_expression * p_expression

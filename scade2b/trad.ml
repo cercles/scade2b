@@ -150,6 +150,8 @@ let bimpl_translator env node imports const_list =
 	Call { call_lp = nlp_to_blp env f.n_fun_lp;
 	       call_id = f.n_fun_id;
 	       call_params = List.map (n_expr_to_b_expr env) f.n_fun_params;
+	       (* call_instance = Xml_utils.getprefix f.n_fun_pragma imports; *)
+	       call_instance = f.n_fun_pragma;
 	     }
       | N_Operation o ->
 	Op_Base { op_lp = nlp_to_blp env o.n_op_lp;
@@ -181,8 +183,10 @@ let bimpl_translator env node imports const_list =
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
   let op_1, imports = Utils.check_imports_params imports op_1 in (* NEW *)
+  let op_1, imports = Utils.check_rennaming imports op_1 in (* NEW *)
   let imports = MAP_import.fold 
-    (fun name value acc -> MAP_import.add ("M_" ^ name) value acc) imports MAP_import.empty in 
+    (fun name value acc -> MAP_import.add ("M_" ^ name) value acc) 
+    imports MAP_import.empty in 
   let reg_ids = !concrete_vars in
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =

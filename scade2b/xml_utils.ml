@@ -33,6 +33,21 @@ type xml_prog_instances = instances list XML_prog.t
 type xml_prog = import_t list XML_prog.t
 
 
+
+let get_instances node map =
+  let inst_list = XML_prog.find node map in
+  let dummy_list = ref [] in
+  let list_with_instances, list_without =
+    List.partition (fun a -> let res = List.mem a.i_node_name !dummy_list in
+			     dummy_list := (a.i_node_name) :: !dummy_list; res) inst_list in
+  list_with_instances, list_without
+    
+(* let get_imports node map = *)
+(*   let list_ok *)
+
+
+  
+
 let retrieve_opts_node_instance option_list =
   List.fold_left (fun (scadename, instname) o -> match o with 
 		    | ScadeName id -> (id, instname)
@@ -68,7 +83,8 @@ let build_instance_map xml_ast =
 					     | NodeInstance ni_options -> 
 						 let scadename, instname = retrieve_opts_node_instance ni_options in
 						 { i_node_name = scadename; 
-						   i_params_m = None; instance = instname } :: l
+						   i_params_m = None; 
+						   instance = instname } :: l
 					     | _ -> l
 					  ) [] nbs in
 	   XML_prog.add node_name inst_list inst_map
@@ -111,5 +127,5 @@ let update_xml_map xml_map ast =
   let params_index = List.map (fun l -> l.n_l_index) ast.n_lambdas in
   XML_prog.map (fun import_list ->
     List.map (fun import ->
-      if import.node_name = node_ident then {import with params_m = Some params_index}
+      if import.i_node_name = node_ident then {import with i_params_m = Some params_index}
       else import) import_list) xml_map

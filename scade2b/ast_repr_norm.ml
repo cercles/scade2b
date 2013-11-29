@@ -35,6 +35,7 @@ type n_call =
   { n_fun_lp: n_left_part;
     n_fun_id: ident;
     n_fun_params: n_expression list;
+    n_fun_pragma: ident;
   }
 
 type n_operation =

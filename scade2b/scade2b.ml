@@ -64,7 +64,15 @@ let () =
 
   let ast_xml_out = open_out (Filename.concat main_dir "ast_xml.txt") in 
   Printer_xml_ast.print_ast_xml xml_prog ast_xml_out;
+
+  let xml_map = build_instance_map xml_prog in
+  (* let xml_map =  *)
+  (*   XML_prog.fold *)
+  (*     (fun elt l res -> XML_prog.add elt ( *)
+  (* 	 List.map (fun inst -> {node_name = inst.i_node_name; params_m = inst.i_params_m}) l) res) *)
+  (*     instances_map XML_prog.empty in *)
   
+
   (* Récupération d'une map de noeuds qui sont indexés par leur nom, ainsi qu'une map de constantes également indexées par leur nom. *)
   let channel = open_in scade_file in
   let lexbuf = Lexing.from_channel channel in
@@ -88,6 +96,12 @@ let () =
   
   (* Traduction de chaque noeud du programme *)
   let node_translator node_name node xml_map =
+    let generate_error_machine node =
+      let babst_err =
+  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
+      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
+      close_out babst_err
+    in
     let import_list =
       try
   	XML_prog.find node_name xml_map
@@ -113,46 +127,28 @@ let () =
     | Lexer.Lexical_error s ->
       Format.eprintf "\nLexical Error: %s@." s;
       handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
-      let babst_err =
-  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
-      close_out babst_err;
+      generate_error_machine node_name;
       xml_map
     | Parsing.Parse_error ->
       Format.eprintf "\nSyntax Error in %s@." node_name;
       handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf);
-      let babst_err =
-  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
-      close_out babst_err;
+      generate_error_machine node_name;
       xml_map
     | Normalizer.Assert_id_error e ->
       Format.eprintf "\nNormalizer Error: Assert %s@." e;
-      let babst_err =
-  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
-      close_out babst_err;
+      generate_error_machine node_name;
       xml_map
     | Normalizer.Ident_Call_Error e ->
       Format.eprintf "\nNormalizer Error: The node name %s is reserved in B @." e;
-      let babst_err =
-  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
-      close_out babst_err;
+      generate_error_machine node_name;
       xml_map
     | Trad.Register_cond_error e ->
       Format.eprintf "\nTrad Error: Register condition %s isn't related to an input/output @." e;
-      let babst_err =
-  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
-      close_out babst_err;
+      generate_error_machine node_name;
       xml_map
     | e ->
       Format.eprintf "\nAnomaly: %s @." (Printexc.to_string e);
-      let babst_err =
-  	open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-      Babsterror_generator.print_m (Xml_utils.get_node xml_prog node_name) babst_err;
-      close_out babst_err;
+      generate_error_machine node_name;
       xml_map
   in
 
@@ -168,18 +164,10 @@ let () =
 
 
   (* Creation de la liste de noeuds ordonnée selon l'ordre des IMPORTS *)
-
-  let instances_map = build_instance_map xml_prog in
-  let xml_map = 
-    XML_prog.fold
-      (fun elt l res -> XML_prog.add elt (
-	 List.map (fun inst -> {node_name = inst.i_node_name; params_m = inst.i_params_m}) l) res)
-      instances_map XML_prog.empty in
-
   let node_list =
     let xml_imports_list = XML_prog.bindings xml_map in
     let remove_param_from_imports l =
-      List.map (fun (elt, l2) -> elt, (List.map (fun import -> import.node_name)) l2) l
+      List.map (fun (elt, l2) -> elt, (List.map (fun import -> import.i_node_name)) l2) l
     in
     let to_schedule = remove_param_from_imports xml_imports_list in
     let rec scheduler not_ordered ordered =

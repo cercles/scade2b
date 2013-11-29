@@ -120,9 +120,13 @@ let print_alternative ppt a =
     print_lp a.alt_lp
     print_expr a.alt_else
 
+let print_prefix_call ppt prefixe =
+  if prefixe = "" then () else fprintf ppt "m%s." prefixe
+
 let print_call ppt f =
-  fprintf ppt "%a <-- %s(%a)"
+  fprintf ppt "%a <-- %a%s(%a)"
     print_lp f.call_lp
+    print_prefix_call f.call_instance
     f.call_id
     print_e_list f.call_params
     
@@ -238,11 +242,17 @@ let print_concrete_var ppt reg_list =
   else 
     fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
 
+
+
+let print_instname ppt id =
+  if id = "" then () else fprintf ppt "m%s." id
+
 let print_imports_root sees ppt imports_m =
   let print_import ppt import =
     match import with
-    | id, None -> fprintf ppt "%a" print_bid id
-    | id, Some p -> fprintf ppt "%a(%a)" print_bid id print_expr_list p
+      id, a when a.map_expr = None -> fprintf ppt "%a%a" print_instname a.map_ident print_bid id
+    | id, a -> (match a.map_expr with Some p ->
+      fprintf ppt "%a%a(%a)" print_instname a.map_ident print_bid id print_expr_list p | _ -> assert false)
   in 
   let rec print_import_list_comma ppt = function
   | [] -> ()
@@ -261,8 +271,9 @@ let print_imports_root sees ppt imports_m =
 let print_imports ppt imports_m =
   let print_import ppt import =
     match import with
-    | id, None -> fprintf ppt "%a" print_bid id
-    | id, Some p -> fprintf ppt "%a(%a)" print_bid id print_expr_list p
+      id, a when a.map_expr = None -> fprintf ppt "%a%a" print_instname a.map_ident print_bid id
+    | id, a -> (match a.map_expr with Some p ->
+      fprintf ppt "%a%a(%a)" print_instname a.map_ident print_bid id print_expr_list p | _ -> assert false)
   in 
   let rec print_import_list_comma ppt = function
   | [] -> ()

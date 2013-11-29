@@ -37,6 +37,7 @@
 %token <int> INT
 %token <float> REAL
 %token <string> IDENT
+%token <string> PRAGMA
 %token EOF
 
 %nonassoc uminus
@@ -164,9 +165,9 @@ expr :
  | NOT expr { PE_Op_Logic (Op_not, [$2]) }
  | FBY LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Fby ($3, $5, $7) }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
- | LPAREN IDENT DOUBLE_COLON IDENT DOUBLE_CHEVIN expr_list DOUBLE_CHEVOUT RPAREN LPAREN expr_list RPAREN 
-     { PE_Call ($4, $10) }
- | IDENT LPAREN expr_list RPAREN { PE_Call ($1, $3) }
+ | LPAREN PRAGMA IDENT DOUBLE_COLON IDENT DOUBLE_CHEVIN expr_list DOUBLE_CHEVOUT RPAREN LPAREN expr_list RPAREN 
+     { PE_Call ($2, $5, $11) }
+ | PRAGMA IDENT LPAREN expr_list RPAREN { PE_Call ($1, $2, $4) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
 ;

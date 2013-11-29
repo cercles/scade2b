@@ -102,7 +102,7 @@ let handle_alt = function
 
 (* Retourne un appel normalisé *)
 let handle_call env = function
-  | lp, PE_Call (id_call, elist) ->
+  | lp, PE_Call (pragma, id_call, elist) ->
       let _ =
 	try
 	  (Utils.is_b_compliant id_call) && (Utils.check_no_collision id_call env)
@@ -111,6 +111,7 @@ let handle_call env = function
       N_Call { n_fun_lp = plp_to_nlp lp;
 	       n_fun_id = id_call;
 	       n_fun_params = List.map p_expr_to_n_expr elist;
+	       n_fun_pragma = pragma;
 	     }
   | _ -> assert false
 
