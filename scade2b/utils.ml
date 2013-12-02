@@ -248,21 +248,21 @@ let print_imports_in imps =
   List.iter (fun imp -> Printf.printf "\n  name : %s  id : %s  \n  " imp.import_name imp.instance_id) imps 
 
 let check_imports_params imports eqs =
-  print_imports_in imports;
   let imports_out = ref [] in
-  let find_in_imp_list imp_id =
-    List.find (fun imp -> imp.import_name = imp_id ) imports
+  (* print_imports_in imports; *)
+  let find_in_imp_list imp_id inst_id =
+    List.find (fun imp -> (imp.import_name = imp_id) && (imp.instance_id = inst_id) ) imports
   in
-  let fun_rec eq =
+  let cip_fun_rec eq =
     match eq with
       Call c -> (
-	let imp = find_in_imp_list c.call_id in
+	let imp = find_in_imp_list c.call_id c.call_instance in
 	let params_index_list, instname = imp.params_index, imp.instance_id in
 	match params_index_list with 
 	  | None -> 
-	      imports_out :=  { b_import_name = imp.import_name; 
-				b_params_expr = None;
-				b_instance_id = instname; } :: !imports_out; eq
+	      imports_out := { b_import_name = imp.import_name; 
+			       b_params_expr = None;
+			       b_instance_id = instname; } :: !imports_out; eq
 	  | Some param_index_list ->
 	      if (List.length param_index_list) = 0 then (
 		imports_out :=  { b_import_name = imp.import_name; 
@@ -272,7 +272,7 @@ let check_imports_params imports eqs =
 		if instname = c.call_instance then
 		  ( 
 		    let _, params_op, params_m =
-		      List.fold_left (fun (index, params_op, params_m) param_expr ->
+		      List.fold_left (fun (index, params_op, params_m) param_expr -> 
 					if List.mem index param_index_list then
 					  (index+1, params_op, (List.nth c.call_params index) :: params_m)
 					else
@@ -291,8 +291,9 @@ let check_imports_params imports eqs =
       )
       | _ -> eq
   in
-  print_imports_out !imports_out;
-  List.map fun_rec eqs, !imports_out 
+  (* print_imports_out !imports_out; *)
+  (* Printf.printf " taille : %d " (List.length !imports_out); *)
+  List.map cip_fun_rec eqs, !imports_out 
 
 
 

@@ -13,11 +13,12 @@ let print_bid ppt id =
   fprintf ppt "%s" id
 
 let print_instname imp_name ppt inst_id =
+  
   let bid = 
     try 
       Env_instances.find (!node_name, imp_name, inst_id) !env_instances
     with
-	Not_found -> ""
+	Not_found -> Printf.printf "\n %s  %s  %s" !node_name imp_name inst_id; ""
   in
   if bid = "" then () else fprintf ppt "%s." bid
 
@@ -287,7 +288,7 @@ let print_imports ppt imports =
 	None -> fprintf ppt "%aM_%a" 
 	  (print_instname import.b_import_name) import.b_instance_id 
 	  print_bid import.b_import_name
-      | Some p -> Printf.printf "\n\n\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+      | Some p -> 
 	  fprintf ppt "%aM_%a(%a)" 
 	    (print_instname import.b_import_name) import.b_instance_id 
 	    print_bid import.b_import_name
@@ -346,9 +347,8 @@ let print_machine ppt b_impl =
 
 
 let print_prog b_impl file is_root env_inst env =
-  node_name := b_impl.name;
+  node_name := String.sub b_impl.name 2 ((String.length b_impl.name)-4);
   env_instances := env_inst;
-  Prog_builder.print_inst_map !env_instances;
   if is_root then
     fprintf (formatter_of_out_channel file) "%a@." print_root_machine b_impl
   else 
