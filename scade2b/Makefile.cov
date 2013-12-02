@@ -1,0 +1,70 @@
+.PHONY: all report clean
+all: dep clean tests report
+EXEC=scade2b.cov
+MODS=\
+    ast_base \
+    ast_printer \
+    ast_printer_norm \
+    ast_prog \
+    ast_repr_b \
+    ast_repr \
+    ast_repr_norm \
+    babst_generator \
+    utils \
+    bconst_generator \
+    bimpl_generator \
+    scheduler \
+    normalizer \
+    lexer \
+    parser \
+    trad \
+    lexer_prog \
+    lexer_xml \
+    parser_prog \
+    parser_xml \
+    scade2b
+
+OBJS=$(addsuffix .cmo,$(MODS))
+BISECT_DIR=$(shell ocamlc -where)/../bisect/
+BISECT_P4=camlp4o str.cma $(shell ocamlc -where)/../bisect/bisect_pp.cmo
+
+dep:
+	ocamldep *.ml > .depends
+
+%.cmo: %.ml
+	ocamlc \
+	    -I $(BISECT_DIR) -pp "$(BISECT_P4)" \
+	    -c $<
+
+%.ml: %.mly
+	ocamlyacc $< && rm $*.mli
+
+%.ml: %.mll
+	ocamllex $<
+
+$(EXEC): $(OBJS)
+	ocamlc \
+	    -I $(BISECT_DIR) $(shell ocamlc -where)/../bisect/bisect.cma \
+	    -o $@ \
+	    unix.cma \
+	    $+
+
+tests: $(EXEC)
+	./$< TODO
+
+report:
+	bisect-report `find . -name 'bisect*.out'` -html bisect-report
+
+# extra deps
+
+lexer_xml.cmo: parser_xml.cmo
+scade2b.cmo: parser_xml.cmo
+scade2b.cmo: lexer_xml.cmo
+scade2b.cmo: parser_prog.cmo
+scade2b.cmo: lexer_prog.cmo
+scade2b.cmo: parser.cmo
+scade2b.cmo: lexer.cmo
+lexer_prog.cmo: parser_prog.cmo
+lexer.cmo: parser.cmo
+
+-include .depends
