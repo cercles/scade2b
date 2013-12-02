@@ -3,10 +3,24 @@
 open Format
 open Ast_repr_b
 open Ast_base
+open Ast_prog
+open Ast_scade_norm
 
+let env_instances = ref Env_instances.empty
+let node_name = ref ""
 
 let print_bid ppt id =
   fprintf ppt "%s" id
+
+let print_instname imp_name ppt inst_id =
+  let bid = 
+    try 
+      Env_instances.find (!node_name, imp_name, inst_id) !env_instances
+    with
+	Not_found -> ""
+  in
+  if bid = "" then () else fprintf ppt "%s." bid
+
 
 let rec print_idlist_comma ppt = function
   | [] -> ()
@@ -56,7 +70,7 @@ and print_expr ppt = function
       fprintf ppt "bool(%a(%a = TRUE))" print_op_logic op print_expr (List.hd e_list)
   | BE_Op_Logic (op, e_list) -> 
       fprintf ppt "bool(%a = TRUE %a)" print_expr (List.hd e_list) (print_opl_list op) (List.tl e_list)
-  
+	
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
   | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_expr_list e_list
@@ -120,13 +134,10 @@ let print_alternative ppt a =
     print_lp a.alt_lp
     print_expr a.alt_else
 
-let print_prefix_call ppt prefixe =
-  if prefixe = "" then () else fprintf ppt "m%s." prefixe
-
 let print_call ppt f =
   fprintf ppt "%a <-- %a%s(%a)"
     print_lp f.call_lp
-    print_prefix_call f.call_instance
+    (print_instname f.call_id) f.call_instance
     f.call_id
     print_e_list f.call_params
     
@@ -134,7 +145,7 @@ let print_op ppt o =
   fprintf ppt "%a := %a"
     print_lp o.op_lp
     print_expr o.op_expr
-  
+    
 let print_eq ppt = function
   | Alternative a -> fprintf ppt "%a" print_alternative a
   | Call f -> fprintf ppt "%a" print_call f
@@ -144,12 +155,12 @@ let rec print_eq_list ppt = function
   | [] -> ()
   | [eq] -> fprintf ppt "%a" print_eq eq
   | eq::l -> fprintf ppt "%a; @,%a" print_eq eq print_eq_list l 
-  
+      
 let print_registre ppt r =
   fprintf ppt "%a := %a"
     print_bid r.reg_lpid
     print_expr r.reg_val
-  
+    
 let rec print_reg_list ppt = function
   | [] -> ()
   | [r] -> fprintf ppt "%a" print_registre r
@@ -166,7 +177,7 @@ let print_op_decl ppt op_decl =
     print_idlist_comma op_decl.param_out
     op_decl.id
     print_idlist_comma op_decl.param_in
- 
+    
 let print_operation ppt operations =
   let sep = if (List.length operations.op_2) > 0 then ";" else "" in
   let print_end = if (List.length operations.vars) > 0 then "END" else "" in
@@ -208,23 +219,23 @@ let print_array_type t ppt e_list =
 
 let print_condition ppt = function
   | Base_expr (id, t, expr, _) -> 
-    fprintf ppt "%a : %a & %a"
-      print_bid id
-      print_basetype t
-      print_expr expr 
+      fprintf ppt "%a : %a & %a"
+	print_bid id
+	print_basetype t
+	print_expr expr 
   | Base_no_expr (id, t, _) ->
       fprintf ppt "%a : %a"
 	print_bid id
 	print_basetype t
   | Fun_expr (id, t, e_list, expr, _) ->
-    fprintf ppt "%a : %a & %a "
-      print_bid id
-      (print_array_type t) e_list
-      print_expr expr
+      fprintf ppt "%a : %a & %a "
+	print_bid id
+	(print_array_type t) e_list
+	print_expr expr
   | Fun_no_expr (id, t, e_list, _) ->
-    fprintf ppt "%a : %a"
-      print_bid id
-      (print_array_type t) e_list
+      fprintf ppt "%a : %a"
+	print_bid id
+	(print_array_type t) e_list
 
 let rec print_invariant_list ppt = function 
   | [] -> ()
@@ -244,45 +255,52 @@ let print_concrete_var ppt reg_list =
 
 
 
-let print_instname ppt id =
-  if id = "" then () else fprintf ppt "m%s." id
-
-let print_imports_root sees ppt imports_m =
+let print_imports_root sees ppt imports =
   let print_import ppt import =
-    match import with
-      id, a when a.map_expr = None -> fprintf ppt "%a%a" print_instname a.map_ident print_bid id
-    | id, a -> (match a.map_expr with Some p ->
-      fprintf ppt "%a%a(%a)" print_instname a.map_ident print_bid id print_expr_list p | _ -> assert false)
+    match import.b_params_expr with
+	None -> fprintf ppt "%aM_%a" 
+	  (print_instname import.b_import_name) import.b_instance_id 
+	  print_bid import.b_import_name
+      | Some p ->
+	  fprintf ppt "%aM_%a(%a)" 
+	    (print_instname import.b_import_name) import.b_instance_id 
+	    print_bid import.b_import_name
+	    print_expr_list p
   in 
   let rec print_import_list_comma ppt = function
-  | [] -> ()
-  | [import] -> fprintf ppt "%a" print_import import
-  | import :: l -> fprintf ppt "%a, %a" print_import import print_import_list_comma l
+    | [] -> ()
+    | [import] -> fprintf ppt "%a" print_import import
+    | import :: l -> fprintf ppt "%a, %a" print_import import print_import_list_comma l
   in
   let print_sees_import ppt sees =
     if (List.length sees) = 0 then () else 
       fprintf ppt ", %a" print_idlist_comma sees
   in
-  if (MAP_import.is_empty imports_m) && ((List.length sees) = 0) then () 
+  if ((List.length imports) = 0) && ((List.length sees) = 0) then () 
   else 
-    fprintf ppt "IMPORTS %a %a" print_import_list_comma (MAP_import.bindings imports_m)  
+    fprintf ppt "IMPORTS %a %a" print_import_list_comma imports
       print_sees_import sees
 
-let print_imports ppt imports_m =
+let print_imports ppt imports =
   let print_import ppt import =
-    match import with
-      id, a when a.map_expr = None -> fprintf ppt "%a%a" print_instname a.map_ident print_bid id
-    | id, a -> (match a.map_expr with Some p ->
-      fprintf ppt "%a%a(%a)" print_instname a.map_ident print_bid id print_expr_list p | _ -> assert false)
-  in 
-  let rec print_import_list_comma ppt = function
-  | [] -> ()
-  | [import] -> fprintf ppt "%a" print_import import
-  | import :: l -> fprintf ppt "%a, %a" print_import import print_import_list_comma l
+    match import.b_params_expr with
+	None -> fprintf ppt "%aM_%a" 
+	  (print_instname import.b_import_name) import.b_instance_id 
+	  print_bid import.b_import_name
+      | Some p -> Printf.printf "\n\n\n\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+	  fprintf ppt "%aM_%a(%a)" 
+	    (print_instname import.b_import_name) import.b_instance_id 
+	    print_bid import.b_import_name
+	    print_expr_list p
   in
-  if MAP_import.is_empty imports_m then () 
+  let rec print_import_list_comma ppt = function
+    | [] -> ()
+    | [import] -> fprintf ppt "%a" print_import import
+    | import :: l -> fprintf ppt "%a, %a" print_import import print_import_list_comma l
+  in
+  if (List.length imports) = 0 then () 
   else 
-    fprintf ppt "IMPORTS %a" print_import_list_comma (MAP_import.bindings imports_m)
+    fprintf ppt "IMPORTS %a" print_import_list_comma imports
 
 let print_sees ppt sees_l =
   if (List.length sees_l) = 0 then () 
@@ -327,7 +345,10 @@ let print_machine ppt b_impl =
     print_operation b_impl.operation
 
 
-let print_prog b_impl file is_root =
+let print_prog b_impl file is_root env_inst env =
+  node_name := b_impl.name;
+  env_instances := env_inst;
+  Prog_builder.print_inst_map !env_instances;
   if is_root then
     fprintf (formatter_of_out_channel file) "%a@." print_root_machine b_impl
   else 

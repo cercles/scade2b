@@ -65,22 +65,26 @@ type op_decl =
   }
 
 
-module MAP_import = Map.Make(
-  struct
-    type t = ident
-    let compare = compare
-  end
-)
+type imports_b = 
+    { b_import_name : ident; 
+      b_params_expr : b_expression list option; 
+      b_instance_id : ident } 
 
-type map_inst_imp = { map_expr : b_expression list option; map_ident : ident}
 
-type map_inst_int = { map_int : int list; map_iident : ident}
 
-(* params map called side *)
-type b_import_expr = b_expression list option MAP_import.t
-(* params map caller side *)
-type b_import_index = int list option MAP_import.t
-type b_import_test = map_inst_imp MAP_import.t
+(* module MAP_import = Map.Make( *)
+(*   struct *)
+(*     type t = ident *)
+(*     let compare = compare *)
+(*   end *)
+(* ) *)
+(* type map_inst_int = { map_int : int list; map_iident : ident} *)
+(* type map_inst_imp = { map_expr : b_expression list option; map_ident : ident} *)
+(* (\* params map called side *\) *)
+(* type b_import_expr = b_expression list option MAP_import.t *)
+(* (\* params map caller side *\) *)
+(* type b_import_index = int list option MAP_import.t *)
+(* type b_import_test = map_inst_imp MAP_import.t *)
 
 
 type impl_operation =
@@ -95,7 +99,7 @@ type b_impl =
     params: ident list;
     refines: ident;
     sees: ident list;
-    imports: b_import_test;
+    imports: imports_b list;
     concrete_variables: ident list;
     invariant: condition list;
     initialisation: initialisation list;

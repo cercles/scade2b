@@ -14,17 +14,28 @@ let get_insts_node node =
   let node_name = node.node_name in
   let node_xml = node.node_xml in
   let instances = node_xml.instances in
+  (* let _, instances = *)
+  (*   List.fold_left (fun (inst_names, insts) inst ->  *)
+  (* 		      if List.mem inst.inst_name inst_names then *)
+  (* 			(inst_names, insts) *)
+  (* 		      else *)
+  (* 			(inst.inst_name :: inst_names, inst :: insts)  *)
+  (* 		   ) ([], []) instances in (\* Supprime les instances solos, à revoir*\) *)
   List.map (fun inst -> node_name, inst.inst_name, inst.inst_id) instances
 
 let get_insts_nodes nodes =
   List.fold_left (fun insts node -> (get_insts_node node) @ insts) [] nodes
 
+let print_inst_map env =
+  Env_instances.iter (fun  (node, imp, id) bid -> Printf.printf "\n %s  - %s  - %s  - %s" bid node imp id) env
+
 let build_env_instances nodes =
   let insts = get_insts_nodes nodes in
-  List.fold_left (fun env inst ->
-		    let b_id = Utils.make_instance_bid inst env in
-		    Env_instances.add inst b_id env
-		 ) Env_instances.empty insts
+  let env_instances = List.fold_left (fun env inst ->
+					let b_id = Utils.make_instance_bid inst env in
+					Env_instances.add inst b_id env
+				     ) Env_instances.empty insts in
+  env_instances
 
 (* Env permet d'associer l'ident scade à un ident B en vérifiant qu'il n'y a pas de collisions *)
 
@@ -59,25 +70,40 @@ let build_env nodes enum_types consts =
 			   ) env const_ids in
   env
 
-let node_parser node =
-   let lexbuf = Lexing.from_string node in 
-   let ast = Parser.prog Lexer.token lexbuf in
-   ast
+let node_parser node_name node_xml main_dir node =
+  let handle_error (start, finish, lex) =
+    let line = start.pos_lnum in
+    let first_char = start.pos_cnum - start.pos_bol + 1 in
+    let last_char = finish.pos_cnum - start.pos_bol + 1 in
+    Printf.eprintf "line %d, characters %d-%d %s\n" line first_char last_char lex
+  in
+  let lexbuf = Lexing.from_string node in 
+  let ast = 
+    try Parser.prog Lexer.token lexbuf 
+    with 
+      | Lexer.Lexical_error s ->
+	  Format.eprintf "\nLexical Error in %s@." node_name; 
+	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf);
+	  Utils.generate_error_machine node_xml main_dir;
+	  raise Not_found
+      | Parsing.Parse_error ->
+	  Format.eprintf "\nSyntax Error in %s@." node_name; 
+	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf);
+	  Utils.generate_error_machine node_xml main_dir;
+	  raise Not_found
+  in
+  ast
 
 
-let build_node_list xml_nodes kcg_nodes =
+let build_node_list xml_nodes kcg_nodes main_dir =
   List.map (fun node -> 
 	      let node_name = node.xml_node_name in
 	      let node_xml = node in
 	      let ast_scade = 
 		try 
-		  Some (node_parser (T_Node.find node_name kcg_nodes))
+		  Some (node_parser node_name node_xml main_dir (T_Node.find node_name kcg_nodes))
 		with 
 		  | Not_found -> None
-		  | Lexer.Lexical_error s ->
-		      Format.eprintf "\nLexical Error: %s@." s; None
-		  | Parsing.Parse_error ->
-		      Format.eprintf "\nSyntax Error in %s@." node_name; None
 	      in
 	      { node_name = node_name; 
 		node_xml = node_xml;
@@ -85,8 +111,8 @@ let build_node_list xml_nodes kcg_nodes =
 	      }
 	   ) xml_nodes
     
-let build_prog xml_prog kcg_prog =
-  let nodes = build_node_list xml_prog.xml_nodes kcg_prog.node_map in
+let build_prog xml_prog kcg_prog main_dir =
+  let nodes = build_node_list xml_prog.xml_nodes kcg_prog.node_map main_dir in
   let enum_types = kcg_prog.enum_list in
   let consts = kcg_prog.const_list in
   let arraytypes = xml_prog.xml_arraytypes in

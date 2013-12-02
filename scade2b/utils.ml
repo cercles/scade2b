@@ -6,6 +6,7 @@ open Ast_scade
 open Ast_base
 open Ast_kcg
 open Ast_prog
+open Ast_xml
 open Xml_utils
 
 (*************************** IDENT COLLISION FUNCTIONS ***************************)
@@ -223,109 +224,75 @@ let search_input_in_reg eqs ins pres lambdas =
 	
 (*                          2) Traduction                           *)
 
-let imports_list_to_map imports =
-  List.fold_left (fun map import -> match import.params_index with
-		    | Some p when (List.length p) > 0 -> 
-		        MAP_import.add import.import_name {map_int = p; map_iident = import.instance_id} map
-		    | None -> map
-		    | _ -> map ) MAP_import.empty imports
+(* let imports_list_to_map imports = *)
+(*   List.fold_left (fun map import -> match import.params_index with *)
+(* 		    | Some p when (List.length p) > 0 ->  *)
+(* 		        MAP_import.add import.import_name {map_int = p; map_iident = import.instance_id} map *)
+(* 		    | None -> map *)
+(* 		    | _ -> map ) MAP_import.empty imports *)
 
 
-let print_imports_bis imports =
-  Printf.printf "\n\n !!!!!!!!!!!!!!!!!IMPRESSION DE MAP IMPORT22 : \n";
-  let print_import (id, a) =
-    Printf.printf "    m%s.%s   " a.map_iident id
-  in
-   List.iter print_import imports
+(* let print_imports_bis imports = *)
+(*   Printf.printf "\n\n !!!!!!!!!!!!!!!!!IMPRESSION DE MAP IMPORT : \n"; *)
+(*   let print_import (id, a) = *)
+(*     Printf.printf "    m%s.%s   " a.map_iident id *)
+(*   in *)
+(*    List.iter print_import imports *)
 
+let print_imports_out imps =
+  List.iter (fun imp -> match imp.b_params_expr with 
+		 None -> Printf.printf "\nTTT %s nope %s " imp.b_import_name imp.b_instance_id
+	       | Some a -> Printf.printf "\nTTT %s %d %s" imp.b_import_name (List.length a) imp.b_instance_id ) imps
+
+let print_imports_in imps =
+  List.iter (fun imp -> Printf.printf "\n  name : %s  id : %s  \n  " imp.import_name imp.instance_id) imps 
 
 let check_imports_params imports eqs =
-  let import_map_in = imports_list_to_map imports in
-  let import_map_out = ref MAP_import.empty in
-  let bins = MAP_import.bindings import_map_in in
-  print_imports_bis bins;
-  let rec fun_rec eq =
-    match eq with
-      Call c ->
-	if MAP_import.mem c.call_id import_map_in then (
-	  let imp = MAP_import.find c.call_id import_map_in in
-	  let params_index_list, instname = imp.map_int, imp.map_iident in
-	  if instname = c.call_instance then
-	    begin
-	      let _, params_op, params_m =
-		List.fold_left (fun (index, params_op, params_m) param_expr ->
-		  if List.mem index params_index_list then
-		    (index+1, params_op, (List.nth c.call_params index) :: params_m)
-		  else
-		    (index+1, (List.nth c.call_params index) :: params_op, params_m)
-		) (0, [], []) c.call_params in
-	      import_map_out := 
-		MAP_import.add c.call_id {map_expr = Some params_m; map_ident = instname} !import_map_out;
-	      Call {c with call_params = params_op}
-	    end
-	  else 
-	    (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = instname} !import_map_out; eq)
-	)
-	else 
-	  (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = c.call_instance} !import_map_out; eq)
-    | _ -> eq
+  print_imports_in imports;
+  let imports_out = ref [] in
+  let find_in_imp_list imp_id =
+    List.find (fun imp -> imp.import_name = imp_id ) imports
   in
-  List.map fun_rec eqs, !import_map_out
-
-
-(********************************************************************************************************************************************
-
-TODO!!! 
-
-*)
-
-
-let print_imports imports =
-  Printf.printf "\n\nIMPORESSION DE MAP IMPORT : \n";
-  let print_import import =
-    match import with
-	id, a when a.map_expr = None -> Printf.printf "    m%s.%s   " a.map_ident id
-      | id, a -> (match a.map_expr with 
-		      Some p ->
-			Printf.printf "     m%s.%s(qqch)    " a.map_ident id 
-		    | _ -> assert false)
-  in 
-   List.iter print_import imports
-
-
-
-let check_rennaming imports eqs =
-  let import_map_in = MAP_import.bindings imports in
-  print_imports import_map_in;
-  (* let import_map_out = ref MAP_import.empty in *)
-  (* let rec fun_rec eq = *)
-  (*   match eq with *)
-  (*     Call c -> *)
-  (* 	if MAP_import.mem c.call_id import_map_in then ( *)
-  (* 	  let imp = MAP_import.find c.call_id import_map_in in *)
-  (* 	  let params_index_list, instname = imp.map_int, imp.map_iident in *)
-  (* 	  if instname = c.call_instance then *)
-  (* 	    begin *)
-  (* 	      let _, params_op, params_m = *)
-  (* 		List.fold_left (fun (index, params_op, params_m) param_expr -> *)
-  (* 		  if List.mem index params_index_list then *)
-  (* 		    (index+1, params_op, (List.nth c.call_params index) :: params_m) *)
-  (* 		  else *)
-  (* 		    (index+1, (List.nth c.call_params index) :: params_op, params_m) *)
-  (* 		) (0, [], []) c.call_params in *)
-  (* 	      import_map_out := *)
-  (* 		MAP_import.add c.call_id {map_expr = Some params_m; map_ident = instname} !import_map_out; *)
-  (* 	      Call {c with call_params = params_op} *)
-  (* 	    end *)
-  (* 	  else *)
-  (* 	    (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = instname} !import_map_out; eq) *)
-  (* 	) *)
-  (* 	else *)
-  (* 	  (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = c.call_instance} !import_map_out; eq) *)
-  (*   | _ -> eq *)
-  (* in *)
-  (* List.map fun_rec eqs, !import_map_out *)
-  eqs, imports
+  let fun_rec eq =
+    match eq with
+      Call c -> (
+	let imp = find_in_imp_list c.call_id in
+	let params_index_list, instname = imp.params_index, imp.instance_id in
+	match params_index_list with 
+	  | None -> 
+	      imports_out :=  { b_import_name = imp.import_name; 
+				b_params_expr = None;
+				b_instance_id = instname; } :: !imports_out; eq
+	  | Some param_index_list ->
+	      if (List.length param_index_list) = 0 then (
+		imports_out :=  { b_import_name = imp.import_name; 
+				  b_params_expr = None;
+				  b_instance_id = instname; } :: !imports_out; eq)
+	      else (
+		if instname = c.call_instance then
+		  ( 
+		    let _, params_op, params_m =
+		      List.fold_left (fun (index, params_op, params_m) param_expr ->
+					if List.mem index param_index_list then
+					  (index+1, params_op, (List.nth c.call_params index) :: params_m)
+					else
+					  (index+1, (List.nth c.call_params index) :: params_op, params_m)
+				     ) (0, [], []) c.call_params in
+		    imports_out :=  { b_import_name = imp.import_name; 
+				      b_params_expr = Some params_m;
+				      b_instance_id = instname; } :: !imports_out;
+		    Call {c with call_params = params_op}
+		  )
+		else (
+		  imports_out := { b_import_name = imp.import_name; 
+				   b_params_expr = None;
+				   b_instance_id = instname; } :: !imports_out; eq)
+	      )
+      )
+      | _ -> eq
+  in
+  print_imports_out !imports_out;
+  List.map fun_rec eqs, !imports_out 
 
 
 
@@ -455,3 +422,11 @@ let p_const_to_b_const const =
 
 
 
+
+
+let generate_error_machine node_xml main_dir =
+  let node_name = node_xml.xml_node_name in
+  let babst_err =
+    open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
+  Babsterror_generator.print_machine_base node_xml babst_err;
+  close_out babst_err

@@ -234,23 +234,25 @@ let get_insts_node node =
 
 let build_imports_map xml_nodes =
   List.fold_left 
-    (fun map node -> Imports_map.add node.xml_node_name (get_insts_node node) map) 
+    (fun map node -> Imports_map.add node.xml_node_name (get_insts_node node) map)
     Imports_map.empty xml_nodes
 
 
 (********************  Mise à jour de la nodename_imports_map ********************)
 
-let update_xml_map xml_map ast =
+let update_imports_map xml_map ast =
   let node_ident = ast.n_id in
   let params_index = List.map (fun l -> l.n_l_index) ast.n_lambdas in
-  XML_prog.map (fun import_list ->
-		  List.map (fun import ->
-			      if import.i_node_name = node_ident then {import with i_params_m = Some params_index}
-			      else import) import_list) xml_map
+  Imports_map.map (fun import_list ->
+		     List.map (fun import ->
+				 if import.import_name = node_ident then 
+				   {import with params_index = Some params_index}
+				 else 
+				   import) import_list
+		  ) xml_map
 
 
 (******************** MISC / OLD ********************)
-
 
 
 (* let get_instances node map = *)
@@ -293,15 +295,6 @@ let update_xml_map xml_map ast =
 (* 		    | ScadeName id -> id *)
 (* 		    | _ -> assert false ) "" options *)
     
-
-(* let get_root_id xml_ast = *)
-(*   List.fold_left *)
-(*     (fun res node_or_arraytype -> match node_or_arraytype with *)
-(*        | Root (options, nbs) ->  *)
-(* 	   let node_name = retrieve_node_name options in *)
-(* 	   res ^ node_name *)
-(*        | _ -> res *)
-(*     ) "" xml_ast *)
 
 
 (* type xml_node_decl = *)
