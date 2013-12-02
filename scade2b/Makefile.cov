@@ -3,26 +3,33 @@ all: dep clean tests report
 EXEC=scade2b.cov
 MODS=\
     ast_base \
-    ast_printer \
     ast_printer_norm \
     ast_prog \
+    ast_kcg \
     ast_repr_b \
-    ast_repr \
-    ast_repr_norm \
+    ast_scade_norm \
+    ast_scade \
+    ast_xml \
     babst_generator \
+    babsterror_generator \
+    benum_generator \
     utils \
     bconst_generator \
     bimpl_generator \
     scheduler \
     normalizer \
     lexer \
+    parser_kcg \
+    lexer_kcg \
     parser \
     trad \
-    lexer_prog \
     lexer_xml \
-    parser_prog \
+    printer_xml_ast \
+    prog_builder \
+    xml_utils \
     parser_xml \
     scade2b
+    #ast_printer \
 
 OBJS=$(addsuffix .cmo,$(MODS))
 BISECT_DIR=$(shell ocamlc -where)/../bisect/
@@ -63,11 +70,8 @@ clean:
 lexer_xml.cmo: parser_xml.cmo
 scade2b.cmo: parser_xml.cmo
 scade2b.cmo: lexer_xml.cmo
-scade2b.cmo: parser_prog.cmo
-scade2b.cmo: lexer_prog.cmo
 scade2b.cmo: parser.cmo
 scade2b.cmo: lexer.cmo
-lexer_prog.cmo: parser_prog.cmo
 lexer.cmo: parser.cmo
 
 -include .depends
