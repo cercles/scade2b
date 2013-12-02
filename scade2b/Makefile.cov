@@ -55,6 +55,9 @@ tests: $(EXEC)
 report:
 	bisect-report `find . -name 'bisect*.out'` -html bisect-report
 
+clean:
+	rm -f $(EXEC) *.cmo *.cmi *.cmp *.out
+
 # extra deps
 
 lexer_xml.cmo: parser_xml.cmo
