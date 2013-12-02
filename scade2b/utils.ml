@@ -1,10 +1,11 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Ast_repr_b
-open Ast_repr_norm
-open Ast_repr
+open Ast_scade_norm
+open Ast_scade
 open Ast_base
 open Ast_kcg
+open Ast_prog
 open Xml_utils
 
 (*************************** IDENT COLLISION FUNCTIONS ***************************)
@@ -67,9 +68,93 @@ let make_params_ident env lambda_list =
     Env.add lambda.n_l_ident ((String.uncapitalize param), typ, expr) env) env lambda_list
 
 
+
+(******************** GLOBAL ENV CHECK *************************)
+
+let check_no_collision_global ident env =
+  if (Env.exists (fun _ bid -> ident = bid) env) then raise (Collision ident)
+  else true
+
+let make_b_ident_global ident env = 
+  let new_ident = ref "" in
+  let switch_underscore s = 
+    try 
+      new_ident := (String.sub s 1 ((String.length s)-1));
+      false
+    with 
+    | Invalid_argument _ -> failwith ("String error in switch_underscore(Utils) with " ^ s)
+  in
+  let double_character s = new_ident := s^s; false in
+  let add_underscore s = new_ident := s^"_"; false in
+  let ident_check ident =
+    try 
+      (is_b_compliant ident) && (check_no_collision_global ident env)
+    with
+    | Underscore s ->
+        switch_underscore s 
+    | Character s ->
+        double_character s
+    | Reserved s ->
+        add_underscore s
+    | Collision s ->
+        add_underscore s
+  in
+  let rec ident_generator ident =
+    if ident_check ident then ident else ident_generator !new_ident
+  in
+  ident_generator ident
+
+
+
+(******************** INSTANCES ENV BUILDER *************************)
+
+let make_inst_ident inst =
+  let node_name, import_name, inst_id = inst in
+  try
+    (String.sub node_name 0 1) ^ (String.sub import_name 0 1) ^ inst_id 
+  with Invalid_argument _ -> Printf.printf " ERROR !!!!!! : %s %s" node_name import_name; node_name ^ import_name ^ inst_id
+
+let check_no_collision_global ident env =
+  if (Env_instances.exists (fun _ bid -> ident = bid) env) then raise (Collision ident)
+  else true
+
+let make_instance_bid instance env = 
+  let new_ident = ref "" in
+  let switch_underscore s = 
+    try 
+      new_ident := (String.sub s 1 ((String.length s)-1));
+      false
+    with 
+    | Invalid_argument _ -> failwith ("String error in switch_underscore(Utils) with " ^ s)
+  in
+  let double_character s = new_ident := s^s; false in
+  let add_underscore s = new_ident := s^"_"; false in
+  let ident_check ident =
+    try 
+      (is_b_compliant ident) && (check_no_collision_global ident env)
+    with
+    | Underscore s ->
+        switch_underscore s 
+    | Character s ->
+        double_character s
+    | Reserved s ->
+        add_underscore s
+    | Collision s ->
+        add_underscore s
+  in
+  let rec ident_generator ident =
+    if ident_check ident then ident else ident_generator !new_ident
+  in
+  let ident = make_inst_ident instance in
+  ident_generator ident
+
+
+
+
 (*** RECONNAISSANCE DE L'INITIALISATION D'UN REGISTRE PAR UNE ENTREE ***)
 
 (*                          1) Normalisation                           *)
+
 
 let is_linked eqs ins v =
   let linked_fold = function
@@ -139,15 +224,26 @@ let search_input_in_reg eqs ins pres lambdas =
 (*                          2) Traduction                           *)
 
 let imports_list_to_map imports =
-  List.fold_left (fun map import -> match import.i_params_m with
+  List.fold_left (fun map import -> match import.params_index with
 		    | Some p when (List.length p) > 0 -> 
-		        MAP_import.add import.i_node_name {map_int = p; map_iident = import.instance} map
+		        MAP_import.add import.import_name {map_int = p; map_iident = import.instance_id} map
 		    | None -> map
 		    | _ -> map ) MAP_import.empty imports
+
+
+let print_imports_bis imports =
+  Printf.printf "\n\n !!!!!!!!!!!!!!!!!IMPRESSION DE MAP IMPORT22 : \n";
+  let print_import (id, a) =
+    Printf.printf "    m%s.%s   " a.map_iident id
+  in
+   List.iter print_import imports
+
 
 let check_imports_params imports eqs =
   let import_map_in = imports_list_to_map imports in
   let import_map_out = ref MAP_import.empty in
+  let bins = MAP_import.bindings import_map_in in
+  print_imports_bis bins;
   let rec fun_rec eq =
     match eq with
       Call c ->
@@ -182,36 +278,54 @@ let check_imports_params imports eqs =
 TODO!!! 
 
 *)
+
+
+let print_imports imports =
+  Printf.printf "\n\nIMPORESSION DE MAP IMPORT : \n";
+  let print_import import =
+    match import with
+	id, a when a.map_expr = None -> Printf.printf "    m%s.%s   " a.map_ident id
+      | id, a -> (match a.map_expr with 
+		      Some p ->
+			Printf.printf "     m%s.%s(qqch)    " a.map_ident id 
+		    | _ -> assert false)
+  in 
+   List.iter print_import imports
+
+
+
 let check_rennaming imports eqs =
-  let import_map_out = ref MAP_import.empty in
-  let rec fun_rec eq =
-    match eq with
-      Call c ->
-	if MAP_import.mem c.call_id import_map_in then (
-	  let imp = MAP_import.find c.call_id import_map_in in
-	  let params_index_list, instname = imp.map_int, imp.map_iident in
-	  if instname = c.call_instance then
-	    begin
-	      let _, params_op, params_m =
-		List.fold_left (fun (index, params_op, params_m) param_expr ->
-		  if List.mem index params_index_list then
-		    (index+1, params_op, (List.nth c.call_params index) :: params_m)
-		  else
-		    (index+1, (List.nth c.call_params index) :: params_op, params_m)
-		) (0, [], []) c.call_params in
-	      import_map_out := 
-		MAP_import.add c.call_id {map_expr = Some params_m; map_ident = instname} !import_map_out;
-	      Call {c with call_params = params_op}
-	    end
-	  else 
-	    (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = instname} !import_map_out; eq)
-	)
-	else 
-	  (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = c.call_instance} !import_map_out; eq)
-    | _ -> eq
-  in
-  List.map fun_rec eqs, !import_map_out
-  
+  let import_map_in = MAP_import.bindings imports in
+  print_imports import_map_in;
+  (* let import_map_out = ref MAP_import.empty in *)
+  (* let rec fun_rec eq = *)
+  (*   match eq with *)
+  (*     Call c -> *)
+  (* 	if MAP_import.mem c.call_id import_map_in then ( *)
+  (* 	  let imp = MAP_import.find c.call_id import_map_in in *)
+  (* 	  let params_index_list, instname = imp.map_int, imp.map_iident in *)
+  (* 	  if instname = c.call_instance then *)
+  (* 	    begin *)
+  (* 	      let _, params_op, params_m = *)
+  (* 		List.fold_left (fun (index, params_op, params_m) param_expr -> *)
+  (* 		  if List.mem index params_index_list then *)
+  (* 		    (index+1, params_op, (List.nth c.call_params index) :: params_m) *)
+  (* 		  else *)
+  (* 		    (index+1, (List.nth c.call_params index) :: params_op, params_m) *)
+  (* 		) (0, [], []) c.call_params in *)
+  (* 	      import_map_out := *)
+  (* 		MAP_import.add c.call_id {map_expr = Some params_m; map_ident = instname} !import_map_out; *)
+  (* 	      Call {c with call_params = params_op} *)
+  (* 	    end *)
+  (* 	  else *)
+  (* 	    (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = instname} !import_map_out; eq) *)
+  (* 	) *)
+  (* 	else *)
+  (* 	  (import_map_out := MAP_import.add c.call_id {map_expr = None; map_ident = c.call_instance} !import_map_out; eq) *)
+  (*   | _ -> eq *)
+  (* in *)
+  (* List.map fun_rec eqs, !import_map_out *)
+  eqs, imports
 
 
 

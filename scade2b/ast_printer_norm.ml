@@ -1,7 +1,7 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Format
-open Ast_repr_norm
+open Ast_scade_norm
 open Ast_base
 
 let print_id ppt id = fprintf ppt "%s" id

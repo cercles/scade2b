@@ -1,6 +1,6 @@
 
 open Format
-open Ast_repr
+open Ast_scade
 open Ast_base
 
 

@@ -22,7 +22,7 @@
 %token EOF
 
 %start model
-%type <Ast_xml.xml_prog> model
+%type <Ast_xml.xml_prog_list> model
 
 %%
 

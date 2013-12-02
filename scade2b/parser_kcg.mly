@@ -1,7 +1,7 @@
 %{
   (* Florian Thibord  --  Projet CERCLES *)
 
-  open Ast_repr
+  open Ast_scade
   open Ast_base
   open Ast_kcg
 
@@ -24,8 +24,8 @@
   type node_const_enum = 
       Node of (string * string) 
     | Function of (string * string) 
-    | Const of p_const
-    | Enum of p_enum
+    | Const of kcg_const
+    | Enum of kcg_enum
 
   let prog_builder node_const_enum_list =
     let (node_map, cst_list, enu_list) = 

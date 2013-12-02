@@ -1,46 +1,33 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Ast_base
+open Ast_scade
+open Ast_scade_norm
+open Ast_xml
+open Ast_kcg
 
+type node =
+    { node_name : ident;
+      node_xml : xml_node_decl;
+      ast_scade : p_node option;
+    }
 
-type p_enum = 
-  { p_enum_id : ident;
-    p_enum_list : ident list;
-  }
+type env_prog = ident Env.t
 
-type p_const = 
-  { c_id : ident;
-    c_typ : p_type;
-    c_expr : p_expression;
-  }
+module Env_instances = Map.Make(
+  struct
+    type t = ident * ident * ident (* node name * import name * inst id*)
+    let compare = compare
+  end
+)
 
-type instance =
-  { inst_name : ident;
-    inst_id : ident;
-  }
-
-type var_decl =
-  { var_id : ident;
-    var_type : ident;
-  }
-
-type locals =
-  { local_id : ident;
-    local_var : ident;
-  }
-
-type node_decl =
-  { node_name : ident;
-    
-    is_root : bool;
-    ins : var_decl list;
-    outs : var_decl list;
-    locals : locals list;
-    instances : instance list;
-  }
+type env_instances = ident Env_instances.t
 
 type prog =
-  { nodes : node list;
-    enum_types : enum_types list;
-    consts : const list;
-  }
+    { nodes : node list;
+      enum_types : kcg_enum list;
+      consts : kcg_const list;
+      arraytypes : xml_arraytype list;
+      env_prog : env_prog;
+      env_instances : env_instances;
+    }

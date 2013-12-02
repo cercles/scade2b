@@ -2,16 +2,16 @@
 
 
 open Ast_base
-open Ast_repr
+open Ast_scade
 open Ast_repr_b
 
 
-type p_enum = 
+type kcg_enum = 
   { p_enum_id : ident;
     p_enum_list : ident list;
   }
 
-type p_const = 
+type kcg_const = 
   { c_id : ident;
     c_typ : p_type;
     c_expr : p_expression;
@@ -32,6 +32,6 @@ type t_node_map = string T_Node.t
 
 type t_prog = 
   { node_map : t_node_map;
-    const_list : p_const list;
-    enum_list : p_enum list;
+    const_list : kcg_const list;
+    enum_list : kcg_enum list;
   }

@@ -4,9 +4,15 @@ open Format
 open Ast_kcg
 open Ast_base
 open Ast_repr_b
+open Ast_prog
+open Ast_scade_norm
+
+
+let env = ref Env.empty
 
 let print_bid ppt id =
-  fprintf ppt "%s" id
+  let bid = Env.find id !env in
+  fprintf ppt "%s" bid
 
 let rec print_idlist_comma ppt = function
   | [] -> ()
@@ -161,5 +167,6 @@ let print_machine ppt const_list =
     print_concrete_constants (List.map (fun cst -> cst.c_id) const_list)
     print_properties const_list 
 
-let print_m_const const_list file =
+let print_m_const const_list file prog_env =
+  env := prog_env;
   fprintf (formatter_of_out_channel file) "%a@." print_machine const_list

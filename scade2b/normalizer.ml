@@ -2,9 +2,9 @@
 
 
 open Ast_base
-open Ast_repr
+open Ast_scade
 open Ast_kcg
-open Ast_repr_norm
+open Ast_scade_norm
 open Utils
 
 

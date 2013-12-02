@@ -1,7 +1,7 @@
 %{
   (* Florian Thibord  --  Projet CERCLES *)
 
-  open Ast_repr
+  open Ast_scade
   open Ast_base
 
   (* Check if all the types in the list are the same. Used to check array coherence *)
@@ -55,7 +55,7 @@
 %left CARET CONCAT
 
 %start prog
-%type <Ast_repr.p_node> prog
+%type <Ast_scade.p_node> prog
 
 %%
 

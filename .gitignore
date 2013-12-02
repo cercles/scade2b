@@ -5,3 +5,12 @@ src/_build
 src/*#*
 src/tests
 src/cercles
+
+scade2b/*~
+scade2b/_build
+scade2b/*#*
+scade2b/tests
+scade2b/scade2b
+
+notes/
+reunion/

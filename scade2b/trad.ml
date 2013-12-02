@@ -3,7 +3,7 @@
 
 open Ast_base
 open Ast_repr_b
-open Ast_repr_norm
+open Ast_scade_norm
 open Utils
 
 
@@ -182,11 +182,17 @@ let bimpl_translator env node imports const_list =
     (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
+
+
   let op_1, imports = Utils.check_imports_params imports op_1 in (* NEW *)
-  let op_1, imports = Utils.check_rennaming imports op_1 in (* NEW *)
+  (* let op_1, imports = Utils.check_rennaming imports op_1 in (\* NEW *\) *)
+
+
   let imports = MAP_import.fold 
     (fun name value acc -> MAP_import.add ("M_" ^ name) value acc) 
     imports MAP_import.empty in 
+
+
   let reg_ids = !concrete_vars in
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =
@@ -214,9 +220,8 @@ let bimpl_translator env node imports const_list =
 
 let babst_translator env node const_list =
   let machine = "M_" ^ node.n_id in
-  let params_id, params_cond = List.split (List.map (fun {n_l_ident = ident; 
-							  n_l_cond = cond; 
-							  n_l_index = _; } -> ident, cond) node.n_lambdas) in
+  let params_id, params_cond = 
+    List.split (List.map (fun lambda -> lambda.n_l_ident, lambda.n_l_cond) node.n_lambdas) in
   let sees = Utils.sees_list env const_list in
   let constraints = trad_list env n_condition_to_condition params_cond in
   let abstop_decl = { id = node.n_id;

@@ -1,7 +1,7 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Ast_base
-open Ast_repr_norm
+open Ast_scade_norm
 open Utils
 
 module L = Set.Make(

@@ -2,7 +2,7 @@
   (* Florian Thibord  --  Projet CERCLES *)
 
   open Lexing
-  open Parser_prog
+  open Parser_kcg
 
   exception Lexical_error of string
 
