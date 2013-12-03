@@ -21,6 +21,7 @@
       PA_Slice (id, elist)
 
   type equation_type = Eq of p_equation | Assume of p_expression | Guarantee of p_expression
+
 %}
 
 %token NODE RETURNS LET TEL VAR ASSUME GUARANTEE
@@ -51,6 +52,7 @@
 %left PLUS MINUS
 %left MULT DIV DIV_INT MOD
 %nonassoc T_REAL
+%nonassoc T_INT
 %nonassoc NOT PRE
 %left CARET CONCAT
 
@@ -157,7 +159,8 @@ expr :
  | expr SUP expr { PE_Op_Arith (Op_gt, [$1; $3]) }
  | expr SUPEQ expr { PE_Op_Arith (Op_ge, [$1; $3]) }
  | MINUS expr { PE_Op_Arith (Op_minus, [$2]) }
- | T_REAL expr { PE_Op_Arith (Op_to_real, [$2]) } 
+ | T_REAL expr { PE_Op_Arith (Op_cast_real, [$2]) } 
+ | T_INT expr { PE_Op_Arith (Op_cast_int, [$2]) } 
  | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Logic (Op_sharp, ($3 :: $5)) }
  | expr AND expr { PE_Op_Logic (Op_and, [$1; $3]) }
  | expr OR expr { PE_Op_Logic (Op_or, [$1; $3]) }
@@ -168,6 +171,7 @@ expr :
  | LPAREN PRAGMA IDENT DOUBLE_COLON IDENT DOUBLE_CHEVIN expr_list DOUBLE_CHEVOUT RPAREN LPAREN expr_list RPAREN 
      { PE_Call ($2, $5, $11) }
  | PRAGMA IDENT LPAREN expr_list RPAREN { PE_Call ($1, $2, $4) }
+ | PRAGMA IDENT DOUBLE_COLON IDENT LPAREN expr_list RPAREN { PE_Call ($1, $4, $6) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
 ;
