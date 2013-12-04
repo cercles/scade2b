@@ -75,7 +75,7 @@ let node_parser node_name node_xml main_dir node =
     let line = start.pos_lnum in
     let first_char = start.pos_cnum - start.pos_bol + 1 in
     let last_char = finish.pos_cnum - start.pos_bol + 1 in
-    Printf.eprintf "line %d, characters %d-%d %s\n" line first_char last_char lex
+    Printf.eprintf "line %d, characters %d-%d: lexeme %s\n" line first_char last_char lex
   in
   let lexbuf = Lexing.from_string node in 
   let ast = 
