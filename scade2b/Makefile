@@ -33,3 +33,37 @@ realclean: clean
 	rm -f $(MAIN) *~
 
 cleanall: realclean
+
+#  +---------+              +--------+
+#  | %.scade |   scade2b    |  %.out |
+#  |         |              |        |
+#  | Source  |  --------->  | Actual |
+#  |  code   |              | output |
+#  +---------+              +--------+
+#                               |
+# +----------+                  |           *.ok all exist
+# |  %.spec  |                  |                 ==
+# |          |                  |             tests pass
+# | Expected | -------------+   |
+# |  output  |              |   |                 /\
+# +----------+              |   |                 ||
+#                           v   v                 ||
+#  \___  ___/            +---------+       +-------------+
+#      \/                | %.diff  |       |    %.ok     |
+#                        |         |       |             |
+#    in git              | Unified | ----> |  Exists if  |
+#                        |  diff   |       | out == spec |
+#                        +---------+       +-------------+
+
+check: $(patsubst %.scade, %.ok, $(wildcard tests/*.scade))
+
+%.out: %.scade $(MAIN)
+	./$(MAIN) --runtest $< > $@
+
+%.diff: %.out %.spec
+	diff -Nru $+ > $@
+
+%.ok: %.diff
+	# -e : file exists
+	# -s : file exists and is not empty
+	[ -e $< -a ! -s $< ] && touch $@
