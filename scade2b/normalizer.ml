@@ -51,10 +51,10 @@ let p_decl_to_n_decl declist =
 
 
 (* Cherche l'entrée liée à la condition expr, et retourne la condition normalisée *)
-let handle_assume node expr =
+let handle_assume node consts expr =
   let id =
     try
-      Utils.find_ident_in_pexpr expr
+      Utils.find_ident_in_pexpr expr consts
     with Two_ident (id1, id2) -> raise (Assert_id_error id1)
   in
   match Utils.find_type id node.p_param_in with
@@ -62,10 +62,10 @@ let handle_assume node expr =
   | None ->  raise (Assert_id_error id)
 
 (* Idem pour les sorties *)
-let handle_guarantee node expr =
+let handle_guarantee node consts expr =
   let id =
     try
-      Utils.find_ident_in_pexpr expr
+      Utils.find_ident_in_pexpr expr consts
     with Two_ident (id1, id2) -> raise (Assert_id_error id1) 
   in
   match Utils.find_type id node.p_param_out with
@@ -138,13 +138,15 @@ let remove_terminator eq_list =
 
 (* Fonction principale de normalisation *)
 let normalize_node node const_list =
+  Printf.printf "\n\nNODE : %s" node.p_id;
   (* Normalisation des déclarations *)
   let inputs = p_decl_to_n_decl node.p_param_in in
   let outputs = p_decl_to_n_decl node.p_param_out in
   let vars = p_decl_to_n_decl node.p_vars in
   (* Normalisation des conditions *)
-  let assumes = List.map (handle_assume node) node.p_assumes in
-  let guarantees = List.map (handle_guarantee node) node.p_guarantees in
+  let consts = List.map (fun c -> c.c_id) const_list in
+  let assumes = List.map (handle_assume node consts) node.p_assumes in
+  let guarantees = List.map (handle_guarantee node consts) node.p_guarantees in
   (* Si une entrée/sortie n'a pas de condition, on ajoute une condition vide *)
   let add_non_existing_cond cond_list decl_list =
     List.fold_left (fun cond_l (id, t) ->

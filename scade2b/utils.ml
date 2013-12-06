@@ -321,10 +321,14 @@ and caret_to_def e1 e2 =
 exception Two_ident of (string * string)
 
 (* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)
-let find_ident_in_pexpr expr =
+let find_ident_in_pexpr expr consts =
+  Printf.printf "\nPASSE:";
+  List.iter (fun c -> Printf.printf " %s " c) consts;
+  let is_not_const id = not(List.mem id consts) in
   let id = ref "" in
   let rec ident_finder = function
-    | PE_Ident iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
+    | PE_Ident iden -> if (!id <> iden && (is_not_const iden) && (is_not_const !id)) 
+      then raise (Two_ident (!id, iden)) else Printf.printf "\n%s" iden; id := iden
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
     | PE_Call (_, _, elist) -> List.iter ident_finder elist
