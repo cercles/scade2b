@@ -18,10 +18,10 @@ MODS=\
     bimpl_generator \
     scheduler \
     normalizer \
-    lexer \
+    lexer_scade \
     parser_kcg \
     lexer_kcg \
-    parser \
+    parser_scade \
     trad \
     lexer_xml \
     printer_xml_ast \
@@ -29,7 +29,6 @@ MODS=\
     xml_utils \
     parser_xml \
     scade2b
-    #ast_printer \
 
 OBJS=$(addsuffix .cmo,$(MODS))
 BISECT_DIR=$(shell ocamlc -where)/../bisect/
@@ -70,8 +69,8 @@ clean:
 lexer_xml.cmo: parser_xml.cmo
 scade2b.cmo: parser_xml.cmo
 scade2b.cmo: lexer_xml.cmo
-scade2b.cmo: parser.cmo
-scade2b.cmo: lexer.cmo
-lexer.cmo: parser.cmo
+scade2b.cmo: parser_scade.cmo
+scade2b.cmo: lexer_scade.cmo
+lexer_scade.cmo: parser_scade.cmo
 
 -include .depends
