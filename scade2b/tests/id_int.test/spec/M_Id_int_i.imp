@@ -1,6 +1,6 @@
 IMPLEMENTATION M_Id_int_i
 REFINES M_Id_int
-IMPORTS  , M_Enum
+IMPORTS M_Enum
 
 
 
