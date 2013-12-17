@@ -191,7 +191,7 @@ let e_t_r_prog prog_list =
 (******************** Creation de la liste d'imports ordonnée ********************)
 
 (* In : xml_nodes
-   Out : (id * id list) list , liste de couples (node, instances associées) *)
+   Out : (id * id list) list , liste de couples (node, instances associees) *)
 let retrieve_instances_list xml_nodes =
   let get_instance_ids instances =
     List.map (fun instance -> instance.inst_name) instances
@@ -238,7 +238,7 @@ let build_imports_map xml_nodes =
     Imports_map.empty xml_nodes
 
 
-(********************  Mise à jour de la nodename_imports_map ********************)
+(********************  MAJ de la nodename_imports_map ********************)
 
 let update_imports_map xml_map ast =
   let node_ident = ast.n_id in
@@ -254,65 +254,3 @@ let update_imports_map xml_map ast =
 
 (******************** MISC / OLD ********************)
 
-
-(* let get_instances node map = *)
-(*   let inst_list = XML_prog.find node map in *)
-(*   let dummy_list = ref [] in *)
-(*   let list_with_instances, list_without = *)
-(*     List.partition (fun a -> let res = List.mem a.i_node_name !dummy_list in *)
-(* 		    dummy_list := (a.i_node_name) :: !dummy_list; res) inst_list in *)
-(*   list_with_instances, list_without *)
-    
-(* let get_imports node map = *)
-(*   let list_ok *)
-
-
-    
-
-(* let retrieve_opts_node_instance option_list = *)
-(*   List.fold_left (fun (scadename, instname) o -> match o with  *)
-(* 		    | ScadeName id -> (id, instname) *)
-(* 		    | InstName id -> (scadename, id) *)
-(* 		    | _ -> assert false *)
-(* 		 ) ("", "") option_list *)
-
-(* let retrieve_inputs_outputs nbs = *)
-(*   List.fold_left (fun (inputs, outputs) nb -> match nb with  *)
-(* 		    | Input opts -> (opts :: inputs, outputs) *)
-(* 		    | Output opts -> (inputs, opts :: outputs ) *)
-(* 		    | _ -> (inputs, outputs) *)
-(* 		 ) ([], []) nbs *)
-
-(* let retrieve_inputs_outputs_options options = *)
-(*   List.fold_left (fun (scadename, targettype) o -> match o with  *)
-(* 		    | ScadeName id -> (id, targettype) *)
-(* 		    | TargetType id -> (scadename, id) *)
-(* 		    | _ -> (scadename, targettype) *)
-(* 		 ) ("", "") options *)
-
-(* let retrieve_node_name options = *)
-(*   List.fold_left (fun name o -> match o with  *)
-(* 		    | ScadeName id -> id *)
-(* 		    | _ -> assert false ) "" options *)
-    
-
-
-(* type xml_node_decl = *)
-(*     { xmlu_node_name : ident; *)
-(*       xmlu_ins : (ident * ident) list; *)
-(*       xmlu_outs : (ident * ident) list; *)
-(*     } *)
-
-(* let get_node xml_ast name = *)
-(*   let node = List.find *)
-(*     (fun node_or_arraytype -> match node_or_arraytype with *)
-(*        | Node (options, nbs) | Root (options, nbs) ->  *)
-(* 	   let node_name = retrieve_node_name options in *)
-(* 	   node_name = name *)
-(*        | _ -> false *)
-(*     ) xml_ast in *)
-(*   let node = match node with Node (_, nbs) | Root (_, nbs) -> nbs | _ -> assert false in *)
-(*   let inputs, outputs = retrieve_inputs_outputs node in *)
-(*   let ins = List.map retrieve_inputs_outputs_options inputs in *)
-(*   let outs = List.map retrieve_inputs_outputs_options outputs in *)
-(*   { xmlu_node_name = name; xmlu_ins = ins; xmlu_outs = outs; } *)

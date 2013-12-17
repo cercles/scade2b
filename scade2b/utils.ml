@@ -221,23 +221,11 @@ let search_input_in_reg eqs ins pres lambdas =
     end
   in
   fun_rec eqs ins pres lambdas
+
+
 	
 (*                          2) Traduction                           *)
 
-(* let imports_list_to_map imports = *)
-(*   List.fold_left (fun map import -> match import.params_index with *)
-(* 		    | Some p when (List.length p) > 0 ->  *)
-(* 		        MAP_import.add import.import_name {map_int = p; map_iident = import.instance_id} map *)
-(* 		    | None -> map *)
-(* 		    | _ -> map ) MAP_import.empty imports *)
-
-
-(* let print_imports_bis imports = *)
-(*   Printf.printf "\n\n !!!!!!!!!!!!!!!!!IMPRESSION DE MAP IMPORT : \n"; *)
-(*   let print_import (id, a) = *)
-(*     Printf.printf "    m%s.%s   " a.map_iident id *)
-(*   in *)
-(*    List.iter print_import imports *)
 
 let print_imports_out imps =
   List.iter (fun imp -> match imp.b_params_expr with 
@@ -333,10 +321,14 @@ and caret_to_def e1 e2 =
 exception Two_ident of (string * string)
 
 (* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)
-let find_ident_in_pexpr expr =
+let find_ident_in_pexpr expr consts =
+  Printf.printf "\nPASSE:";
+  List.iter (fun c -> Printf.printf " %s " c) consts;
+  let is_not_const id = not(List.mem id consts) in
   let id = ref "" in
   let rec ident_finder = function
-    | PE_Ident iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
+    | PE_Ident iden -> if (!id <> iden && (is_not_const iden) && (is_not_const !id)) 
+      then raise (Two_ident (!id, iden)) else Printf.printf "\n%s" iden; id := iden
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
     | PE_Call (_, _, elist) -> List.iter ident_finder elist
@@ -420,8 +412,6 @@ let p_const_to_b_const const =
     | PT_Array (_, _) -> (
       let typ, dims = flatten_array t in 
       Const_Fun (id, typ, dims, p_expr_to_b_expr e))
-
-
 
 
 

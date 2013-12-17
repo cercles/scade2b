@@ -18,7 +18,7 @@ let handle_error (start, finish, lex) =
   let line = start.pos_lnum in
   let first_char = start.pos_cnum - start.pos_bol + 1 in
   let last_char = finish.pos_cnum - start.pos_bol + 1 in
-  Printf.eprintf "line %d, characters %d-%d %s\n" line first_char last_char lex
+  Printf.eprintf "line %d, characters %d-%d : lexeme %s\n" line first_char last_char lex
 
 let spec =
   ["-parse-only", Arg.Set parse_only, "stops after parsing";
@@ -102,12 +102,14 @@ let () =
   Benum_generator.print_m_enum prog.enum_types benum_file prog.env_prog;
 
   (* Traduction de chaque noeud du programme *)
-  let node_translator node imports_map =    
+  let node_translator node imports_map =
     let node_name = node.node_name in
     let scade_node = node.ast_scade in
     let node_xml = node.node_xml in
+    let id_consts = List.map (fun cst -> cst.c_id) prog.consts in
     match scade_node with
-      | None -> Utils.generate_error_machine node_xml main_dir; imports_map
+      | None -> Utils.generate_error_machine node_xml main_dir; 
+	imports_map
       | Some ast -> begin
 	  let import_list =
 	    try
@@ -116,18 +118,16 @@ let () =
 	  in
 	  try
 	    let ast_n = Normalizer.normalize_node ast prog.consts in
-	    (* Retrieve constants ids *)
-	    let id_consts = List.map (fun cst -> cst.c_id) prog.consts in
 	    let ast_b = Trad.translate ast_n import_list id_consts in
-	    (* let ast_b = Machine_rennaming.machine_renn ast_b in *)
-	    let is_root = node_xml.is_root in
+	    (* Impression des machines *)
 	    let babst_file =
 	      open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-	    Babst_generator.print_prog ast_b.machine_abstraite babst_file is_root;
+	    Babst_generator.print_prog ast_b.machine_abstraite babst_file node_xml.is_root;
 	    close_out babst_file;
 	    let bimpl_file =
 	      open_out (Filename.concat main_dir ("M_" ^ node_name ^ "_i.imp")) in
-	    Bimpl_generator.print_prog ast_b.implementation bimpl_file is_root prog.env_instances prog.env_prog;
+	    Bimpl_generator.print_prog 
+	      ast_b.implementation bimpl_file node_xml.is_root prog.env_instances prog.env_prog;
 	    close_out bimpl_file;
 	    Xml_utils.update_imports_map imports_map ast_n
 	  with
