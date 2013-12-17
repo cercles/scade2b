@@ -55,10 +55,15 @@ cleanall: realclean
 #                        |   diff    |       | out == spec |
 #                        +-----------+       +-------------+
 
+CHECK_EXEC?=$(MAIN)
+
+check_cov:
+	$(MAKE) check CHECK_EXEC=$(MAIN).cov
+
 check: $(patsubst %.test, %.ok, $(wildcard tests/*.test))
 
-%/Machines_B/: % $(MAIN)
-	./$(MAIN) $</
+%/Machines_B/: % $(CHECK_EXEC)
+	./$(CHECK_EXEC) $</
 
 %.diff: %.test/spec %.test/Machines_B
 	diff -Nru $+ | tee $@

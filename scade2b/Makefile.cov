@@ -56,7 +56,7 @@ $(EXEC): $(OBJS)
 	    $+
 
 tests: $(EXEC)
-	./$< TODO
+	$(MAKE) check_cov
 
 report:
 	bisect-report `find . -name 'bisect*.out'` -html bisect-report
