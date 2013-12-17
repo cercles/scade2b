@@ -1,0 +1,8 @@
+function Op_plus(xx : int; yy : int)
+  returns (rr : int)
+var
+  zz : int;
+let
+  zz = xx + yy;
+  rr = zz;
+tel
