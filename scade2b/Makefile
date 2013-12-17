@@ -57,7 +57,7 @@ cleanall: realclean
 
 check: $(patsubst %.test, %.ok, $(wildcard tests/*.test))
 
-%/Machines_B: % $(MAIN)
+%/Machines_B/: % $(MAIN)
 	./$(MAIN) $</
 
 %.diff: %.test/spec %.test/Machines_B
@@ -67,3 +67,6 @@ check: $(patsubst %.test, %.ok, $(wildcard tests/*.test))
 # -s : file exists and is not empty
 %.ok: %.diff
 	[ -e $< -a ! -s $< ] && touch $@
+
+check_clean:
+	rm -r tests/*/Machines_B/
