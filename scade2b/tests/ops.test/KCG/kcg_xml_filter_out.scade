@@ -6,3 +6,12 @@ let
   zz = xx + yy;
   rr = zz;
 tel
+
+function Op_minus(xx : int; yy : int)
+  returns (rr : int)
+var
+  zz : int;
+let
+  zz = xx - yy;
+  rr = zz;
+tel

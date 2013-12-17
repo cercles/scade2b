@@ -6,4 +6,10 @@
     <Output scadeName="rr" scadeType="int" targetName="rr" targetType="kcg_int"/>
     <Local scadeName="zz" scadeType="int" targetName="zz" targetType="kcg_int"/>
   </NoExpNode>
+  <NoExpNode scadeName="Op_minus" targetCycleFct="Op_minus">
+    <Input scadeName="xx" scadeType="int" targetName="xx" targetType="kcg_int"/>
+    <Input scadeName="yy" scadeType="int" targetName="yy" targetType="kcg_int"/>
+    <Output scadeName="rr" scadeType="int" targetName="rr" targetType="kcg_int"/>
+    <Local scadeName="zz" scadeType="int" targetName="zz" targetType="kcg_int"/>
+  </NoExpNode>
 </Model>
