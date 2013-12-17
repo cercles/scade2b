@@ -34,36 +34,36 @@ realclean: clean
 
 cleanall: realclean
 
-#  +---------+              +--------+
-#  | %.scade |   scade2b    |  %.out |
-#  |         |              |        |
-#  | Source  |  --------->  | Actual |
-#  |  code   |              | output |
-#  +---------+              +--------+
+# +----------+              +-----------------+
+# | dir/KCG/ |   scade2b    | dir/Machines_B/ |
+# |          |              |                 |
+# | Source   |  --------->  |     Actual      |
+# |  code    |              |     output      |
+# +----------+              +-----------------+
 #                               |
-# +----------+                  |           *.ok all exist
-# |  %.spec  |                  |                 ==
-# |          |                  |             tests pass
-# | Expected | -------------+   |
-# |  output  |              |   |                 /\
-# +----------+              |   |                 ||
-#                           v   v                 ||
-#  \___  ___/            +---------+       +-------------+
-#      \/                | %.diff  |       |    %.ok     |
-#                        |         |       |             |
-#    in git              | Unified | ----> |  Exists if  |
-#                        |  diff   |       | out == spec |
-#                        +---------+       +-------------+
+# +-----------+                 |            *.ok all exist
+# | dir/spec/ |                 |                  ==
+# |           |                 |              tests pass
+# | Expected  | -------------+  |
+# |  output   |              |  |                  /\
+# +-----------+              |  |                  ||
+#                            v  v                  ||
+#  \___  ___/            +-----------+       +-------------+
+#      \/                | dir.diff  |       |    dir.ok   |
+#                        |           |       |             |
+#    in git              |  Unified  | ----> |  Exists if  |
+#                        |   diff    |       | out == spec |
+#                        +-----------+       +-------------+
 
-check: $(patsubst %.scade, %.ok, $(wildcard tests/*.scade))
+check: $(patsubst %.test, %.ok, $(wildcard tests/*.test))
 
-%.out: %.scade $(MAIN)
-	./$(MAIN) --runtest $< > $@
+%/Machines_B: % $(MAIN)
+	./$(MAIN) $</
 
-%.diff: %.out %.spec
-	diff -Nru $+ > $@
+%.diff: %.test/spec %.test/Machines_B
+	diff -Nru $+ | tee $@
 
+# -e : file exists
+# -s : file exists and is not empty
 %.ok: %.diff
-	# -e : file exists
-	# -s : file exists and is not empty
 	[ -e $< -a ! -s $< ] && touch $@
