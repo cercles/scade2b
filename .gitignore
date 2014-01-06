@@ -1,18 +1,14 @@
 *~
 *#*
-src/*~
-src/_build
-src/*#*
-src/tests
-src/cercles
 
 scade2b/*~
 scade2b/_build
 scade2b/*#*
 scade2b/scade2b
+scade2b/nav_tests
 
-examples/
+rapport/
 presentation/
-
+doc/
 notes/
 reunion/
