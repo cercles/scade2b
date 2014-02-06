@@ -63,10 +63,12 @@ and print_expr ppt = function
 	    fprintf ppt "(%a (%a))" print_op_arith op print_expr (List.hd e_list)
 	| _ -> fprintf ppt "%a %a" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
     )
-  | BE_Op_Logic (op, e_list) when op = Op_sharp -> 
+  | BE_Op_Logic (op, e_list) when op = Op_sharp ->
       fprintf ppt "sharp(%a)" print_e_list e_list
-  | BE_Op_Logic (op, e_list) when op = Op_xor -> 
-      fprintf ppt "xor(%a)" print_e_list e_list
+  | BE_Op_Logic (Op_xor, [x; y]) ->
+      fprintf ppt "%a /= %a" print_expr x print_expr y
+  | BE_Op_Logic (Op_xor, _) ->
+          failwith "Non-binary xor"
   | BE_Op_Logic (op, e_list) when op = Op_not -> 
       fprintf ppt "bool(%a(%a = TRUE))" print_op_logic op print_expr (List.hd e_list)
   | BE_Op_Logic (op, e_list) -> 
