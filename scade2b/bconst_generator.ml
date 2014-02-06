@@ -29,11 +29,6 @@ let rec print_opa_list op ppt = function
   | [v] -> fprintf ppt "%a %a" print_op_arith op print_expr v
   | v::l -> fprintf ppt "%a %a" print_expr v print_e_list l
 
-and print_opl_list op ppt = function 
-  | [] -> ()
-  | [v] -> fprintf ppt "%a %a = TRUE" print_op_logic op print_expr v
-  | v::l -> fprintf ppt "%a %a = TRUE %a" print_op_logic op print_expr v print_e_list l
-
 and print_e_list ppt = function 
   | [] -> ()
   | [v] -> fprintf ppt "%a" print_expr v
@@ -53,14 +48,14 @@ and print_expr ppt = function
 	    fprintf ppt "(%a (%a))" print_op_arith op print_expr (List.hd e_list)
 	| _ -> fprintf ppt "%a %a" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
     )
-  | BE_Op_Logic (op, e_list) when op = Op_sharp -> 
+  | BE_Op_Sharp e_list ->
       fprintf ppt "sharp(%a)" print_e_list e_list
-  | BE_Op_Logic (op, e_list) when op = Op_xor -> 
-      fprintf ppt "xor(%a)" print_e_list e_list
-  | BE_Op_Logic (op, e_list) when op = Op_not -> 
-      fprintf ppt "bool(%a(%a = TRUE))" print_op_logic op print_expr (List.hd e_list)
-  | BE_Op_Logic (op, e_list) -> 
-      fprintf ppt "bool(%a = TRUE %a)" print_expr (List.hd e_list) (print_opl_list op) (List.tl e_list)
+  | BE_Op_Logic (Op_xor, e1, e2) ->
+      fprintf ppt "%a /= %a" print_expr e1 print_expr e2
+  | BE_Op_Not e ->
+      fprintf ppt "bool(not (%a = TRUE))" print_expr e
+  | BE_Op_Logic (op, e1, e2) ->
+      fprintf ppt "bool(%a = TRUE %a %a = TRUE)" print_expr e1 print_op_logic op print_expr e2
   
 and print_array ppt = function 
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
@@ -107,9 +102,7 @@ and print_op_arith ppt = function
 and print_op_logic ppt = function
   | Op_and -> fprintf ppt "&"
   | Op_or -> fprintf ppt "or"
-  | Op_not -> fprintf ppt "not "
   | Op_xor -> assert false
-  | Op_sharp -> assert false
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"

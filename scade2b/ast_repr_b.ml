@@ -6,7 +6,9 @@ type b_expression =
   BE_Ident of ident
 | BE_Value of value
 | BE_Op_Arith of op_arith * b_expression list
-| BE_Op_Logic of op_logic * b_expression list
+| BE_Op_Sharp of b_expression list
+| BE_Op_Not of b_expression
+| BE_Op_Logic of op_logic * b_expression * b_expression
 | BE_Array of array_expr
 
 and array_expr =

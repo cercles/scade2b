@@ -18,4 +18,4 @@ type op_arith =
 | Op_div_f | Op_minus | Op_cast_real | Op_cast_int
 
 type op_logic =
-  Op_and | Op_or | Op_xor | Op_not | Op_sharp
+  Op_and | Op_or | Op_xor

@@ -21,7 +21,9 @@ let rec p_expr_to_n_expr = function
   | PE_Value v -> NE_Value v
   | PE_Array array -> NE_Array (p_array_to_n_array array)
   | PE_Op_Arith (op, e_list) -> NE_Op_Arith (op, (List.map p_expr_to_n_expr e_list))
-  | PE_Op_Logic (op, e_list) -> NE_Op_Logic (op, (List.map p_expr_to_n_expr e_list))
+  | PE_Op_Logic (op, e1, e2) -> NE_Op_Logic (op, p_expr_to_n_expr e1, p_expr_to_n_expr e2)
+  | PE_Op_Sharp e_list -> NE_Op_Sharp (List.map p_expr_to_n_expr e_list)
+  | PE_Op_Not e -> NE_Op_Not (p_expr_to_n_expr e)
   | _ -> raise (Normalisation_Error "Une equation n'est pas atomique") 
 
 and p_array_to_n_array = function

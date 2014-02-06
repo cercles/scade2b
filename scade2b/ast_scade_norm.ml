@@ -6,7 +6,9 @@ type n_expression =
     NE_Ident of ident
   | NE_Value of value
   | NE_Op_Arith of op_arith * n_expression list
-  | NE_Op_Logic of op_logic * n_expression list
+  | NE_Op_Logic of op_logic * n_expression * n_expression
+  | NE_Op_Sharp of n_expression list
+  | NE_Op_Not of n_expression
   | NE_Array of n_array_expr
 
 and n_array_expr =

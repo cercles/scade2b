@@ -161,11 +161,11 @@ expr :
  | MINUS expr { PE_Op_Arith (Op_minus, [$2]) }
  | T_REAL expr { PE_Op_Arith (Op_cast_real, [$2]) } 
  | T_INT expr { PE_Op_Arith (Op_cast_int, [$2]) } 
- | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Logic (Op_sharp, ($3 :: $5)) }
- | expr AND expr { PE_Op_Logic (Op_and, [$1; $3]) }
- | expr OR expr { PE_Op_Logic (Op_or, [$1; $3]) }
- | expr XOR expr { PE_Op_Logic (Op_xor, [$1; $3]) }
- | NOT expr { PE_Op_Logic (Op_not, [$2]) }
+ | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Sharp ($3 :: $5) }
+ | expr AND expr { PE_Op_Logic (Op_and, $1, $3) }
+ | expr OR expr { PE_Op_Logic (Op_or, $1, $3) }
+ | expr XOR expr { PE_Op_Logic (Op_xor, $1, $3) }
+ | NOT expr { PE_Op_Not $2 }
  | FBY LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Fby ($3, $5, $7) }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
  | LPAREN PRAGMA IDENT DOUBLE_COLON IDENT DOUBLE_CHEVIN expr_list DOUBLE_CHEVOUT RPAREN LPAREN expr_list RPAREN 
