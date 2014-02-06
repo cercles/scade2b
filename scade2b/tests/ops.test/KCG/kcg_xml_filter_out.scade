@@ -24,3 +24,14 @@ let
   zz = xx xor yy;
   rr = zz;
 tel
+
+function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
+  returns (rr : bool)
+var
+  zz : bool;
+let
+  zz = ((aa <= bb) or (aa >= bb))
+   and ((cc <  dd) or (cc >  dd))
+   and ((ee =  ff) or (ee <> ff));
+  rr = zz;
+tel
