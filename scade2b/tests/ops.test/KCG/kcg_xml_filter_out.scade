@@ -35,3 +35,14 @@ let
    and ((ee =  ff) or (ee <> ff));
   rr = zz;
 tel
+
+function Op_unops(aa: int)
+  returns (rr: int)
+var
+ bb: int;
+ cc: int;
+let
+  bb = -aa;
+  cc = int (real 0);
+  rr = bb + cc;
+tel

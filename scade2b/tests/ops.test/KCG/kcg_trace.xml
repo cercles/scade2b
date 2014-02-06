@@ -28,4 +28,10 @@
     <Output scadeName="rr" scadeType="bool" targetName="rr" targetType="kcg_bool"/>
     <Local scadeName="zz" scadeType="bool" targetName="zz" targetType="kcg_bool"/>
   </NoExpNode>
+  <NoExpNode scadeName="Op_unops" targetCycleFct="Op_unops">
+    <Input scadeName="aa" scadeType="int" targetName="aa" targetType="kcg_int"/>
+    <Output scadeName="rr" scadeType="int" targetName="rr" targetType="kcg_int"/>
+    <Local scadeName="bb" scadeType="int" targetName="bb" targetType="kcg_int"/>
+    <Local scadeName="cc" scadeType="int" targetName="cc" targetType="kcg_int"/>
+  </NoExpNode>
 </Model>
