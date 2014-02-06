@@ -24,12 +24,7 @@ let print_value ppt = function
   | Int i -> fprintf ppt "%d" i
   | Float f -> fprintf ppt "%f" f
 
-let rec print_opa_list op ppt = function 
-  | [] -> ()
-  | [v] -> fprintf ppt "%a %a" print_op_arith op print_expr v
-  | v::l -> fprintf ppt "%a %a" print_expr v print_e_list l
-
-and print_e_list ppt = function 
+let rec print_e_list ppt = function
   | [] -> ()
   | [v] -> fprintf ppt "%a" print_expr v
   | v::l -> fprintf ppt "%a, %a" print_expr v print_e_list l
@@ -38,15 +33,18 @@ and print_expr ppt = function
   | BE_Ident id -> print_bid ppt id
   | BE_Value v -> print_value ppt v
   | BE_Array ar -> print_array ppt ar
-  | BE_Op_Arith (op, e_list) -> (
+  | BE_Op_Arith1 (op, e) -> (
       match op with 
-	| Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge ->
-	    fprintf ppt "bool(%a %a)" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
 	| Op_minus ->  
-	    fprintf ppt "(%a%a)" print_op_arith op print_expr (List.hd e_list)
+	    fprintf ppt "(%a%a)" print_op_arith1 op print_expr e
 	| Op_cast_real | Op_cast_int ->  
-	    fprintf ppt "(%a (%a))" print_op_arith op print_expr (List.hd e_list)
-	| _ -> fprintf ppt "%a %a" print_expr (List.hd e_list) (print_opa_list op) (List.tl e_list)
+	    fprintf ppt "(%a (%a))" print_op_arith1 op print_expr e
+    )
+  | BE_Op_Arith2 (op, e1, e2) -> (
+      match op with
+	| Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge ->
+            fprintf ppt "bool(%a %a %a)" print_expr e1 print_op_arith2 op print_expr e2
+        | _ -> fprintf ppt "%a %a %a" print_expr e1 print_op_arith2 op print_expr e2
     )
   | BE_Op_Sharp e_list ->
       fprintf ppt "sharp(%a)" print_e_list e_list
@@ -82,7 +80,12 @@ and print_index_list ppt = function
   | [(e)] -> fprintf ppt "%a" print_expr e
   | (e)::l -> fprintf ppt "%a, %a" print_expr e print_index_list l
 
-and print_op_arith ppt = function
+and print_op_arith1 ppt = function
+  | Op_minus -> fprintf ppt "-"
+  | Op_cast_real -> fprintf ppt "REAL"
+  | Op_cast_int -> fprintf ppt "INT"
+
+and print_op_arith2 ppt = function
   | Op_eq -> fprintf ppt "="
   | Op_neq -> fprintf ppt "/="
   | Op_lt -> fprintf ppt "<"
@@ -95,9 +98,6 @@ and print_op_arith ppt = function
   | Op_div -> fprintf ppt "/"
   | Op_mod -> fprintf ppt "mod"
   | Op_div_f -> fprintf ppt "/"
-  | Op_minus -> fprintf ppt "-"
-  | Op_cast_real -> fprintf ppt "REAL"
-  | Op_cast_int -> fprintf ppt "INT"
 
 and print_op_logic ppt = function
   | Op_and -> fprintf ppt "&"

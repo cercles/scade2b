@@ -22,7 +22,8 @@ let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
   | NE_Value v -> BE_Value v
   | NE_Array ar -> BE_Array (n_array_to_b_array env ar)
-  | NE_Op_Arith (op, e_list) -> BE_Op_Arith (op, (List.map (n_expr_to_b_expr env) e_list))
+  | NE_Op_Arith1 (op, e) -> BE_Op_Arith1 (op, n_expr_to_b_expr env e)
+  | NE_Op_Arith2 (op, e1, e2) -> BE_Op_Arith2 (op, n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
   | NE_Op_Logic (op, e1, e2) -> BE_Op_Logic (op, n_expr_to_b_expr env e1,n_expr_to_b_expr env e2)
   | NE_Op_Sharp e_list -> BE_Op_Sharp (List.map (n_expr_to_b_expr env) e_list)
   | NE_Op_Not e -> BE_Op_Not (n_expr_to_b_expr env e)
