@@ -20,11 +20,6 @@ let print_instname imp_name ppt inst_id =
   in
   if bid = "" then () else fprintf ppt "%s." bid
 
-let rec print_idlist_comma ppt = function
-  | [] -> ()
-  | [id] -> fprintf ppt "%a" print_bid id
-  | id::l -> fprintf ppt "%a, %a" print_bid id print_idlist_comma l
-
 let rec print_e_list ppt = function
   | [] -> ()
   | [v] -> fprintf ppt "%a" print_expr v
