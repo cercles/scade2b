@@ -5,11 +5,6 @@ open Ast_repr_b
 open Ast_base
 open Printer
 
-let print_basetype ppt = function
-  | T_Bool -> fprintf ppt "%s" "BOOL"
-  | T_Int -> fprintf ppt "%s" "INT"
-  | T_Float -> fprintf ppt "%s" "REAL"
-
 let rec print_dim_list ppt = function
   | [] -> ()
   | [BE_Value (Int i)] -> fprintf ppt "0 .. %a" print_value (Int (i-1))

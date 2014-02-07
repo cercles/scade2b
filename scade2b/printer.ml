@@ -115,3 +115,8 @@ let rec print_index_list ppt = function
   | [] -> ()
   | [(e)] -> fprintf ppt "%a" print_expr e
   | (e)::l -> fprintf ppt "%a, %a" print_expr e print_index_list l
+
+let print_basetype ppt = function
+  | T_Bool -> fprintf ppt "%s" "BOOL"
+  | T_Int -> fprintf ppt "%s" "INT"
+  | T_Float -> fprintf ppt "%s" "REAL"
