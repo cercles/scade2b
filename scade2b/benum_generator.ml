@@ -6,16 +6,10 @@ open Ast_scade_norm
 open Ast_prog
 open Printer
 
-
-let rec print_elt_list ppt = function
-  | [] -> ()
-  | [e] -> fprintf ppt "%a" print_bid e
-  | e::l -> fprintf ppt "%a, %a" print_bid e print_elt_list l 
-
 let print_enum ppt enum =
   fprintf ppt "%s = {%a}" 
     enum.p_enum_id
-    print_elt_list enum.p_enum_list
+    print_idlist_comma enum.p_enum_list
 
 let rec print_enum_list ppt = function 
   | [] -> ()
