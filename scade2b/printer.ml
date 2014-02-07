@@ -105,3 +105,11 @@ let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
+
+let print_sees ppt = function
+    | [] -> ()
+    | sees_l -> fprintf ppt "SEES %a" print_idlist_comma sees_l
+
+let print_params_machine ppt = function
+    | [] -> ()
+    | params_machine -> fprintf ppt "(%a)" print_idlist_comma params_machine

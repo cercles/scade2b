@@ -153,10 +153,6 @@ let string_of_formatter print x =
   print ppt x;
   Buffer.contents buf
 
-let print_list_comma print ppt l =
-  fprintf ppt "%s"
-    (String.concat ", " (List.map (string_of_formatter print) l))
-
 let print_imports_root sees ppt imports =
   let print_import ppt import =
     match import.b_params_expr with
@@ -187,20 +183,10 @@ let print_imports ppt imports =
 	    print_expr_list p
   in
   if imports != [] then
-    fprintf ppt "IMPORTS %a" (print_list_comma print_import) imports
-
-let print_sees ppt sees_l =
-  if (List.length sees_l) = 0 then () 
-  else 
-    fprintf ppt "SEES %a" print_idlist_comma sees_l
+    fprintf ppt "IMPORTS %a" (print_list print_import) imports
 
 let print_refines ppt id =
   fprintf ppt "REFINES %s" id
-
-let print_params_machine ppt params_machine =
-  if (List.length params_machine) = 0 then () 
-  else 
-    fprintf ppt "(%a)" print_idlist_comma params_machine
 
 let print_implementation ppt impl_name =
   fprintf ppt "%s" impl_name

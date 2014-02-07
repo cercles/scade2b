@@ -89,24 +89,13 @@ let print_operation ppt abstop =
     print_prelist abstop.abstop_pre
     print_thenlist abstop.abstop_post
 
-let print_sees ppt mach_list =
-  if (List.length mach_list) = 0 then () 
-  else 
-    fprintf ppt "SEES %a" print_idlist_comma mach_list
-
 let print_constraints ppt constraints =
   if (List.length constraints) = 0 then () 
   else 
     fprintf ppt "CONSTRAINTS@\n  %a" print_prelist constraints
 
-let print_params_machine ppt params_machine =
-  if (List.length params_machine) = 0 then () 
-  else 
-    fprintf ppt "(%a)" print_idlist_comma params_machine
-
 let print_id_machine ppt id_machine =
   fprintf ppt "%s" id_machine
-
 
 let print_machine_root ppt b_abst =
   fprintf ppt
