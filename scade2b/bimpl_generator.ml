@@ -81,31 +81,6 @@ and print_expr_list ppt = function
   | [(e)] -> fprintf ppt "%a" print_expr e
   | (e)::l -> fprintf ppt "%a, %a" print_expr e print_expr_list l
 
-and print_op_arith1 ppt = function
-  | Op_minus -> fprintf ppt "-"
-  | Op_cast_real -> fprintf ppt "REAL"
-  | Op_cast_int -> fprintf ppt "INT"
-
-and print_op_arith2 ppt = function
-  | Op_eq -> fprintf ppt "="
-  | Op_neq -> fprintf ppt "/="
-  | Op_lt -> fprintf ppt "<"
-  | Op_le -> fprintf ppt "<="
-  | Op_gt -> fprintf ppt ">"
-  | Op_ge -> fprintf ppt ">="
-  | Op_add -> fprintf ppt "+"
-  | Op_sub -> fprintf ppt "-"
-  | Op_mul -> fprintf ppt "*"
-  | Op_div -> fprintf ppt "/"
-  | Op_mod -> fprintf ppt "mod"
-  | Op_div_f -> fprintf ppt "/"
-
-
-and print_op_logic ppt = function
-  | Op_and -> fprintf ppt "&"
-  | Op_or -> fprintf ppt "or"
-  | Op_xor -> assert false
-
 
 let print_lp ppt = function
   | BLP_Ident id -> print_bid ppt id
