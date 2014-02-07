@@ -5,12 +5,10 @@ open Ast_repr_b
 open Ast_base
 open Ast_prog
 open Ast_scade_norm
+open Printer
 
 let env_instances = ref Env_instances.empty
 let node_name = ref ""
-
-let print_bid ppt id =
-  fprintf ppt "%s" id
 
 let print_instname imp_name ppt inst_id =
   
@@ -22,17 +20,10 @@ let print_instname imp_name ppt inst_id =
   in
   if bid = "" then () else fprintf ppt "%s." bid
 
-
 let rec print_idlist_comma ppt = function
   | [] -> ()
   | [id] -> fprintf ppt "%a" print_bid id
   | id::l -> fprintf ppt "%a, %a" print_bid id print_idlist_comma l
-
-let print_value ppt = function
-  | Bool b -> fprintf ppt "%s" (if b then "TRUE" else "FALSE")
-  | Int i -> fprintf ppt "%d" i
-  | Float f -> fprintf ppt "%f" f
-
 
 let rec print_e_list ppt = function
   | [] -> ()
