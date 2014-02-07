@@ -9,6 +9,7 @@ MODS=\
     ast_scade_norm \
     ast_scade \
     ast_xml \
+    printer \
     babst_generator \
     babsterror_generator \
     benum_generator \
