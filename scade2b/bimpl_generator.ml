@@ -39,7 +39,7 @@ let print_call ppt f =
     print_lp f.call_lp
     (print_instname f.call_id) f.call_instance
     f.call_id
-    print_e_list f.call_params
+    print_expr_list f.call_params
     
 let print_op ppt o =
   fprintf ppt "%a := %a"
