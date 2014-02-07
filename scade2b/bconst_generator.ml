@@ -9,12 +9,6 @@ open Ast_scade_norm
 open Printer
 
 
-let env = ref Env.empty
-
-let print_bid ppt id =
-  let bid = Env.find id !env in
-  fprintf ppt "%s" bid
-
 let rec print_idlist_comma ppt = function
   | [] -> ()
   | [id] -> fprintf ppt "%a" print_bid id
@@ -134,5 +128,6 @@ let print_machine ppt const_list =
     print_properties const_list 
 
 let print_m_const const_list file prog_env =
-  env := prog_env;
-  fprintf (formatter_of_out_channel file) "%a@." print_machine const_list
+    with_env prog_env (fun () ->
+        fprintf (formatter_of_out_channel file) "%a@." print_machine const_list
+    )

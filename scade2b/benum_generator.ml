@@ -4,13 +4,8 @@ open Format
 open Ast_kcg
 open Ast_scade_norm
 open Ast_prog
+open Printer
 
-
-let env = ref Env.empty
-
-let print_bid ppt id =
-  let bid = Env.find id !env in
-  fprintf ppt "%s" bid
 
 let rec print_elt_list ppt = function
   | [] -> ()
@@ -38,5 +33,6 @@ let print_machine ppt enum_list =
     print_sets_clause enum_list
 
 let print_m_enum enum_list file env_prog =
-  env := env_prog;
-  fprintf (formatter_of_out_channel file) "%a@." print_machine enum_list
+    with_env env_prog (fun () ->
+        fprintf (formatter_of_out_channel file) "%a@." print_machine enum_list
+    )

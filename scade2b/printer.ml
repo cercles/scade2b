@@ -1,8 +1,24 @@
 open Ast_base
+open Ast_scade_norm
 open Format
 
+let env = ref None
+
 let print_bid ppt id =
-  fprintf ppt "%s" id
+    let bid = match !env with
+      | None -> id
+      | Some e -> Env.find id e
+    in
+    fprintf ppt "%s" bid
+
+let with_env e f =
+    (match !env with
+        | Some _ -> failwith "with_env: env should be None"
+        | None -> ());
+    env := Some e;
+    let r = f () in
+    env := None;
+    r
 
 let rec print_idlist_comma ppt = function
   | [] -> ()
