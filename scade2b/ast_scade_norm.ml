@@ -7,6 +7,7 @@ type n_expression =
   | NE_Value of value
   | NE_Op_Arith1 of op_arith1 * n_expression
   | NE_Op_Arith2 of op_arith2 * n_expression * n_expression
+  | NE_Op_Relat of op_relat * n_expression * n_expression
   | NE_Op_Logic of op_logic * n_expression * n_expression
   | NE_Op_Sharp of n_expression list
   | NE_Op_Not of n_expression

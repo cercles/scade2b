@@ -24,9 +24,25 @@ let rec n_expr_to_b_expr env = function
   | NE_Array ar -> BE_Array (n_array_to_b_array env ar)
   | NE_Op_Arith1 (op, e) -> BE_Op_Arith1 (op, n_expr_to_b_expr env e)
   | NE_Op_Arith2 (op, e1, e2) -> BE_Op_Arith2 (op, n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
-  | NE_Op_Logic (op, e1, e2) -> BE_Op_Logic (op, n_expr_to_b_expr env e1,n_expr_to_b_expr env e2)
   | NE_Op_Sharp e_list -> BE_Op_Sharp (List.map (n_expr_to_b_expr env) e_list)
-  | NE_Op_Not e -> BE_Op_Not (n_expr_to_b_expr env e)
+  | ( NE_Op_Logic _
+    | NE_Op_Not _
+    | NE_Op_Relat _
+    ) as e ->
+        BE_Pred (n_expr_to_b_pred env e)
+
+and n_expr_to_b_pred env = function
+  | NE_Op_Not e -> BP_Not (n_expr_to_b_pred env e)
+  | NE_Op_Logic (op, e1, e2) -> BP_Op_Logic (op, n_expr_to_b_pred env e1, n_expr_to_b_pred env e2)
+  | NE_Op_Relat (op, e1, e2) -> BP_Op_Relat (op, n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
+  | ( NE_Ident _
+    | NE_Value _
+    | NE_Array _
+    | NE_Op_Arith1 _
+    | NE_Op_Arith2 _
+    | NE_Op_Sharp _
+    ) as e ->
+        BP_Expr (n_expr_to_b_expr env e)
 
 and n_array_to_b_array env = function
   | NA_Def e_list -> BA_Def (List.map (n_expr_to_b_expr env) e_list)

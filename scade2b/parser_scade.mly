@@ -154,10 +154,10 @@ expr :
  | expr MOD expr { PE_Op_Arith2 (Op_mod, $1, $3) }
  | expr EQ expr { PE_Op_Arith2 (Op_eq, $1, $3) }
  | expr NEQ expr { PE_Op_Arith2 (Op_neq, $1, $3) }
- | expr INF expr { PE_Op_Arith2 (Op_lt, $1, $3) }
- | expr INFEQ expr { PE_Op_Arith2 (Op_le, $1, $3) }
- | expr SUP expr { PE_Op_Arith2 (Op_gt, $1, $3) }
- | expr SUPEQ expr { PE_Op_Arith2 (Op_ge, $1, $3) }
+ | expr INF expr { PE_Op_Relat (Op_lt, $1, $3) }
+ | expr INFEQ expr { PE_Op_Relat (Op_le, $1, $3) }
+ | expr SUP expr { PE_Op_Relat (Op_gt, $1, $3) }
+ | expr SUPEQ expr { PE_Op_Relat (Op_ge, $1, $3) }
  | MINUS expr { PE_Op_Arith1 (Op_minus, $2) }
  | T_REAL expr { PE_Op_Arith1 (Op_cast_real, $2) }
  | T_INT expr { PE_Op_Arith1 (Op_cast_int, $2) }

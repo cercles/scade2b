@@ -11,7 +11,7 @@ OPERATIONS
 
 rr <-- Op_xor(xx, yy) =
  VAR zz IN
-   zz := xx /= yy; 
+   zz := bool((xx = TRUE) /= (yy = TRUE)); 
    rr := zz
    
  END 

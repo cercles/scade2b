@@ -41,16 +41,18 @@ let print_op_arith1 ppt = function
 let print_op_arith2 ppt = function
   | Op_eq -> fprintf ppt "="
   | Op_neq -> fprintf ppt "/="
-  | Op_lt -> fprintf ppt "<"
-  | Op_le -> fprintf ppt "<="
-  | Op_gt -> fprintf ppt ">"
-  | Op_ge -> fprintf ppt ">="
   | Op_add -> fprintf ppt "+"
   | Op_sub -> fprintf ppt "-"
   | Op_mul -> fprintf ppt "*"
   | Op_div -> fprintf ppt "/"
   | Op_mod -> fprintf ppt "mod"
   | Op_div_f -> fprintf ppt "/"
+
+let print_op_relat ppt = function
+  | Op_lt -> fprintf ppt "<"
+  | Op_le -> fprintf ppt "<="
+  | Op_gt -> fprintf ppt ">"
+  | Op_ge -> fprintf ppt ">="
 
 let rec print_expr ppt = function
   | BE_Ident id -> print_bid ppt id
@@ -65,16 +67,29 @@ let rec print_expr ppt = function
     )
   | BE_Op_Arith2 (op, e1, e2) -> (
       match op with
-	| Op_eq | Op_neq | Op_lt | Op_le | Op_gt | Op_ge ->
+	| Op_eq | Op_neq ->
             fprintf ppt "bool(%a %a %a)" print_expr e1 print_op_arith2 op print_expr e2
         | _ -> fprintf ppt "%a %a %a" print_expr e1 print_op_arith2 op print_expr e2
     )
   | BE_Op_Sharp e_list ->
       fprintf ppt "sharp(%a)" print_expr_list e_list
-  | BE_Op_Logic (op, e1, e2) ->
-      print_op_logic ppt op e1 e2
-  | BE_Op_Not e ->
-      fprintf ppt "bool(not (%a = TRUE))" print_expr e
+  | BE_Pred p ->
+      fprintf ppt "bool%a" print_pred p
+
+and print_pred ppt = function
+  | BP_Op_Logic (op, p1, p2) ->
+    fprintf ppt "(%a %a %a)" print_pred p1 print_op op print_pred p2
+  | BP_Op_Relat (op, e1, e2) ->
+    fprintf ppt "(%a %a %a)" print_expr e1 print_op_relat op print_expr e2
+  | BP_Not p ->
+    fprintf ppt "(not %a)" print_pred p
+  | BP_Expr e ->
+    fprintf ppt "(%a = TRUE)" print_expr e
+
+and print_op ppt = function
+  | Op_and -> fprintf ppt "&"
+  | Op_or  -> fprintf ppt "or"
+  | Op_xor -> fprintf ppt "/="
 
 and print_expr_list ppt = print_list print_expr ppt
 
@@ -95,11 +110,6 @@ and print_def_list ppt e_list =
 
 and print_slice ppt (e1, e2) =
     fprintf ppt "(%a, %a)" print_expr e1 print_expr e2
-
-and print_op_logic ppt op e1 e2 = match op with
-  | Op_and -> fprintf ppt "bool(%a = TRUE & %a = TRUE)"  print_expr e1 print_expr e2
-  | Op_or  -> fprintf ppt "bool(%a = TRUE or %a = TRUE)" print_expr e1 print_expr e2
-  | Op_xor -> fprintf ppt "%a /= %a" print_expr e1 print_expr e2
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"

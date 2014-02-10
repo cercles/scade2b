@@ -11,7 +11,7 @@ OPERATIONS
 
 rr <-- Op_cmp(aa, bb, cc, dd, ee, ff) =
  VAR zz IN
-   zz := bool(bool(bool(bool(aa <= bb) = TRUE or bool(aa >= bb) = TRUE) = TRUE & bool(bool(cc < dd) = TRUE or bool(cc > dd) = TRUE) = TRUE) = TRUE & bool(bool(ee = ff) = TRUE or bool(ee /= ff) = TRUE) = TRUE); 
+   zz := bool((((aa <= bb) or (aa >= bb)) & ((cc < dd) or (cc > dd))) & ((bool(ee = ff) = TRUE) or (bool(ee /= ff) = TRUE))); 
    rr := zz
    
  END 

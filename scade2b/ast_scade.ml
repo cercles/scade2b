@@ -9,6 +9,7 @@ type p_expression =
   | PE_Call of ident * ident * p_expression list
   | PE_Op_Arith1 of op_arith1 * p_expression
   | PE_Op_Arith2 of op_arith2 * p_expression * p_expression
+  | PE_Op_Relat of op_relat * p_expression * p_expression
   | PE_Op_Sharp of p_expression list
   | PE_Op_Not of p_expression
   | PE_Op_Logic of op_logic * p_expression * p_expression
