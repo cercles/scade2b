@@ -34,4 +34,9 @@
     <Local scadeName="bb" scadeType="int" targetName="bb" targetType="kcg_int"/>
     <Local scadeName="cc" scadeType="int" targetName="cc" targetType="kcg_int"/>
   </NoExpNode>
+  <NoExpNode scadeName="Op_div" targetCycleFct="Op_div">
+    <Input scadeName="aa" scadeType="int" targetName="aa" targetType="kcg_int"/>
+    <Input scadeName="bb" scadeType="int" targetName="bb" targetType="kcg_int"/>
+    <Output scadeName="rr" scadeType="int" targetName="rr" targetType="kcg_int"/>
+  </NoExpNode>
 </Model>

@@ -46,3 +46,9 @@ let
   cc = int (real 0);
   rr = bb + cc;
 tel
+
+function Op_div(aa: int; bb: int)
+  returns (rr: int)
+let
+  rr = aa div bb;
+tel
