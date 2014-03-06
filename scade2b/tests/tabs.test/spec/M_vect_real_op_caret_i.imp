@@ -1,0 +1,17 @@
+IMPLEMENTATION M_vect_real_op_caret_i
+REFINES M_vect_real_op_caret
+SEES M_Enum
+
+
+
+
+
+
+OPERATIONS
+
+yy <-- vect_real_op_caret(xx) =
+ 
+   yy := {0 |-> 3.200000, 1 |-> 3.200000}
+   
+  
+END

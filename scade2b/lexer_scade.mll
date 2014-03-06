@@ -57,6 +57,8 @@ rule token = parse
 
 	  | "fby"                      { FBY }
 
+	  | "Array_PRED"               { ARRAY_PRED }
+
 	  | '+'                        { PLUS }
 	  | '-'                        { MINUS }
 	  | '*'                        { MULT }
@@ -87,7 +89,7 @@ rule token = parse
 	  | ".."                       { DOTDOT }
 	  | '.'                        { DOT }
 	  | '^'                        { CARET }
-	  | '|'                        { CONCAT } 
+	  | '@'                        { CONCAT } 
 
 	  | "true"                     { BOOL (true) }
 	  | "false"                    { BOOL (false) }

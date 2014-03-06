@@ -69,6 +69,36 @@ let make_params_ident env lambda_list =
     Env.add lambda.n_l_ident ((String.uncapitalize param), typ, expr) env) env lambda_list
 
 
+let make_b_ident_without_env ident = 
+  let new_ident = ref "" in
+  let switch_underscore s = 
+    try 
+      new_ident := (String.sub s 1 ((String.length s)-1));
+      false
+    with 
+    | Invalid_argument _ -> failwith ("String error in switch_underscore(Utils) with " ^ s)
+  in
+  let double_character s = new_ident := s^s; false in
+  let add_underscore s = new_ident := s^"_"; false in
+  let ident_check ident =
+    try 
+      (is_b_compliant ident)
+    with
+    | Underscore s ->
+        switch_underscore s 
+    | Character s ->
+        double_character s
+    | Reserved s ->
+        add_underscore s
+    | Collision s ->
+        add_underscore s
+  in
+  let rec ident_generator ident =
+    if ident_check ident then ident else ident_generator !new_ident
+  in
+  ident_generator ident
+
+
 
 (******************** GLOBAL ENV CHECK *************************)
 
@@ -229,8 +259,8 @@ let search_input_in_reg eqs ins pres lambdas =
 
 let print_imports_out imps =
   List.iter (fun imp -> match imp.b_params_expr with 
-		 None -> Printf.printf "\nTTT %s nope %s " imp.b_import_name imp.b_instance_id
-	       | Some a -> Printf.printf "\nTTT %s %d %s" imp.b_import_name (List.length a) imp.b_instance_id ) imps
+		 None -> Printf.printf "\nnone %s %s " imp.b_import_name imp.b_instance_id
+	       | Some a -> Printf.printf "\nsome %s %d %s" imp.b_import_name (List.length a) imp.b_instance_id ) imps
 
 let print_imports_in imps =
   List.iter (fun imp -> Printf.printf "\n  name : %s  id : %s  \n  " imp.import_name imp.instance_id) imps 
@@ -322,13 +352,13 @@ exception Two_ident of (string * string)
 
 (* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)
 let find_ident_in_pexpr expr consts =
-  Printf.printf "\nPASSE:";
-  List.iter (fun c -> Printf.printf " %s " c) consts;
   let is_not_const id = not(List.mem id consts) in
   let id = ref "" in
   let rec ident_finder = function
-    | PE_Ident iden -> if (!id <> iden && (is_not_const iden) && (is_not_const !id)) 
-      then raise (Two_ident (!id, iden)) else Printf.printf "\n%s" iden; id := iden
+    | PE_Ident iden -> 
+        if (!id <> iden && !id <> "" && (is_not_const iden) && (is_not_const !id)) 
+	then raise (Two_ident (!id, iden)) 
+	else (if (is_not_const iden) then id := iden)
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
     | PE_Call (_, _, elist) -> List.iter ident_finder elist
@@ -425,12 +455,3 @@ let p_const_to_b_const const =
     | PT_Array (_, _) -> (
       let typ, dims = flatten_array t in 
       Const_Fun (id, typ, dims, p_expr_to_b_expr e))
-
-
-
-let generate_error_machine node_xml main_dir =
-  let node_name = node_xml.xml_node_name in
-  let babst_err =
-    open_out (Filename.concat main_dir ("M_" ^ node_name ^ ".mch")) in
-  Babsterror_generator.print_machine_base node_xml babst_err;
-  close_out babst_err

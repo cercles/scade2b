@@ -76,6 +76,30 @@ let rec print_expr ppt = function
   | BE_Pred p ->
       fprintf ppt "bool%a" print_pred p
 
+(* TODO: find a way to merge *)
+and print_expr_in_pred ppt = function
+  | BE_Ident id -> print_bid ppt id
+  | BE_Value v -> print_value ppt v
+  | BE_Array ar -> print_array ppt ar
+  | BE_Op_Arith1 (op, e) -> (
+      match op with
+	| Op_minus ->
+	    fprintf ppt "(%a%a)" print_op_arith1 op print_expr e
+	| Op_cast_real | Op_cast_int ->
+	    fprintf ppt "(%a (%a))" print_op_arith1 op print_expr e
+    )
+  | BE_Op_Arith2 (op, e1, e2) -> (
+      match op with
+	| Op_eq | Op_neq ->
+            fprintf ppt "bool(%a %a %a)" print_expr e1 print_op_arith2 op print_expr e2
+        | _ -> fprintf ppt "%a %a %a" print_expr e1 print_op_arith2 op print_expr e2
+    )
+  | BE_Op_Sharp e_list ->
+      fprintf ppt "sharp(%a)" print_expr_list e_list
+  | BE_Pred p ->
+      fprintf ppt "%a" print_pred p
+
+
 and print_pred ppt = function
   | BP_Op_Logic (op, p1, p2) ->
     fprintf ppt "(%a %a %a)" print_pred p1 print_op op print_pred p2
@@ -97,7 +121,7 @@ and print_array ppt = function
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
   | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_expr_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
-  | BA_Concat (e1, e2) -> fprintf ppt "concat(%a, %a)" print_expr e1 print_expr e2
+  | BA_Concat (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id (print_list print_slice) e_list
 
 and print_def_list ppt e_list =
@@ -123,3 +147,14 @@ let print_sees ppt = function
 let print_params_machine ppt = function
     | [] -> ()
     | params_machine -> fprintf ppt "(%a)" print_idlist_comma params_machine
+
+
+let print_basetype ppt = function
+  | T_Bool -> fprintf ppt "%s" "BOOL"
+  | T_Int -> fprintf ppt "%s" "INT"
+  | T_Float -> fprintf ppt "%s" "REAL"
+
+let rec print_array_type t ppt e_list =
+  match e_list with
+  | [] -> fprintf ppt "%a" print_basetype t
+  | _ :: l -> fprintf ppt "seq(%a)" (print_array_type t) l

@@ -1,4 +1,5 @@
 MACHINE M_Id_int
+SEES M_Enum
 
 OPERATIONS
 

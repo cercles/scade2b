@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="vect_int_op_aff">
+    <Input scadeName="x" scadeType="int^(2)" targetName="x" targetType="array_int_2"/>
+    <Output scadeName="y" scadeType="int^(2)" targetName="y" targetType="array_int_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_int_op_rev">
+    <Input scadeName="x" scadeType="int^(2)" targetName="x" targetType="array_int_2"/>
+    <Output scadeName="y" scadeType="int^(2)" targetName="y" targetType="array_int_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_int_op_concat">
+    <Input scadeName="x" scadeType="int^(2)" targetName="x" targetType="array_int_2"/>
+    <Input scadeName="z" scadeType="int^(2)" targetName="z" targetType="array_int_2"/>
+    <Output scadeName="y" scadeType="int^(4)" targetName="y" targetType="array_int_4"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_int_op_def">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Input scadeName="z" scadeType="int" targetName="z" targetType="kcg_int"/>
+    <Output scadeName="y" scadeType="int^(2)" targetName="y" targetType="array_int_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_int_op_index">
+    <Input scadeName="x" scadeType="int^(2)" targetName="x" targetType="array_int_2"/>
+    <Output scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_int_op_caret">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="y" scadeType="int^(2)" targetName="y" targetType="array_int_2"/>
+  </NoExpNode>
+
+
+ <NoExpNode scadeName="vect_bool_op_aff">
+    <Input scadeName="x" scadeType="bool^(2)" targetName="x" targetType="array_bool_2"/>
+    <Output scadeName="y" scadeType="bool^(2)" targetName="y" targetType="array_bool_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_bool_op_rev">
+    <Input scadeName="x" scadeType="bool^(2)" targetName="x" targetType="array_bool_2"/>
+    <Output scadeName="y" scadeType="bool^(2)" targetName="y" targetType="array_bool_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_bool_op_concat">
+    <Input scadeName="x" scadeType="bool^(2)" targetName="x" targetType="array_bool_2"/>
+    <Input scadeName="z" scadeType="bool^(2)" targetName="z" targetType="array_bool_2"/>
+    <Output scadeName="y" scadeType="bool^(4)" targetName="y" targetType="array_bool_4"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_bool_op_def">
+    <Input scadeName="x" scadeType="bool" targetName="x" targetType="kcg_bool"/>
+    <Input scadeName="z" scadeType="bool" targetName="z" targetType="kcg_bool"/>
+    <Output scadeName="y" scadeType="bool^(2)" targetName="y" targetType="array_bool_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_bool_op_index">
+    <Input scadeName="x" scadeType="bool^(2)" targetName="x" targetType="array_bool_2"/>
+    <Output scadeName="y" scadeType="bool" targetName="y" targetType="kcg_bool"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_bool_op_caret">
+    <Input scadeName="x" scadeType="bool" targetName="x" targetType="kcg_bool"/>
+    <Output scadeName="y" scadeType="bool^(2)" targetName="y" targetType="array_bool_2"/>
+  </NoExpNode>
+
+
+ <NoExpNode scadeName="vect_real_op_aff">
+    <Input scadeName="x" scadeType="real^(2)" targetName="x" targetType="array_real_2"/>
+    <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_real_op_rev">
+    <Input scadeName="x" scadeType="real^(2)" targetName="x" targetType="array_real_2"/>
+    <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_real_op_concat">
+    <Input scadeName="x" scadeType="real^(2)" targetName="x" targetType="array_real_2"/>
+    <Input scadeName="z" scadeType="real^(2)" targetName="z" targetType="array_real_2"/>
+    <Output scadeName="y" scadeType="real^(4)" targetName="y" targetType="array_real_4"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_real_op_def">
+    <Input scadeName="x" scadeType="real" targetName="x" targetType="kcg_real"/>
+    <Input scadeName="z" scadeType="real" targetName="z" targetType="kcg_real"/>
+    <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_real_op_index">
+    <Input scadeName="x" scadeType="real^(2)" targetName="x" targetType="array_real_2"/>
+    <Output scadeName="y" scadeType="real" targetName="y" targetType="kcg_real"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_real_op_caret">
+    <Input scadeName="x" scadeType="real" targetName="x" targetType="kcg_real"/>
+    <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
+  </NoExpNode>
+
+</Model>

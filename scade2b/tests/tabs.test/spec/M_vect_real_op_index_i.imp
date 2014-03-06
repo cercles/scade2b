@@ -1,0 +1,17 @@
+IMPLEMENTATION M_vect_real_op_index_i
+REFINES M_vect_real_op_index
+SEES M_Enum
+
+
+
+
+
+
+OPERATIONS
+
+yy <-- vect_real_op_index(xx) =
+ 
+   yy := xx(0)
+   
+  
+END

@@ -84,12 +84,12 @@ let node_parser node_name node_xml main_dir node =
       | Lexer_scade.Lexical_error s ->
 	  Format.eprintf "\nLexical Error in %s@." node_name; 
 	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf);
-	  Utils.generate_error_machine node_xml main_dir;
+	  Babsterror_generator.generate node_xml main_dir;
 	  raise Not_found
       | Parsing.Parse_error ->
 	  Format.eprintf "\nSyntax Error in %s@." node_name; 
 	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf);
-	  Utils.generate_error_machine node_xml main_dir;
+	  Babsterror_generator.generate node_xml main_dir;
 	  raise Not_found
   in
   ast

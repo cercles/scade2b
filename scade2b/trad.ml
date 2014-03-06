@@ -75,7 +75,7 @@ let n_condition_to_condition env (id, t, e) =
   in
   let compr_ens_ident = Utils.make_b_ident "ii" env in
   match t with 
-    | NT_Base typ ->  (
+    | NT_Base typ -> (
 	match e with 
 	  | None -> Base_no_expr (id_to_bid env id, typ, compr_ens_ident)
 	  | Some expr -> 
@@ -89,6 +89,27 @@ let n_condition_to_condition env (id, t, e) =
 	  | Some expr -> 
 	      let env2 = Env.add id (compr_ens_ident, t, None) env in
 	      Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env2 expr, compr_ens_ident))
+
+
+let n_condition_to_condition_pred env (id, t, e) =
+  let flatten_array env a =
+    let base_t = ref T_Int in (* default ref *)
+    let rec fun_rec = function
+      | NT_Base t -> base_t := t; []
+      | NT_Array (t, expr) -> (n_expr_to_b_expr env expr) :: (fun_rec t)
+    in
+    (!base_t, fun_rec a)
+  in
+  match t with 
+    | NT_Base typ -> (
+	match e with 
+	  | None -> Base_no_expr (id_to_bid env id, typ, id_to_bid env id)
+	  | Some expr -> Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr, id_to_bid env id))
+    | NT_Array (_, _) -> (
+	let typ, dims = flatten_array env t in
+	match e with 
+	  | None -> Fun_no_expr (id_to_bid env id, typ, dims, id_to_bid env id)
+	  | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr, id_to_bid env id))
 	
 
 
@@ -130,7 +151,7 @@ let retrieve_cond_expr reg node env =
   List.fold_left eqs_folder None eqs
   
 let get_invariant env node reg =
-  n_condition_to_condition env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env)
+  n_condition_to_condition_pred env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env)
   
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
@@ -231,12 +252,12 @@ let babst_translator env node const_list =
   let params_id, params_cond = 
     List.split (List.map (fun lambda -> lambda.n_l_ident, lambda.n_l_cond) node.n_lambdas) in
   let sees = Utils.sees_list env const_list in
-  let constraints = trad_list env n_condition_to_condition params_cond in
+  let constraints = trad_list env n_condition_to_condition_pred params_cond in
   let abstop_decl = { id = node.n_id;
 		      param_in = trad_list env n_decl_to_decl node.n_param_in;
 		      param_out = trad_list env n_decl_to_decl node.n_param_out;
 		    } in 
-  let abstop_pre = trad_list env n_condition_to_condition node.n_pre in
+  let abstop_pre = trad_list env n_condition_to_condition_pred node.n_pre in
   let abstop_post = trad_list env n_condition_to_condition node.n_post in
   let abst_operation = { abstop_decl = abstop_decl;
 			 abstop_pre = abstop_pre;

@@ -204,7 +204,7 @@ let schedule_node_list xml_nodes =
     match not_ordered with
       | [] -> ordered
       | (node, imports) :: l ->
-  	  if List.for_all (fun ident -> (ident = "$+$" or ident = "$*$") or (List.mem ident ordered)) imports
+  	  if List.for_all (fun ident -> (ident = "$+$" || ident = "$*$") || (List.mem ident ordered)) imports
   	  then scheduler l (ordered @ [node])
   	  else scheduler (l @ [(node, imports)]) ordered
   in

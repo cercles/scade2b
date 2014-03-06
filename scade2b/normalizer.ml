@@ -50,10 +50,6 @@ let p_decl_to_n_decl declist =
 
 
 
-
-
-
-
 (* Cherche l'entrée liée à la condition expr, et retourne la condition normalisée *)
 let handle_assume node consts expr =
   let id =
@@ -63,7 +59,7 @@ let handle_assume node consts expr =
   in
   match Utils.find_type id node.p_param_in with
   | Some typ -> (id, p_type_to_n_type typ, Some (p_expr_to_n_expr expr))
-  | None ->  raise (Assert_id_error id)
+  | None -> raise (Assert_id_error id)
 
 (* Idem pour les sorties *)
 let handle_guarantee node consts expr =
@@ -142,7 +138,6 @@ let remove_terminator eq_list =
 
 (* Fonction principale de normalisation *)
 let normalize_node node const_list =
-  Printf.printf "\n\nNODE : %s" node.p_id;
   (* Normalisation des déclarations *)
   let inputs = p_decl_to_n_decl node.p_param_in in
   let outputs = p_decl_to_n_decl node.p_param_out in

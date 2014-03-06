@@ -16,7 +16,7 @@ let print_instname imp_name ppt inst_id =
     try 
       Env_instances.find (!node_name, imp_name, inst_id) !env_instances
     with
-	Not_found -> Printf.printf "\n %s  %s  %s" !node_name imp_name inst_id; ""
+	Not_found -> Printf.printf "\n %s  %s  %s" !node_name imp_name inst_id; "" (* DEBUG *)
   in
   if bid = "" then () else fprintf ppt "%s." bid
 
@@ -101,22 +101,12 @@ let print_initialisation ppt ini_list =
   else 
     fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]" print_initialisation_list ini_list 
 
-let rec print_dim_list ppt = function
-  | [] -> ()
-  | [BE_Value (Int i)] -> fprintf ppt "0 .. %a" print_value (Int (i-1))
-  | BE_Value (Int i) :: l -> fprintf ppt "0 .. %a, %a " print_value (Int (i-1)) print_dim_list l
-  | [d] -> fprintf ppt "0 .. (%a-1)" print_expr d
-  | d :: l -> fprintf ppt "0 .. (%a-1), %a " print_expr d print_dim_list l
-
-let print_array_type t ppt e_list =
-  fprintf ppt "%a --> (%a)" print_dim_list e_list print_basetype t
-
 let print_condition ppt = function
   | Base_expr (id, t, expr, _) -> 
       fprintf ppt "%a : %a & %a"
 	print_bid id
 	print_basetype t
-	print_expr expr 
+	print_expr_in_pred expr 
   | Base_no_expr (id, t, _) ->
       fprintf ppt "%a : %a"
 	print_bid id
@@ -125,7 +115,7 @@ let print_condition ppt = function
       fprintf ppt "%a : %a & %a "
 	print_bid id
 	(print_array_type t) e_list
-	print_expr expr
+	print_expr_in_pred expr
   | Fun_no_expr (id, t, e_list, _) ->
       fprintf ppt "%a : %a"
 	print_bid id
@@ -191,7 +181,6 @@ let print_refines ppt id =
 let print_implementation ppt impl_name =
   fprintf ppt "%s" impl_name
 
-
 let print_root_machine ppt b_impl =
   fprintf ppt
     "IMPLEMENTATION %a%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a @\nEND"
@@ -203,6 +192,7 @@ let print_root_machine ppt b_impl =
     print_invariant b_impl.invariant
     print_initialisation b_impl.initialisation
     print_operation b_impl.operation
+
 
 let print_machine ppt b_impl =
   fprintf ppt
@@ -222,6 +212,6 @@ let print_prog b_impl file is_root env_inst env =
   node_name := String.sub b_impl.name 2 ((String.length b_impl.name)-4);
   env_instances := env_inst;
   if is_root then
-    fprintf (formatter_of_out_channel file) "%a@." print_root_machine b_impl
+    fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl
   else 
     fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl

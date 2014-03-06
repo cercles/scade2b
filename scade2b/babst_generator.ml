@@ -5,17 +5,6 @@ open Ast_repr_b
 open Ast_base
 open Printer
 
-let rec print_dim_list ppt = function
-  | [] -> ()
-  | [BE_Value (Int i)] -> fprintf ppt "0 .. %a" print_value (Int (i-1))
-  | BE_Value (Int i) :: l -> fprintf ppt "0 .. %a, %a " print_value (Int (i-1)) print_dim_list l
-  | [d] -> fprintf ppt "0 .. (%a-1)" print_expr d
-  | d :: l -> fprintf ppt "0 .. (%a-1), %a " print_expr d print_dim_list l
-
-let print_array_type t ppt e_list =
-  fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t
-
-
 let print_then_condition ppt = function
   | Base_expr (id, t, expr, ens_id) -> 
     fprintf ppt "%a :: { %a | %a : %a & %a }"
@@ -23,7 +12,7 @@ let print_then_condition ppt = function
       print_bid ens_id
       print_bid ens_id
       print_basetype t
-      print_expr expr
+      print_expr_in_pred expr
   | Base_no_expr (id, t, ens_id) -> 
     fprintf ppt "%a :: { %a | %a : %a }"
       print_bid id
@@ -36,7 +25,7 @@ let print_then_condition ppt = function
       print_bid ens_id 
       print_bid ens_id
       (print_array_type t) e_list 
-      print_expr expr;
+      print_expr_in_pred expr;
   | Fun_no_expr (id, t, e_list, ens_id) ->
     fprintf ppt "%a :: { %a | %a : %a }"
       print_bid id
@@ -55,7 +44,7 @@ let print_pre_condition ppt = function
     fprintf ppt "%a : %a & %a"
       print_bid id
       print_basetype t
-      print_expr expr 
+      print_expr_in_pred expr 
   | Base_no_expr (id, t, _) ->
       fprintf ppt "%a : %a"
 	print_bid id
@@ -64,7 +53,7 @@ let print_pre_condition ppt = function
     fprintf ppt "%a : %a & %a "
       print_bid id
       (print_array_type t) e_list
-      print_expr expr
+      print_expr_in_pred expr
   | Fun_no_expr (id, t, e_list, _) ->
     fprintf ppt "%a : %a"
       print_bid id
@@ -99,9 +88,10 @@ let print_id_machine ppt id_machine =
 
 let print_machine_root ppt b_abst =
   fprintf ppt
-    "MACHINE %a%a@\n%a@\n%a @\nEND"
+    "MACHINE %a%a@\n%a@\n%a@\n%a @\nEND"
     print_id_machine b_abst.machine
     print_params_machine b_abst.abst_params
+    print_sees b_abst.abst_sees
     print_constraints b_abst.abst_constraints
     print_operation b_abst.abst_operation
 

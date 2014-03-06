@@ -1,0 +1,17 @@
+IMPLEMENTATION M_vect_bool_op_caret_i
+REFINES M_vect_bool_op_caret
+SEES M_Enum
+
+
+
+
+
+
+OPERATIONS
+
+yy <-- vect_bool_op_caret(xx) =
+ 
+   yy := {0 |-> TRUE, 1 |-> TRUE}
+   
+  
+END

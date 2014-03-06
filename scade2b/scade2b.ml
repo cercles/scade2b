@@ -108,7 +108,7 @@ let () =
     let node_xml = node.node_xml in
     let id_consts = List.map (fun cst -> cst.c_id) prog.consts in
     match scade_node with
-      | None -> Utils.generate_error_machine node_xml main_dir; 
+      | None -> Babsterror_generator.generate node_xml main_dir; 
 	imports_map
       | Some ast -> begin
 	  let import_list =
@@ -133,19 +133,19 @@ let () =
 	  with
 	    | Normalizer.Assert_id_error e ->
   		Format.eprintf "\nNormalizer Error: Assert %s@." e;
-  		Utils.generate_error_machine node_xml main_dir;
+  		Babsterror_generator.generate node_xml main_dir;
   		imports_map
 	    | Normalizer.Ident_Call_Error e ->
   		Format.eprintf "\nNormalizer Error: The node name %s is reserved in B @." e;
-  		Utils.generate_error_machine node_xml main_dir;
+  		Babsterror_generator.generate node_xml main_dir;
   		imports_map
 	    | Trad.Register_cond_error e ->
   		Format.eprintf "\nTrad Error: Register condition %s isn't related to an input/output @." e;
-  		Utils.generate_error_machine node_xml main_dir;
+  		Babsterror_generator.generate node_xml main_dir;
   		imports_map
 	    | e ->
   		Format.eprintf "\nAnomaly: %s @." (Printexc.to_string e);
-  		Utils.generate_error_machine node_xml main_dir;
+  		Babsterror_generator.generate node_xml main_dir;
   		imports_map		  
 	end
   in
