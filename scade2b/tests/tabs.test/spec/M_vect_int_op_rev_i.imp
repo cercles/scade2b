@@ -11,7 +11,7 @@ OPERATIONS
 
 yy <-- vect_int_op_rev(xx) =
  
-   yy := xx
+   yy := rev(xx)
    
   
 END

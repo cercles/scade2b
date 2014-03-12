@@ -11,8 +11,8 @@ OPERATIONS
 
 rr <-- Op_unops(aa) =
  VAR bb, cc IN
-   cc := (INT ((REAL (0)))); 
    bb := (-aa); 
+   cc := bb; 
    rr := bb + cc
    
  END 

@@ -35,6 +35,7 @@ and p_array_to_n_array = function
   | PA_Slice (id, l) -> 
      NA_Slice (id, (List.map (fun (e1, e2) -> p_expr_to_n_expr e1, p_expr_to_n_expr e2) l))
   | PA_Index (id, l) -> NA_Index (id, List.map p_expr_to_n_expr l)
+  | PA_Reverse id -> NA_Reverse id
 
 let plp_to_nlp = function
   | PLP_Ident id -> NLP_Ident id
@@ -137,7 +138,7 @@ let remove_terminator eq_list =
   
 
 (* Fonction principale de normalisation *)
-let normalize_node node const_list =
+let normalize_node node const_list id_enums =
   (* Normalisation des déclarations *)
   let inputs = p_decl_to_n_decl node.p_param_in in
   let outputs = p_decl_to_n_decl node.p_param_out in
@@ -178,7 +179,7 @@ let normalize_node node const_list =
   let scheduled_eqs =
     let (id_inputs, _) = List.split inputs in
     let id_consts = List.map (fun cst -> cst.c_id) const_list in
-    Scheduler.scheduler eqs (id_inputs @ id_consts)
+    Scheduler.scheduler eqs (id_inputs @ id_consts @ id_enums)
   in
   (* Initialisation d'un registre par une entrée *)
   let inputs, assumes, lambdas, scheduled_eqs = Utils.search_input_in_reg scheduled_eqs inputs assumes [] in

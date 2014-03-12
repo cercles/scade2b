@@ -24,7 +24,7 @@ and p_array_expr =
   | PA_Concat of p_expression * p_expression
   | PA_Slice of ident * (p_expression * p_expression) list
   | PA_Index of ident * p_expression list
-
+  | PA_Reverse of ident
 
 type p_left_part =
     PLP_Ident of ident

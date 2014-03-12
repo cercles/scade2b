@@ -26,6 +26,10 @@
     <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
     <Output scadeName="y" scadeType="int^(2)" targetName="y" targetType="array_int_2"/>
   </NoExpNode>
+  <NoExpNode scadeName="vect_int_op_slice">
+    <Input scadeName="x" scadeType="int^(4)" targetName="x" targetType="array_int_2"/>
+    <Output scadeName="y" scadeType="int^(2)" targetName="y" targetType="array_int_2"/>
+  </NoExpNode>
 
 
  <NoExpNode scadeName="vect_bool_op_aff">
@@ -54,7 +58,10 @@
     <Input scadeName="x" scadeType="bool" targetName="x" targetType="kcg_bool"/>
     <Output scadeName="y" scadeType="bool^(2)" targetName="y" targetType="array_bool_2"/>
   </NoExpNode>
-
+  <NoExpNode scadeName="vect_bool_op_slice">
+    <Input scadeName="x" scadeType="bool^(4)" targetName="x" targetType="array_bool_2"/>
+    <Output scadeName="y" scadeType="bool^(2)" targetName="y" targetType="array_bool_2"/>
+  </NoExpNode>
 
  <NoExpNode scadeName="vect_real_op_aff">
     <Input scadeName="x" scadeType="real^(2)" targetName="x" targetType="array_real_2"/>
@@ -80,6 +87,10 @@
   </NoExpNode>
   <NoExpNode scadeName="vect_real_op_caret">
     <Input scadeName="x" scadeType="real" targetName="x" targetType="kcg_real"/>
+    <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="vect_real_op_slice">
+    <Input scadeName="x" scadeType="real^(4)" targetName="x" targetType="array_real_2"/>
     <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
   </NoExpNode>
 

@@ -376,6 +376,7 @@ let find_ident_in_pexpr expr consts =
     | PA_Concat (e1, e2) -> ident_finder e1; ident_finder e2 
     | PA_Slice (iden, _) -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
     | PA_Index (iden, _) -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
+    | PA_Reverse iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden	
   in
   ident_finder expr;
   !id
@@ -407,7 +408,7 @@ and rename_id_array old new_i = function
   | NA_Index (i, e_list) -> 
     NA_Index ((if i = old then new_i else i), 
 	      (List.map (rename_id_expr old new_i) e_list))
-
+  | NA_Reverse i -> NA_Reverse (if i = old then new_i else i)
 
 
 
@@ -432,6 +433,7 @@ and p_array_to_b_array = function
 			     (p_expr_to_b_expr e1, p_expr_to_b_expr e2)) e_list))
   | PA_Index (id, e_list) -> 
       BA_Index (id, (List.map p_expr_to_b_expr e_list))
+  | PA_Reverse id -> BA_Reverse id
 
 and caret_to_def_bis e1 e2 = 
   let rec funrec v dim acc =

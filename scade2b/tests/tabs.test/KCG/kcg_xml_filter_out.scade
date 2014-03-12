@@ -7,7 +7,7 @@ tel
 function vect_int_op_rev(x : int^2)
   returns (y : int^2)
 let
-  y = x;
+  y = reverse x;
 tel
 
 function vect_int_op_concat(x : int^2; z : int^2)
@@ -33,8 +33,16 @@ tel
 function vect_int_op_caret(x : int)
   returns (y : int^2)
 let
-  y = 2^2;
+  y = 3^2;
 tel
+
+function vect_int_op_slice(x : int^4)
+  returns (y : int^2)
+let
+  y = x[1..2];
+tel
+
+
 
 
 function vect_bool_op_aff(x : bool^2)
@@ -46,7 +54,7 @@ tel
 function vect_bool_op_rev(x : bool^2)
   returns (y : bool^2)
 let
-  y = x;
+  y = reverse x;
 tel
 
 function vect_bool_op_concat(x : bool^2; z : bool^2)
@@ -75,6 +83,12 @@ let
   y = true^2;
 tel
 
+function vect_bool_op_slice(x : bool^4)
+  returns (y : bool^2)
+let
+  y = x[1..2];
+tel
+
 
 
 function vect_real_op_aff(x : real^2)
@@ -86,7 +100,7 @@ tel
 function vect_real_op_rev(x : real^2)
   returns (y : real^2)
 let
-  y = x;
+  y = reverse x;
 tel
 
 function vect_real_op_concat(x : real^2; z : real^2)
@@ -113,4 +127,10 @@ function vect_real_op_caret(x : real)
   returns (y : real^2)
 let
   y = 3.2^2;
+tel
+
+function vect_real_op_slice(x : real^4)
+  returns (y : real^2)
+let
+  y = x[1..2];
 tel

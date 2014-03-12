@@ -6,6 +6,7 @@ open Ast_repr_b
 open Ast_base
 open Ast_xml
 open Xml_utils
+open Utils
 
 
 let print_bid ppt id =

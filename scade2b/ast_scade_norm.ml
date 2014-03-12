@@ -19,6 +19,7 @@ and n_array_expr =
   | NA_Concat of n_expression * n_expression
   | NA_Slice of ident * (n_expression * n_expression) list
   | NA_Index of ident * n_expression list
+  | NA_Reverse of ident
 
 type n_type =
     NT_Base of base_type

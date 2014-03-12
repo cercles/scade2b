@@ -122,7 +122,8 @@ and print_array ppt = function
   | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_expr_list e_list
   | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
   | BA_Concat (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
-  | BA_Slice (id, e_list) -> fprintf ppt "slice(%a, %a)" print_bid id (print_list print_slice) e_list
+  | BA_Slice (id, e_list) -> fprintf ppt "(%a)" (print_slice id) (List.rev e_list)
+  | BA_Reverse (id) -> fprintf ppt "rev(%a)" print_bid id
 
 and print_def_list ppt e_list =
   let rec fun_rec n ppt = function
@@ -132,13 +133,20 @@ and print_def_list ppt e_list =
   in
   fun_rec 0 ppt e_list
 
-and print_slice ppt (e1, e2) =
-    fprintf ppt "(%a, %a)" print_expr e1 print_expr e2
+and print_slice id ppt e_list_rev =
+  match e_list_rev with
+  | [] -> assert false
+  | [(e1, e2)] -> fprintf ppt "(%a /|\\ (%a + 1)) \\|/ %a"
+       print_bid id print_expr e2 print_expr e1
+  | (e1, e2) :: list -> fprintf ppt "((%a) /|\\ (%a + 1)) \\|/ %a"
+       (print_slice id) list print_expr e2 print_expr e1
 
 let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
+  | T_Poly -> fprintf ppt "%s" "BIG"
+  | T_Enum id -> fprintf ppt "%s" id 
 
 let print_sees ppt = function
     | [] -> ()
@@ -147,12 +155,6 @@ let print_sees ppt = function
 let print_params_machine ppt = function
     | [] -> ()
     | params_machine -> fprintf ppt "(%a)" print_idlist_comma params_machine
-
-
-let print_basetype ppt = function
-  | T_Bool -> fprintf ppt "%s" "BOOL"
-  | T_Int -> fprintf ppt "%s" "INT"
-  | T_Float -> fprintf ppt "%s" "REAL"
 
 let rec print_array_type t ppt e_list =
   match e_list with

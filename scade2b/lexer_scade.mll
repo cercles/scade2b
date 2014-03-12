@@ -50,6 +50,7 @@ rule token = parse
 	  | "bool"                     { T_BOOL }
 	  | "int"                      { T_INT }
 	  | "real"                     { T_REAL }
+	  | "'T"                       { T_POLY }
 
 	  | "if"                       { IF }
 	  | "then"                     { THEN }
@@ -78,6 +79,8 @@ rule token = parse
 	  | "not"                      { NOT }
 	  | "xor"                      { XOR }
 	  | '#'                        { SHARP }
+
+	  | "reverse"                  { REVERSE }
 
 	  | '('                        { LPAREN }
 	  | ')'                        { RPAREN }

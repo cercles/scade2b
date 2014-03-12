@@ -107,6 +107,7 @@ let () =
     let scade_node = node.ast_scade in
     let node_xml = node.node_xml in
     let id_consts = List.map (fun cst -> cst.c_id) prog.consts in
+    let id_enums = List.fold_left (fun acc enum -> enum.p_enum_list @ acc) [] prog.enum_types in
     match scade_node with
       | None -> Babsterror_generator.generate node_xml main_dir; 
 	imports_map
@@ -117,7 +118,7 @@ let () =
 	    with Not_found -> []
 	  in
 	  try
-	    let ast_n = Normalizer.normalize_node ast prog.consts in
+	    let ast_n = Normalizer.normalize_node ast prog.consts id_enums in
 	    let ast_b = Trad.translate ast_n import_list id_consts in
 	    (* Impression des machines *)
 	    let babst_file =

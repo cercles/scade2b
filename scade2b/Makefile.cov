@@ -10,10 +10,10 @@ MODS=\
     ast_scade \
     ast_xml \
     printer \
+    utils \
     babst_generator \
     babsterror_generator \
     benum_generator \
-    utils \
     bconst_generator \
     bimpl_generator \
     scheduler \
@@ -72,5 +72,6 @@ scade2b.cmo: lexer_xml.cmo
 scade2b.cmo: parser_scade.cmo
 scade2b.cmo: lexer_scade.cmo
 lexer_scade.cmo: parser_scade.cmo
+babsterror_generator.cmo: utils.cmo
 
 -include .depends

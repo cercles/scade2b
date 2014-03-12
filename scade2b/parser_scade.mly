@@ -33,8 +33,8 @@
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
 %token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOT
-%token DOTDOT CARET CONCAT
-%token T_BOOL T_INT T_REAL
+%token DOTDOT CARET CONCAT REVERSE
+%token T_BOOL T_INT T_REAL T_POLY
 %token <bool> BOOL
 %token <int> INT
 %token <float> REAL
@@ -82,6 +82,22 @@ node :
        p_assumes = assumes;
        p_eqs = eqs;
        p_guarantees = guarantees; } }
+ | NODE IDENT DOUBLE_CHEVIN id_list DOUBLE_CHEVOUT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN semi_opt
+   var_decl
+   LET eq_list TEL semi_opt
+   { let (assumes, guarantees, eqs) = 
+       List.fold_left (fun (a, g, e) eq -> match eq with
+       | Eq p_eq -> (a, g, p_eq :: e)
+       | Assume p_cond -> (p_cond :: a, g, e)
+       | Guarantee p_cond -> (a, p_cond :: g, e)) ([], [], []) $16 in
+     { p_id = $2;
+       p_param_in = $7;
+       p_param_out = $11;
+       p_vars = $14;
+       p_assumes = assumes;
+       p_eqs = eqs;
+       p_guarantees = guarantees; } }
+
 ;
 
 var_decl :
@@ -110,6 +126,8 @@ base_type :
  | T_BOOL { T_Bool }
  | T_INT { T_Int }
  | T_REAL { T_Float }
+ | T_POLY { T_Poly }
+ | IDENT { T_Enum $1 }
 ;
 
 /* 2 facons de déclarer un tableau */
@@ -175,6 +193,7 @@ expr :
  | PRAGMA IDENT DOUBLE_COLON IDENT LPAREN expr_list RPAREN { PE_Call ($1, $4, $6) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
+ | ARRAY_PRED LPAREN IDENT COMMA expr RPAREN { $5 }                /* <<< ARRAY_PRED à tester! */
 ;
 
 expr_list :
@@ -188,6 +207,7 @@ array_expr :
  | IDENT array_list { handle_slice $1 $2 }
  | expr CARET expr { PA_Caret ($1, $3) }
  | expr CONCAT expr { PA_Concat ($1, $3) }
+ | REVERSE IDENT { PA_Reverse $2 }
 ;
 
 array_list :

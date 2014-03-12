@@ -11,6 +11,8 @@ type base_type =
   T_Bool
 | T_Int
 | T_Float
+| T_Poly
+| T_Enum of ident
 
 type op_arith1 =
  Op_minus | Op_cast_real | Op_cast_int

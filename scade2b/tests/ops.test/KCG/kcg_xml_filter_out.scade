@@ -16,15 +16,6 @@ let
   rr = zz;
 tel
 
-function Op_xor(xx : int; yy : int)
-  returns (rr : int)
-var
-  zz : int;
-let
-  zz = xx xor yy;
-  rr = zz;
-tel
-
 function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
   returns (rr : bool)
 var
@@ -43,7 +34,7 @@ var
  cc: int;
 let
   bb = -aa;
-  cc = int (real 0);
+  cc = bb;
   rr = bb + cc;
 tel
 

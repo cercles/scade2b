@@ -40,6 +40,7 @@ let ident_of_expr expr =
       List.iter (fun (e1, e2) -> idexpr_rec e1; idexpr_rec e2) l
     | NA_Index (iden, l) -> id := L.add iden !id;
       List.iter idexpr_rec l
+    | NA_Reverse iden -> id := L.add iden !id
   in
   idexpr_rec expr;
   !id
@@ -91,7 +92,9 @@ let scheduler eqs inputs =
       let l' = List.fold_left (fun s (_, l_idset, _) -> L.union s l_idset) l ok in
       let eqs' = nok in
       (* Stop loop if there is no change *)
-      if res' = res && l' = l && eqs'= eqs then failwith "scheduler issue... causality loop?" else ();
+      if res' = res && l' = l && eqs'= eqs then 
+	(List.iter (fun id -> Printf.printf " %s " id) inputs;
+	 failwith "\nscheduler issue... causality loop?\n") else ();
       schedul_rec res' l' eqs'
     end
   in

@@ -23,6 +23,7 @@ and array_expr =
 | BA_Concat of b_expression * b_expression
 | BA_Slice of ident * (b_expression * b_expression) list
 | BA_Index of ident * b_expression list
+| BA_Reverse of ident
 
 type left_part =
   BLP_Ident of ident

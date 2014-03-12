@@ -16,7 +16,8 @@ exception Register_cond_error of string
 let id_to_bid env id =
 try
   let bid, _, _ = Env.find id env in bid
-with Not_found -> failwith ("Identifier not found: '"^id^"'")
+with Not_found -> 
+  (Printf.printf "Identifier not found: '%s'" id; id) (* TODO : A REMMETTRE EN ETAT *)
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
@@ -55,6 +56,7 @@ and n_array_to_b_array env = function
 			     (n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)) e_list))
   | NA_Index (id, e_list) -> 
       BA_Index (id_to_bid env id, (List.map (n_expr_to_b_expr env) e_list))
+  | NA_Reverse id -> BA_Reverse (id_to_bid env id)
 
 let nlp_to_blp env = function
   | NLP_Ident id -> BLP_Ident (id_to_bid env id)
