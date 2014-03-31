@@ -1,0 +1,64 @@
+begin
+    (* block for both scade2b variants *)
+
+    (* (syntax = "camlp4o") disable preprocessing for a particular file *)
+    files = [
+        "ast_base.ml"
+        "ast_kcg.ml"
+        "ast_prog.ml"
+        "ast_repr_b.ml"
+        "ast_scade.ml"
+        "ast_scade_norm.ml"
+        "ast_xml.ml"
+        "utils.ml"
+        "babsterror_generator.ml"
+        "printer.ml"
+        "babst_generator.ml"
+        "bconst_generator.ml"
+        "benum_generator.ml"
+        "bimpl_generator.ml"
+        "lexer_kcg.mll" (syntax = "camlp4o")
+        "lexer_scade.mll" (syntax = "camlp4o")
+        "lexer_xml.mll" (syntax = "camlp4o")
+        "scheduler.ml"
+        "normalizer.ml"
+        "parser_kcg.mly" (syntax = "camlp4o")
+        "parser_scade.mly" (syntax = "camlp4o")
+        "xml_utils.ml"
+        "parser_xml.mly" (syntax = "camlp4o")
+        "printer_xml_ast.ml"
+        "prog_builder.ml"
+        "trad.ml"
+        "scade2b.ml"
+    ]
+
+    requires = [
+        "camlp4o"
+        "unix"
+    ]
+
+    begin program "scade2b"
+    end
+
+    begin program "scade2b_cov"
+        syntax = "bisect_pp"
+        requires += [ "bisect" "bisect_pp" ]
+    end
+end
+
+begin
+    generated = true
+
+    begin program "camlp4o"
+    end
+
+    begin objects "bisect_pp.objects"
+        dirname = [ "%{bisect_SRC_DIR}%" ]
+        files = [ "bisect_pp.ml" ]
+        requires = [ "str" ]
+    end
+
+    begin syntax "bisect_pp"
+        requires = [ "bisect_pp.objects" "camlp4o" ]
+    end
+end
