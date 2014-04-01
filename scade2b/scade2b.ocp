@@ -54,7 +54,7 @@ end
 begin program "scade2b_tests_cov"
     files = [ "run_tests.ml" ]
     syntax = "bisect_pp"
-    requires = [ "alcotest" "bisect" ]
+    requires = [ "alcotest" "bisect" "bisect_pp" ]
 end
 
 begin
