@@ -81,14 +81,14 @@ let print_operation ppt abstop =
 let print_constraints ppt constraints =
   if (List.length constraints) = 0 then () 
   else 
-    fprintf ppt "CONSTRAINTS@\n  %a" print_prelist constraints
+    fprintf ppt "CONSTRAINTS@\n  %a@\n" print_prelist constraints
 
 let print_id_machine ppt id_machine =
   fprintf ppt "%s" id_machine
 
 let print_machine ppt b_abst =
   fprintf ppt
-    "MACHINE %a%a@\n%a@\n%a@\n%a @\nEND"
+    "MACHINE %a%a@\n%a@\n%a%a @\nEND"
     print_id_machine b_abst.machine
     print_params_machine b_abst.abst_params
     print_sees b_abst.abst_sees

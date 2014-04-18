@@ -1,6 +1,5 @@
 MACHINE M_vect_bool_op_concat
 SEES M_Enum
-
 OPERATIONS
 
 yy <-- vect_bool_op_concat(xx, zz) =

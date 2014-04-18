@@ -1,6 +1,5 @@
 MACHINE M_Op_plus
 SEES M_Enum
-
 OPERATIONS
 
 rr <-- Op_plus(xx, yy) =

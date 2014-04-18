@@ -1,6 +1,5 @@
 MACHINE M_vect_int_op_rev
 SEES M_Enum
-
 OPERATIONS
 
 yy <-- vect_int_op_rev(xx) =
