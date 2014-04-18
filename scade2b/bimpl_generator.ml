@@ -99,7 +99,7 @@ let rec print_initialisation_list ppt = function
 let print_initialisation ppt ini_list = 
   if (List.length ini_list) = 0 then () 
   else 
-    fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]" print_initialisation_list ini_list 
+    fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]@\n" print_initialisation_list ini_list
 
 let print_condition ppt = function
   | Base_expr (id, t, expr, _) -> 
@@ -129,13 +129,13 @@ let rec print_invariant_list ppt = function
 let print_invariant ppt inv_list = 
   if (List.length inv_list) = 0 then () 
   else 
-    fprintf ppt "INVARIANT @\n@[<v 3>   %a@]" print_invariant_list inv_list 
+    fprintf ppt "INVARIANT @\n@[<v 3>   %a@]@\n" print_invariant_list inv_list 
 
 
 let print_concrete_var ppt reg_list =
   if (List.length reg_list) = 0 then () 
   else 
-    fprintf ppt "CONCRETE_VARIABLES %a" print_idlist_comma reg_list 
+    fprintf ppt "CONCRETE_VARIABLES %a@\n" print_idlist_comma reg_list
 
 let string_of_formatter print x =
   let buf = Buffer.create 0 in
@@ -158,7 +158,7 @@ let print_imports_root sees ppt imports =
   let import_strs = List.map (string_of_formatter print_import) imports in
   let all_strs = import_strs @ sees in
   if all_strs != [] then
-    fprintf ppt "IMPORTS %a" print_idlist_comma all_strs
+    fprintf ppt "IMPORTS %a@\n" print_idlist_comma all_strs
 
 let print_imports ppt imports =
   let print_import ppt import =
@@ -173,7 +173,7 @@ let print_imports ppt imports =
 	    print_expr_list p
   in
   if imports != [] then
-    fprintf ppt "IMPORTS %a" (print_list print_import) imports
+    fprintf ppt "IMPORTS %a@\n" (print_list print_import) imports
 
 let print_refines ppt id =
   fprintf ppt "REFINES %s" id
@@ -183,7 +183,7 @@ let print_implementation ppt impl_name =
 
 let print_root_machine ppt b_impl =
   fprintf ppt
-    "IMPLEMENTATION %a%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a@\nEND"
+    "IMPLEMENTATION %a%a@\n%a@\n%a%a%a%a%a@\nEND"
     print_implementation b_impl.name
     print_params_machine b_impl.params
     print_refines b_impl.refines
@@ -196,7 +196,7 @@ let print_root_machine ppt b_impl =
 
 let print_machine ppt b_impl =
   fprintf ppt
-    "IMPLEMENTATION %a%a@\n%a@\n%a@\n%a@\n@\n%a@\n%a@\n%a@\n@\n%a@\nEND"
+    "IMPLEMENTATION %a%a@\n%a@\n%a@\n%a%a%a%a%a@\nEND"
     print_implementation b_impl.name
     print_params_machine b_impl.params
     print_refines b_impl.refines
