@@ -86,15 +86,6 @@ let print_constraints ppt constraints =
 let print_id_machine ppt id_machine =
   fprintf ppt "%s" id_machine
 
-let print_machine_root ppt b_abst =
-  fprintf ppt
-    "MACHINE %a%a@\n%a@\n%a@\n%a @\nEND"
-    print_id_machine b_abst.machine
-    print_params_machine b_abst.abst_params
-    print_sees b_abst.abst_sees
-    print_constraints b_abst.abst_constraints
-    print_operation b_abst.abst_operation
-
 let print_machine ppt b_abst =
   fprintf ppt
     "MACHINE %a%a@\n%a@\n%a@\n%a @\nEND"
@@ -104,9 +95,5 @@ let print_machine ppt b_abst =
     print_constraints b_abst.abst_constraints
     print_operation b_abst.abst_operation
 
-
 let print_prog b_abst file is_root =
-  if is_root then
-    fprintf (formatter_of_out_channel file) "%a@." print_machine_root b_abst
-  else 
-    fprintf (formatter_of_out_channel file) "%a@." print_machine b_abst
+  fprintf (formatter_of_out_channel file) "%a@." print_machine b_abst
