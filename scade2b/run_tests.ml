@@ -39,7 +39,7 @@ let comp_tests dirs =
   List.map (fun d ->
     (d, `Quick, fun () ->
       OUnit.assert_command check_exec [d ^ "/"];
-      OUnit.assert_command "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
+      OUnit.assert_command ~verbose:true "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
   )) dirs
 
 let main () =

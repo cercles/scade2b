@@ -44,3 +44,9 @@ cov: build-cov
 	BISECT_FILE=scade2b ./_obuild/scade2b_tests_cov/scade2b_tests_cov.asm
 	bisect-report -html coverage scade2b*.out
 	rm scade2b*.out
+
+_obuild/scade2b_tests/scade2b_tests.asm: run_tests.ml
+	ocp-build build scade2b_tests
+
+check: _obuild/scade2b_tests/scade2b_tests.asm
+	./$<
