@@ -65,6 +65,7 @@ let nlp_to_blp env = function
 let n_decl_to_decl env (id, _) =
   id_to_bid env id
 
+
 let n_condition_to_condition env (id, t, e) =
   (* flatten a NT_Array into a n_expr list (a list of dimensions) *)
   let flatten_array env a =
@@ -151,7 +152,7 @@ let retrieve_cond_expr reg node env =
       | _ -> condition
   in
   List.fold_left eqs_folder None eqs
-  
+
 let get_invariant env node reg =
   n_condition_to_condition_pred env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env)
   
