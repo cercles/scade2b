@@ -1,5 +1,0 @@
-MACHINE M_Enum
-
-
-
-END
