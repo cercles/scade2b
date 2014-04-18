@@ -14,5 +14,5 @@ rr <-- Op_plus(xx, yy) =
    zz := xx + yy; 
    rr := zz
    
- END 
+ END
 END

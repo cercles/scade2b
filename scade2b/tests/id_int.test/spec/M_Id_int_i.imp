@@ -14,5 +14,5 @@ yy <-- Id_int(xx) =
    zz := xx; 
    yy := zz
    
- END 
+ END
 END

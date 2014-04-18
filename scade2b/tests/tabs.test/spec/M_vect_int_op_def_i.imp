@@ -13,5 +13,5 @@ yy <-- vect_int_op_def(xx, zz) =
  
    yy := {0 |-> xx, 1 |-> zz}
    
-  
+ 
 END

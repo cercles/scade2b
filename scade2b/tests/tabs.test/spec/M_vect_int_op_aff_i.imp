@@ -13,5 +13,5 @@ yy <-- vect_int_op_aff(xx) =
  
    yy := xx
    
-  
+ 
 END

@@ -263,7 +263,7 @@ let print_imports_out imps =
 	       | Some a -> Printf.printf "\nsome %s %d %s" imp.b_import_name (List.length a) imp.b_instance_id ) imps
 
 let print_imports_in imps =
-  List.iter (fun imp -> Printf.printf "\n  name : %s  id : %s  \n  " imp.import_name imp.instance_id) imps 
+  List.iter (fun imp -> Printf.printf "\n  name : %s  id : %s\n  " imp.import_name imp.instance_id) imps
 
 let check_imports_params imports eqs =
   let imports_out = ref [] in

@@ -158,8 +158,8 @@ let () =
 
   (* let print_map map = *)
   (*   Imports_map.iter (fun name imp_list -> *)
-  (* 		Printf.printf "\n\n %s \n" name; *)
-  (* 		List.iter (fun imp -> Printf.printf "name : %s  id : %s  \n" imp.import_name imp.instance_id) imp_list ) map *)
+  (* 		Printf.printf "\n\n %s\n" name; *)
+  (* 		List.iter (fun imp -> Printf.printf "name : %s  id : %s\n" imp.import_name imp.instance_id) imp_list ) map *)
   (* in *)
   (* print_map imports_map; *)
 

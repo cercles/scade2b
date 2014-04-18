@@ -13,5 +13,5 @@ yy <-- vect_bool_op_concat(xx, zz) =
  
    yy := xx ^ zz
    
-  
+ 
 END

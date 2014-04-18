@@ -13,5 +13,5 @@ yy <-- vect_int_op_concat(xx, zz) =
  
    yy := xx ^ zz
    
-  
+ 
 END

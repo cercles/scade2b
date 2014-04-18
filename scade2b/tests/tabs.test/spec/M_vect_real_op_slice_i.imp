@@ -13,5 +13,5 @@ yy <-- vect_real_op_slice(xx) =
  
    yy := ((xx /|\ (2 + 1)) \|/ 1)
    
-  
+ 
 END

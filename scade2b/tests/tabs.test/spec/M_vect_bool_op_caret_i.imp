@@ -13,5 +13,5 @@ yy <-- vect_bool_op_caret(xx) =
  
    yy := {0 |-> TRUE, 1 |-> TRUE}
    
-  
+ 
 END
