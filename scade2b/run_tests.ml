@@ -42,7 +42,7 @@ let comp_tests dirs =
   List.map (fun d ->
     (d>:: fun _ ->
       assert_command check_exec [d ^ "/"];
-      assert_command ~verbose:true "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
+      assert_command "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
   )) dirs
 
 let main () =
