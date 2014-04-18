@@ -21,6 +21,8 @@
                          +-----------+
 *)
 
+open OUnit
+
 let issuffix sfx s =
   let sfx_len = String.length sfx in
   let s_len = String.length s in
@@ -36,14 +38,15 @@ let find_tests () =
 let check_exec = "./_obuild/scade2b_cov/scade2b_cov.asm"
 
 let comp_tests dirs =
+  "scade2b">:::
   List.map (fun d ->
-    (d, `Quick, fun () ->
-      OUnit.assert_command check_exec [d ^ "/"];
-      OUnit.assert_command ~verbose:true "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
+    (d>:: fun _ ->
+      assert_command check_exec [d ^ "/"];
+      assert_command ~verbose:true "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
   )) dirs
 
 let main () =
   let tests = find_tests () in
-  Alcotest.run "scade2b" [("compile", comp_tests tests)]
+  run_test_tt_main (comp_tests tests)
 
 let _ = main ()
