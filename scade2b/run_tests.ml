@@ -6,19 +6,19 @@
   |  code    |              |     output      |
   +----------+              +-----------------+
                                 |
-  +-----------+                 |            *.ok all exist
-  | dir/spec/ |                 |                  ==
-  |           |                 |              tests pass
+  +-----------+                 |
+  | dir/spec/ |                 |
+  |           |                 |
   | Expected  | -------------+  |
-  |  output   |              |  |                  /\
-  +-----------+              |  |                  ||
-                             v  v                  ||
-   \___  ___/            +-----------+       +-------------+
-       \/                | dir.diff  |       |    dir.ok   |
-                         |           |       |             |
-     in git              |  Unified  | ----> |  Exists if  |
-                         |   diff    |       | out == spec |
-                         +-----------+       +-------------+
+  |  output   |              |  |
+  +-----------+              |  |
+                             v  v
+   \___  ___/            +-----------+
+       \/                | dir.diff  |
+                         |           |
+     in git              |  Unified  | ----> If empty: OK
+                         |   diff    |
+                         +-----------+
 *)
 
 let issuffix sfx s =
