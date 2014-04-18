@@ -48,5 +48,8 @@ cov: build-cov
 _obuild/scade2b_tests/scade2b_tests.asm: run_tests.ml
 	ocp-build build scade2b_tests
 
-check: _obuild/scade2b_tests/scade2b_tests.asm
+_obuild/scade2b/scade2b.asm: *.ml
+	ocp-build
+
+check: _obuild/scade2b_tests/scade2b_tests.asm _obuild/scade2b/scade2b.asm
 	./$<
