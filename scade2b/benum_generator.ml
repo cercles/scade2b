@@ -19,11 +19,11 @@ let rec print_enum_list ppt = function
 let print_sets_clause ppt enum_list =
   if (List.length enum_list) = 0 then () 
   else 
-    fprintf ppt "SETS %a" print_enum_list enum_list 
+    fprintf ppt "SETS %a@\n" print_enum_list enum_list
 
 let print_machine ppt enum_list =
   fprintf ppt
-    "MACHINE M_Enum@\n@\n%a@\n@\nEND"
+    "MACHINE M_Enum@\n%aEND"
     print_sets_clause enum_list
 
 let print_m_enum enum_list file env_prog =
