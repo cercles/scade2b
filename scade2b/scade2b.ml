@@ -37,7 +37,7 @@ let scade_file, xml_file, main_dir =
   in
   Arg.parse spec set usage;
   (match !dir with 
-       Some n -> n^"KCG/kcg_xml_filter_out.scade", n^"KCG/kcg_trace.xml", n^"Machines_B/"
+       Some n -> n^"/KCG/kcg_xml_filter_out.scade", n^"/KCG/kcg_trace.xml", n^"/Machines_B/"
      | None -> Arg.usage spec usage; exit 1)
 
 
