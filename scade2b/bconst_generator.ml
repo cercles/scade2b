@@ -41,22 +41,22 @@ let rec print_properties_list ppt = function
   | [c] -> fprintf ppt "%a" print_property c
   | c::l -> fprintf ppt "%a & @,%a" print_property c print_properties_list l 
 
-let print_properties ppt const_list = 
-  if (List.length const_list) = 0 then () 
-  else 
-    fprintf ppt "PROPERTIES @\n@[<v 3>   %a@]" 
-      print_properties_list (List.map Utils.p_const_to_b_const const_list) 
+let print_properties ppt = function
+  | [] -> ()
+  | const_list ->
+      fprintf ppt "PROPERTIES @\n@[<v 3>   %a@]@\n"
+        print_properties_list (List.map Utils.p_const_to_b_const const_list)
 
 
-let print_concrete_constants ppt const_id_list =
-  if (List.length const_id_list) = 0 then () 
-  else 
-    fprintf ppt "CONCRETE_CONSTANTS %a" print_idlist_comma const_id_list 
+let print_concrete_constants ppt = function
+  | [] -> ()
+  | const_id_list ->
+      fprintf ppt "CONCRETE_CONSTANTS %a@\n" print_idlist_comma const_id_list
 
 
 let print_machine ppt const_list =
   fprintf ppt
-    "MACHINE M_Consts@\n@\n%a@\n@\n%a@\n @\nEND"
+    "MACHINE M_Consts@\n%a%aEND"
     print_concrete_constants (List.map (fun cst -> cst.c_id) const_list)
     print_properties const_list 
 
