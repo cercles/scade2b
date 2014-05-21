@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="Test_assume" targetCycleFct="Test_assume">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Input scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+</Model>
