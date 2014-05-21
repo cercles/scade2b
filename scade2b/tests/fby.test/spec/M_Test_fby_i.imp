@@ -1,0 +1,16 @@
+IMPLEMENTATION M_Test_fby_i
+REFINES M_Test_fby
+SEES M_Enum
+CONCRETE_VARIABLES yy
+INVARIANT 
+   yy : INT
+INITIALISATION 
+   yy := 0
+OPERATIONS
+
+yy <-- Test_fby(xx) =
+ VAR zz IN
+   zz := xx;
+   yy := zz
+ END
+END

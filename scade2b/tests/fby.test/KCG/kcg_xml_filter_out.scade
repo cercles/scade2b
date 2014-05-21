@@ -1,0 +1,8 @@
+node Test_fby(x : int)
+  returns (y : int)
+var
+  z : int;
+let
+  z = x; 
+  y = fby(z; 1; 0);
+tel
