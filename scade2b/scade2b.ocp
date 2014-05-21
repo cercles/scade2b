@@ -26,7 +26,6 @@ begin
         "parser_scade.mly" (syntax = "camlp4o")
         "xml_utils.ml"
         "parser_xml.mly" (syntax = "camlp4o")
-        "printer_xml_ast.ml"
         "prog_builder.ml"
         "trad.ml"
         "scade2b.ml"
