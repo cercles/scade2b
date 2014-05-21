@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <EnumType scadeName="Day" targetName="Day">
+    <EnumVal scadeName="Monday" targetName="Monday"/>
+    <EnumVal scadeName="Tuesday" targetName="Tuesday"/>
+    <EnumVal scadeName="Wednesday" targetName="Wednesday"/>
+    <EnumVal scadeName="Thursday" targetName="Thursday"/>
+    <EnumVal scadeName="Friday" targetName="Friday"/>
+    <EnumVal scadeName="Saturday" targetName="Saturday"/>
+    <EnumVal scadeName="Sunday" targetName="Sunday"/>
+  </EnumType>
+  <NoExpNode scadeName="Test_enum" targetCycleFct="Test_enum">
+    <Input scadeName="x" scadeType="Day" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="bool" targetName="r" targetType="kcg_bool"/>
+  </NoExpNode>
+</Model>

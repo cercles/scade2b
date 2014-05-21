@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_enum_i
+REFINES M_Test_enum
+SEES M_Enum
+OPERATIONS
+
+rr <-- Test_enum(xx) =
+ 
+   rr := TRUE
+   
+ 
+END
