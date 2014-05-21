@@ -1,0 +1,6 @@
+const C_CST : int = 100;
+node Test_const(x : int)
+  returns (r : bool)
+let
+  r = x + C_CST;
+tel

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <Constant scadeName="C_CST" scadeType="int" targetName="C_CST" targetType="kcg_int" macroDef="true"/>
+  <NoExpNode scadeName="Test_const" targetCycleFct="Test_const">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+</Model>

@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_const_i
+REFINES M_Test_const
+SEES M_Consts, M_Enum
+OPERATIONS
+
+rr <-- Test_const(xx) =
+ 
+   rr := xx + C_CST
+   
+ 
+END
