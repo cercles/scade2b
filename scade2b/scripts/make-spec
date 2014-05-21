@@ -1,0 +1,3 @@
+#!/bin/bash
+testpath=$1
+rm -rf $testpath/spec ; mv $testpath/{Machines_B,spec}

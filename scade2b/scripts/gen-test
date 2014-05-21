@@ -1,0 +1,24 @@
+#!/bin/bash
+
+testname=$1
+testdir=tests/${testname}.test
+
+mkdir -p $testdir/KCG
+
+cat > $testdir/KCG/kcg_xml_filter_out.scade <<EOF
+node Test_$testname(x : int)
+  returns (r : bool)
+let
+
+tel
+EOF
+
+cat > $testdir/KCG/kcg_trace.xml <<EOF
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="Test_$testname" targetCycleFct="Test_$testname">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+</Model>
+EOF
