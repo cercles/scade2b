@@ -80,7 +80,18 @@ let comp_tests dirs =
           Stream.iter (Buffer.add_char buf)
         in
         let backtrace = false in
-        assert_command ~ctxt ~exit_code:(Unix.WEXITED 2) ~foutput ~backtrace check_exec [d ^ "/"];
+        let exit_code =
+          let n =
+            try
+              (d ^ "/exitcode.txt")
+              |> read_file
+              |> String.trim
+              |> int_of_string
+            with Sys_error _ -> 1
+          in
+          Unix.WEXITED n
+        in
+        assert_command ~ctxt ~exit_code ~foutput ~backtrace check_exec [d ^ "/"];
         let spec = read_file (d ^ "/output.txt") in
         assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
       )

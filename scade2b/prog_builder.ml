@@ -90,10 +90,7 @@ let node_parser node_name node_xml main_dir node =
 	  Format.eprintf "\nSyntax Error in %s@." node_name; 
 	  handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf);
 	  Babsterror_generator.generate node_xml main_dir;
-          exit 2
-          (* if a scade file is provided but invalid, don't even output an
-           * abstract machine
-           *)
+	  raise Not_found
   in
   ast
 
