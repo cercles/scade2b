@@ -256,18 +256,8 @@ let search_input_in_reg eqs ins pres lambdas =
 	
 (*                          2) Traduction                           *)
 
-
-let print_imports_out imps =
-  List.iter (fun imp -> match imp.b_params_expr with 
-		 None -> Printf.printf "\nnone %s %s " imp.b_import_name imp.b_instance_id
-	       | Some a -> Printf.printf "\nsome %s %d %s" imp.b_import_name (List.length a) imp.b_instance_id ) imps
-
-let print_imports_in imps =
-  List.iter (fun imp -> Printf.printf "\n  name : %s  id : %s\n  " imp.import_name imp.instance_id) imps
-
 let check_imports_params imports eqs =
   let imports_out = ref [] in
-  (* print_imports_in imports; *)
   let find_in_imp_list imp_id inst_id =
     List.find (fun imp -> (imp.import_name = imp_id) && (imp.instance_id = inst_id) ) imports
   in
@@ -309,8 +299,6 @@ let check_imports_params imports eqs =
       )
       | _ -> eq
   in
-  (* print_imports_out !imports_out; *)
-  (* Printf.printf " taille : %d " (List.length !imports_out); *)
   List.map cip_fun_rec eqs, !imports_out 
 
 
@@ -324,13 +312,6 @@ let sees_list env const_list =
 (* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
 let a_b_list_equals l=
   List.for_all (fun (a, b) -> a = b) l
-
-(* string_of_list (l: string list) returns the concat of every strings in list *)
-(* NOT USED *)
-let string_of_list l = 
-  List.fold_left (fun acc str -> str^" "^acc ) "" l
-
-
 
 (* Find the type related to a variable (dans normalizer) *)
 let rec find_type id declist =
