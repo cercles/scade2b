@@ -82,13 +82,13 @@ let print_operation ppt operations =
     print_reg_list operations.op_2
     print_end
 
-
-let rec print_initialisation_list ppt = function
-  | [] -> ()
-  | [(id, e)] -> fprintf ppt "%a := %a" print_bid id print_expr e
-  | (id, e)::l -> fprintf ppt "%a := %a ; @,%a" print_bid id print_expr e print_initialisation_list l 
-
 let print_initialisation ppt ini_list = 
+  let print_init_clause ppt (id, e) =
+    fprintf ppt "%a := %a" print_bid id print_expr e
+  in
+  let print_initialisation_list ppt l =
+    print_list ~sep:" ;" ~break:true print_init_clause ppt l
+  in
   if ini_list <> [] then
     fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]@\n" print_initialisation_list ini_list
 
@@ -112,15 +112,12 @@ let print_condition ppt = function
 	print_bid id
 	(print_array_type t) e_list
 
-let rec print_invariant_list ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_condition c
-  | c::l -> fprintf ppt "%a & @,%a" print_condition c print_invariant_list l 
-
 let print_invariant ppt inv_list = 
+  let print_invariant_list ppt l =
+    print_list ~sep:" &" ~break:true print_condition ppt l
+  in
   if inv_list <> [] then
     fprintf ppt "INVARIANT @\n@[<v 3>   %a@]@\n" print_invariant_list inv_list 
-
 
 let print_concrete_var ppt reg_list =
   if reg_list <> [] then
