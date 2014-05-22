@@ -123,29 +123,6 @@ let print_concrete_var ppt reg_list =
   if reg_list <> [] then
     fprintf ppt "CONCRETE_VARIABLES %a@\n" print_idlist_comma reg_list
 
-let string_of_formatter print x =
-  let buf = Buffer.create 0 in
-  let ppt = formatter_of_buffer buf in
-  print ppt x;
-  Buffer.contents buf
-
-let print_imports_root sees ppt imports =
-  let print_import ppt import =
-    match import.b_params_expr with
-	None -> fprintf ppt "%aM_%a" 
-	  (print_instname import.b_import_name) import.b_instance_id 
-	  print_bid import.b_import_name
-      | Some p ->
-	  fprintf ppt "%aM_%a(%a)" 
-	    (print_instname import.b_import_name) import.b_instance_id 
-	    print_bid import.b_import_name
-	    print_expr_list p
-  in
-  let import_strs = List.map (string_of_formatter print_import) imports in
-  let all_strs = import_strs @ sees in
-  if all_strs != [] then
-    fprintf ppt "IMPORTS %a@\n" print_idlist_comma all_strs
-
 let print_imports ppt imports =
   let print_import ppt import =
     match import.b_params_expr with
@@ -166,19 +143,6 @@ let print_refines ppt id =
 
 let print_implementation ppt impl_name =
   fprintf ppt "%s" impl_name
-
-let print_root_machine ppt b_impl =
-  fprintf ppt
-    "IMPLEMENTATION %a%a@\n%a@\n%a%a%a%a%a@\nEND"
-    print_implementation b_impl.name
-    print_params_machine b_impl.params
-    print_refines b_impl.refines
-    (print_imports_root b_impl.sees) b_impl.imports
-    print_concrete_var b_impl.concrete_variables
-    print_invariant b_impl.invariant
-    print_initialisation b_impl.initialisation
-    print_operation b_impl.operation
-
 
 let print_machine ppt b_impl =
   fprintf ppt
