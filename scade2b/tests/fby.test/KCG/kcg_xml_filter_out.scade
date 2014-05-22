@@ -6,3 +6,13 @@ let
   z = x; 
   y = fby(z; 1; 0);
 tel
+
+node Test_fby2(x : int)
+  returns (y1 : int ; y2 : int)
+var
+  z : int;
+let
+  z = x; 
+  y1 = fby(z; 1; 0);
+  y2 = fby(z; 1; 3);
+tel
