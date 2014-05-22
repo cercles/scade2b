@@ -267,18 +267,7 @@ let check_imports_params imports eqs =
 	let imp = find_in_imp_list c.call_id c.call_instance in
 	let params_index_list, instname = imp.params_index, imp.instance_id in
 	match params_index_list with 
-	  | None -> 
-	      imports_out := { b_import_name = imp.import_name; 
-			       b_params_expr = None;
-			       b_instance_id = instname; } :: !imports_out; eq
-	  | Some param_index_list ->
-	      if (List.length param_index_list) = 0 then (
-		imports_out :=  { b_import_name = imp.import_name; 
-				  b_params_expr = None;
-				  b_instance_id = instname; } :: !imports_out; eq)
-	      else (
-		if instname = c.call_instance then
-		  ( 
+	  | Some ((_::_) as param_index_list) when instname = c.call_instance ->
 		    let _, params_op, params_m =
 		      List.fold_left (fun (index, params_op, params_m) param_expr -> 
 					if List.mem index param_index_list then
@@ -290,13 +279,11 @@ let check_imports_params imports eqs =
 				      b_params_expr = Some params_m;
 				      b_instance_id = instname; } :: !imports_out;
 		    Call {c with call_params = params_op}
-		  )
-		else (
-		  imports_out := { b_import_name = imp.import_name; 
-				   b_params_expr = None;
-				   b_instance_id = instname; } :: !imports_out; eq)
+	  | _ ->
+	      imports_out := { b_import_name = imp.import_name;
+			       b_params_expr = None;
+			       b_instance_id = instname; } :: !imports_out; eq
 	      )
-      )
       | _ -> eq
   in
   List.map cip_fun_rec eqs, !imports_out 
