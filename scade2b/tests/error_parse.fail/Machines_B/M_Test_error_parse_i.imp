@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_error_parse_i
+REFINES M_Test_error_parse
+SEES M_Enum
+OPERATIONS
+
+rr <-- Test_error_parse(xx) =
+ 
+   rr := FALSE
+   
+ 
+END
