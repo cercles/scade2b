@@ -51,20 +51,14 @@ let print_eq ppt = function
   | Call f -> fprintf ppt "%a" print_call f
   | Op_Base o -> fprintf ppt "%a" print_op o
 
-let rec print_eq_list ppt = function
-  | [] -> ()
-  | [eq] -> fprintf ppt "%a" print_eq eq
-  | eq::l -> fprintf ppt "%a; @,%a" print_eq eq print_eq_list l 
+let print_eq_list ppt = print_list_semicolon print_eq ppt
       
 let print_registre ppt r =
   fprintf ppt "%a := %a"
     print_bid r.reg_lpid
     print_expr r.reg_val
     
-let rec print_reg_list ppt = function
-  | [] -> ()
-  | [r] -> fprintf ppt "%a" print_registre r
-  | r::l -> fprintf ppt "%a; @,%a" print_registre r print_reg_list l 
+let print_reg_list ppt = print_list_semicolon print_registre ppt
 
 let print_vars ppt var_list =
   if var_list <> [] then

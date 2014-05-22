@@ -21,10 +21,28 @@ let with_env e f =
     env := None;
     r
 
-let rec print_list print_elem ppt = function
+(**
+ * Print a list to a Format.formatter.
+ *
+ * The elements are printed using print_elem.
+ * They are separated by sep and a space.
+ * If break is true, a good break hint (@,) is added.
+ *)
+let print_list ?(sep=",") ?(break=false) print_elem ppt l =
+  let rec go ppt = function
   | [] -> ()
   | [x] -> fprintf ppt "%a" print_elem x
-  | x::xs -> fprintf ppt "%a, %a" print_elem x (print_list print_elem) xs
+  | x::xs ->
+      let spc : ((_, _, _, _, _, _) format6) =
+        if break then " @," else " "
+      in
+      fprintf ppt ("%a%s" ^^ spc ^^ "%a")
+        print_elem x sep go xs
+  in
+  go ppt l
+
+let print_list_semicolon print_elem ppt =
+  print_list ~sep:";" ~break:true print_elem ppt
 
 let print_idlist_comma = print_list print_bid
 
