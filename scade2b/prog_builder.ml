@@ -26,9 +26,6 @@ let get_insts_node node =
 let get_insts_nodes nodes =
   List.fold_left (fun insts node -> (get_insts_node node) @ insts) [] nodes
 
-let print_inst_map env =
-  Env_instances.iter (fun  (node, imp, id) bid -> Printf.printf "\n %s  - %s  - %s  - %s" bid node imp id) env
-
 let build_env_instances nodes =
   let insts = get_insts_nodes nodes in
   let env_instances = List.fold_left (fun env inst ->
