@@ -1,0 +1,11 @@
+node Fct(x : int)
+  returns (r : bool)
+let
+  r = true;
+tel
+
+node Test_call(x : int)
+  returns (r : bool)
+let
+  r = #1 Fct(x+2);
+tel
