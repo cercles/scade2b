@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_alt_i
+REFINES M_Test_alt
+SEES M_Enum
+OPERATIONS
+
+rr <-- Test_alt(xx, yy, bb) =
+ 
+   IF bb = TRUE THEN rr := xx ELSE rr := yy END
+   
+ 
+END

@@ -1,0 +1,4 @@
+node Test_alt(x : int ; y : int ; b : bool) returns (r : bool)
+let
+    r = if b then x else y;
+tel
