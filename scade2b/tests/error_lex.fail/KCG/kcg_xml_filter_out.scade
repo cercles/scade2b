@@ -1,0 +1,5 @@
+node Test_error_lex(x : int)
+  returns (r : bool)
+lee
+    r = false;
+tel
