@@ -1,0 +1,5 @@
+node Test_error_lex2(x : int)
+  returns (r : bool)
+let
+%
+tel

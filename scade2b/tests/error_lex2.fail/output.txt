@@ -1,0 +1,3 @@
+
+Lexical Error in Test_error_lex2
+line 4, characters 1-2: lexeme %

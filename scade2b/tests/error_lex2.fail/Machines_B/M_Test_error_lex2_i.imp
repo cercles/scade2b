@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_error_lex2_i
+REFINES M_Test_error_lex2
+SEES M_Enum
+OPERATIONS
+
+rr <-- Test_error_lex2(xx) =
+ 
+   
+   
+ 
+END
