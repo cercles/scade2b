@@ -5,13 +5,15 @@ open Ast_base
 
 (* AST en sortie de parser_xml *)
 
-type xml_option =
-    ScadeName of ident 
-  | InstName of ident
-  | TargetName of ident
-  | TargetType of ident
-  | CellType of ident
-  | Size of ident
+type xml_option_name =
+  | ScadeName
+  | InstName
+  | TargetName
+  | TargetType
+  | CellType
+  | Size
+
+type xml_option = xml_option_name * ident
 
 type xml_options = xml_option list
 

@@ -21,41 +21,12 @@ let remove_package_name s =
 
 (******************** ast_xml Enum_to_Records functions ********************)
 
-let rec get_scadename options =
-  match options with
-    | [] -> assert false
-    | (ScadeName name) :: l' -> name
-    | _ :: l' -> get_scadename l'
-
-let rec get_instname options =
-  match options with
-    | [] -> assert false
-    | (InstName name) :: l' -> name
-    | _ :: l' -> get_instname l'
-
-let rec get_targetname options =
-  match options with
-    | [] -> assert false
-    | (TargetName name) :: l' -> name
-    | _ :: l' -> get_targetname l'
-
-let rec get_targettype options =
-  match options with
-    | [] -> assert false
-    | (TargetType typ) :: l' -> typ
-    | _ :: l' -> get_targettype l'
-
-let rec get_celltype options =
-  match options with
-    | [] -> assert false
-    | (CellType typ) :: l' -> typ
-    | _ :: l' -> get_celltype l'
-
-let rec get_size options =
-  match options with
-    | [] -> assert false
-    | (Size s) :: l' -> s
-    | _ :: l' -> get_size l'
+let get_scadename options = List.assoc ScadeName options
+let get_instname options = List.assoc InstName options
+let get_targetname options = List.assoc TargetName options
+let get_targettype options = List.assoc TargetType options
+let get_celltype options = List.assoc CellType options
+let get_size options = List.assoc Size options
 
 let get_ins nbs =
   let fold_fun element =

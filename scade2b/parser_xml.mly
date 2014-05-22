@@ -5,12 +5,12 @@
 
   let make_opt value option = 
     match option with
-      | "scadeName" -> Some (ScadeName (Xml_utils.remove_package_name value))
-      | "instName" -> Some (InstName value)
-      | "targetName" -> Some (TargetName value)
-      | "targetType" -> Some (TargetType value)
-      | "cellType" -> Some (CellType value)
-      | "size" -> Some (Size value)
+      | "scadeName" -> Some (ScadeName ,Xml_utils.remove_package_name value)
+      | "instName" -> Some (InstName, value)
+      | "targetName" -> Some (TargetName, value)
+      | "targetType" -> Some (TargetType, value)
+      | "cellType" -> Some (CellType, value)
+      | "size" -> Some (Size, value)
       | _ -> None
 	  
 %}
