@@ -79,8 +79,7 @@ let print_operation ppt abstop =
     print_thenlist abstop.abstop_post
 
 let print_constraints ppt constraints =
-  if (List.length constraints) = 0 then () 
-  else 
+  if constraints <> [] then
     fprintf ppt "CONSTRAINTS@\n  %a@\n" print_prelist constraints
 
 let print_id_machine ppt id_machine =

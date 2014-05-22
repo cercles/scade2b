@@ -66,10 +66,8 @@ let rec print_reg_list ppt = function
   | [r] -> fprintf ppt "%a" print_registre r
   | r::l -> fprintf ppt "%a; @,%a" print_registre r print_reg_list l 
 
-
 let print_vars ppt var_list =
-  if (List.length var_list) = 0 then () 
-  else
+  if var_list <> [] then
     fprintf ppt "VAR %a IN" print_idlist_comma var_list
 
 let print_op_decl ppt op_decl =
@@ -79,8 +77,8 @@ let print_op_decl ppt op_decl =
     print_idlist_comma op_decl.param_in
     
 let print_operation ppt operations =
-  let sep = if (List.length operations.op_2) > 0 then ";" else "" in
-  let print_end = if (List.length operations.vars) > 0 then "END" else "" in
+  let sep = if operations.op_2 <> [] then ";" else "" in
+  let print_end = if operations.vars <> [] then "END" else "" in
   fprintf ppt 
     "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a%s@,%a@]@\n %s"
     print_op_decl operations.op_decl
@@ -97,8 +95,7 @@ let rec print_initialisation_list ppt = function
   | (id, e)::l -> fprintf ppt "%a := %a ; @,%a" print_bid id print_expr e print_initialisation_list l 
 
 let print_initialisation ppt ini_list = 
-  if (List.length ini_list) = 0 then () 
-  else 
+  if ini_list <> [] then
     fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]@\n" print_initialisation_list ini_list
 
 let print_condition ppt = function
@@ -127,14 +124,12 @@ let rec print_invariant_list ppt = function
   | c::l -> fprintf ppt "%a & @,%a" print_condition c print_invariant_list l 
 
 let print_invariant ppt inv_list = 
-  if (List.length inv_list) = 0 then () 
-  else 
+  if inv_list <> [] then
     fprintf ppt "INVARIANT @\n@[<v 3>   %a@]@\n" print_invariant_list inv_list 
 
 
 let print_concrete_var ppt reg_list =
-  if (List.length reg_list) = 0 then () 
-  else 
+  if reg_list <> [] then
     fprintf ppt "CONCRETE_VARIABLES %a@\n" print_idlist_comma reg_list
 
 let string_of_formatter print x =

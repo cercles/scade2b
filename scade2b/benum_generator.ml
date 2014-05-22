@@ -17,8 +17,7 @@ let rec print_enum_list ppt = function
   | e::l -> fprintf ppt "%a; @\n%a" print_enum e print_enum_list l 
 
 let print_sets_clause ppt enum_list =
-  if (List.length enum_list) = 0 then () 
-  else 
+  if enum_list <> [] then
     fprintf ppt "SETS %a@\n" print_enum_list enum_list
 
 let print_machine ppt enum_list =
