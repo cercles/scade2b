@@ -9,3 +9,19 @@ node Test_call(x : int)
 let
   r = #1 Fct(x+2);
 tel
+
+node Fct2 (x : int) returns (r1 : int; r2: int)
+let
+    r1 = x;
+    r2 = x;
+tel
+
+node Test_call2(x : int)
+  returns (r : int)
+var
+  i : int;
+  j : int;
+let
+    (i, j) = #2 Fct2(x+2);
+    r = i + j;
+tel

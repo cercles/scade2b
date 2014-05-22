@@ -9,4 +9,14 @@
     <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
     <NodeInstance scadeName="Fct" instName="1" refName="Fct"/>
   </NoExpNode>
+  <NoExpNode scadeName="Fct2" targetCycleFct="Fct2">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r1" scadeType="int" targetName="r1" targetType="kcg_int"/>
+    <Output scadeName="r2" scadeType="int" targetName="r2" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Test_call2" targetCycleFct="Test_call2">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+    <NodeInstance scadeName="Fct2" instName="2" refName="Fct2"/>
+  </NoExpNode>
 </Model>
