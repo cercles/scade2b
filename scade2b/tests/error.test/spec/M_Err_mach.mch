@@ -1,10 +1,13 @@
 MACHINE M_Err_mach
 OPERATIONS
 
-yy <-- Err_mach(xx) =
+rr <-- Err_mach(aa, bb, cc, dd) =
  PRE
-   xx : INT
+   dd : seq(seq(INT)) &
+   cc : seq(INT) &
+   bb : REAL &
+   aa : INT
  THEN
-   yy :: { ii | ii : INT }
+   rr :: { ii | ii : BOOL }
  END 
 END

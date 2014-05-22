@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Model>
   <RootNode scadeName="Err_mach" targetCycleFct="Err_mach">
-    <Input scadeName="xx" scadeType="int" targetName="xx" targetType="kcg_int"/>
-    <Output scadeName="yy" scadeType="int" targetName="yy" targetType="kcg_int"/>
-    <Local scadeName="zz" scadeType="int" targetName="zz" targetType="kcg_int"/>
+    <Input scadeName="aa" scadeType="int" targetName="aa" targetType="kcg_int"/>
+    <Input scadeName="bb" scadeType="int" targetName="bb" targetType="kcg_real"/>
+    <Input scadeName="cc" scadeType="int^(2)" targetName="cc" targetType="array_int_2"/>
+    <Input scadeName="dd" scadeType="int^(2)^(2)" targetName="dd" targetType="array_int_2_2"/>
+    <Output scadeName="rr" scadeType="bool" targetName="rr" targetType="kcg_bool"/>
   </RootNode>
 </Model>
