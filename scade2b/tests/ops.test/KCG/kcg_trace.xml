@@ -33,4 +33,8 @@
     <Input scadeName="bb" scadeType="int" targetName="bb" targetType="kcg_int"/>
     <Output scadeName="rr" scadeType="int" targetName="rr" targetType="kcg_int"/>
   </NoExpNode>
+  <NoExpNode scadeName="Op_not" targetCycleFct="Op_not">
+    <Input scadeName="aa" scadeType="bool" targetName="aa" targetType="kcg_bool"/>
+    <Output scadeName="rr" scadeType="bool" targetName="rr" targetType="kcg_bool"/>
+  </NoExpNode>
 </Model>

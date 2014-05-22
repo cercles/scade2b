@@ -43,3 +43,9 @@ function Op_div(aa: int; bb: int)
 let
   rr = aa div bb;
 tel
+
+function Op_not(aa:bool)
+  returns (rr:bool)
+let
+  rr = not aa;
+tel

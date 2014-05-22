@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Op_not_i
+REFINES M_Op_not
+SEES M_Enum
+OPERATIONS
+
+rr <-- Op_not(aa) =
+ 
+   rr := bool(not (aa = TRUE))
+   
+ 
+END
