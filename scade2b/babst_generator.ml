@@ -33,11 +33,8 @@ let print_then_condition ppt = function
       print_bid ens_id
       (print_array_type t) e_list
 
-let rec print_thenlist ppt = function
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_then_condition c
-  | c::l -> fprintf ppt "%a||@,%a" print_then_condition c print_thenlist l 
-
+let print_thenlist ppt l =
+  print_list ~sep:"||" ~break:true print_then_condition ppt l
 
 let print_pre_condition ppt = function
   | Base_expr (id, t, expr, _) -> 
@@ -59,11 +56,8 @@ let print_pre_condition ppt = function
       print_bid id
       (print_array_type t) e_list
 
-let rec print_prelist ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_pre_condition c
-  | c::l -> fprintf ppt "%a &@,%a" print_pre_condition c print_prelist l 
-
+let print_prelist ppt l =
+  print_list ~sep:" &" ~break:true print_pre_condition ppt l
 
 let print_op_decl ppt op_decl =
   fprintf ppt "%a <-- %s(%a)"
