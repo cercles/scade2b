@@ -116,6 +116,14 @@ let
   y = [x, z];
 tel
 
+function mat_real_op_def(x : real^2; z : real^2)
+  returns (y : real^2^2)
+let
+  assume A1 : x > 0.0 and x < 1000.0;
+  guarantee G1 : y > 0.0 and y < 1000.0;
+  y = [x, z];
+tel
+
 
 function vect_real_op_index(x : real^2)
   returns (y : real)

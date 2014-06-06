@@ -19,12 +19,13 @@ let print_then_condition ppt = function
       print_bid ens_id
       print_bid ens_id
       print_basetype t
-  | Fun_expr (id, t, e_list, expr, ens_id) ->
-    fprintf ppt "%a :: { %a | %a : %a & %a } "
+  | Fun_expr (id, t, e_list, expr, ens_id, index) ->
+    fprintf ppt "%a :: { %a | %a : %a & !%s.(%s : INT => %a) } "
       print_bid id
-      print_bid ens_id 
+      print_bid ens_id
       print_bid ens_id
       (print_array_type t) e_list 
+      index index
       print_expr_in_pred expr;
   | Fun_no_expr (id, t, e_list, ens_id) ->
     fprintf ppt "%a :: { %a | %a : %a }"
@@ -33,11 +34,14 @@ let print_then_condition ppt = function
       print_bid ens_id
       (print_array_type t) e_list
 
-let rec print_thenlist ppt = function
+let rec print_thenlist_rec ppt = function
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_then_condition c
-  | c::l -> fprintf ppt "%a||@,%a" print_then_condition c print_thenlist l 
+  | c::l -> fprintf ppt "%a||@,%a" print_then_condition c print_thenlist_rec l 
 
+let print_thenlist ppt posts =
+  if (List.length posts = 0) then fprintf ppt "skip" 
+  else print_thenlist_rec ppt posts
 
 let print_pre_condition ppt = function
   | Base_expr (id, t, expr, _) -> 
@@ -49,28 +53,39 @@ let print_pre_condition ppt = function
       fprintf ppt "%a : %a"
 	print_bid id
 	print_basetype t
-  | Fun_expr (id, t, e_list, expr, _) ->
-    fprintf ppt "%a : %a & %a "
+  | Fun_expr (id, t, e_list, expr,_, index) ->
+    fprintf ppt "%a : %a & !%s.(%s : INT => %a)"
       print_bid id
       (print_array_type t) e_list
+      index index
       print_expr_in_pred expr
   | Fun_no_expr (id, t, e_list, _) ->
     fprintf ppt "%a : %a"
       print_bid id
       (print_array_type t) e_list
 
-let rec print_prelist ppt = function 
+let rec print_prelist_rec ppt = function
   | [] -> ()
   | [c] -> fprintf ppt "%a" print_pre_condition c
-  | c::l -> fprintf ppt "%a &@,%a" print_pre_condition c print_prelist l 
+  | c::l -> fprintf ppt "%a &@,%a" print_pre_condition c print_prelist_rec l 
 
+let print_prelist ppt pres =
+  if (List.length pres = 0) then fprintf ppt "TRUE = TRUE" 
+  else print_prelist_rec ppt pres
 
 let print_op_decl ppt op_decl =
-  fprintf ppt "%a <-- %s(%a)"
-    print_idlist_comma op_decl.param_out
-    op_decl.id
-    print_idlist_comma op_decl.param_in
-
+  if (List.length op_decl.param_out = 0) && (List.length op_decl.param_in = 0) then
+    fprintf ppt "%s" op_decl.id
+  else if (List.length op_decl.param_out = 0) then
+    fprintf ppt "%s(%a)" op_decl.id print_idlist_comma op_decl.param_in
+  else if (List.length op_decl.param_in = 0) then
+    fprintf ppt "%a <-- %s" print_idlist_comma op_decl.param_out op_decl.id
+  else
+    fprintf ppt "%a <-- %s(%a)"
+      print_idlist_comma op_decl.param_out
+      op_decl.id
+      print_idlist_comma op_decl.param_in
+ 
 let print_operation ppt abstop =
   fprintf ppt 
     "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v>%a@]@]@\n@[<v 3> THEN@,@[<v>%a@]@]@\n END"

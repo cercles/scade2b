@@ -1,8 +1,12 @@
 (* Florian Thibord  --  Projet CERCLES *)
 
 open Ast_base
+open Ast_kcg
+open Ast_prog
 open Ast_scade_norm
 open Utils
+
+exception Eqs_scheduler
 
 module L = Set.Make(
   struct
@@ -93,8 +97,8 @@ let scheduler eqs inputs =
       let eqs' = nok in
       (* Stop loop if there is no change *)
       if res' = res && l' = l && eqs'= eqs then 
-	(List.iter (fun id -> Printf.printf " %s " id) inputs;
-	 failwith "\nscheduler issue... causality loop?\n") else ();
+	raise (Eqs_scheduler)
+      else ();
       schedul_rec res' l' eqs'
     end
   in
@@ -103,3 +107,11 @@ let scheduler eqs inputs =
   let id_registres = retrieve_reg_ids (EQs.elements eqs) in
   let l = List.fold_left (fun acc id -> L.add id acc) L.empty (inputs@id_registres) in
   List.rev (schedul_rec [] l eqs)
+
+
+let schedule_eqs ast_n prog =
+  let (id_inputs, _) =  List.split ast_n.n_param_in in
+  let id_consts =  List.map (fun cst -> cst.c_id) prog.consts in
+  let id_enums = List.fold_left (fun acc enum -> enum.p_enum_list @ acc) [] prog.enum_types in
+  let scheduled_eqs = scheduler ast_n.n_eqs (id_inputs @ id_consts @ id_enums) in
+  { ast_n with n_eqs = scheduled_eqs }

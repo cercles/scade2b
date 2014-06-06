@@ -76,7 +76,6 @@ let rec print_expr ppt = function
   | BE_Pred p ->
       fprintf ppt "bool%a" print_pred p
 
-(* TODO: find a way to merge *)
 and print_expr_in_pred ppt = function
   | BE_Ident id -> print_bid ppt id
   | BE_Value v -> print_value ppt v
@@ -98,7 +97,6 @@ and print_expr_in_pred ppt = function
       fprintf ppt "sharp(%a)" print_expr_list e_list
   | BE_Pred p ->
       fprintf ppt "%a" print_pred p
-
 
 and print_pred ppt = function
   | BP_Op_Logic (op, p1, p2) ->

@@ -16,7 +16,7 @@ let print_instname imp_name ppt inst_id =
     try 
       Env_instances.find (!node_name, imp_name, inst_id) !env_instances
     with
-	Not_found -> Printf.printf "\n %s  %s  %s" !node_name imp_name inst_id; "" (* DEBUG *)
+	Not_found -> ""
   in
   if bid = "" then () else fprintf ppt "%s." bid
 
@@ -35,6 +35,12 @@ let print_alternative ppt a =
     print_expr a.alt_else
 
 let print_call ppt f =
+  if (List.length f.call_params = 0) then
+  fprintf ppt "%a <-- %a%s"
+    print_lp f.call_lp
+    (print_instname f.call_id) f.call_instance
+    f.call_id
+  else
   fprintf ppt "%a <-- %a%s(%a)"
     print_lp f.call_lp
     (print_instname f.call_id) f.call_instance
@@ -72,11 +78,19 @@ let print_vars ppt var_list =
   else
     fprintf ppt "VAR %a IN" print_idlist_comma var_list
 
+
 let print_op_decl ppt op_decl =
-  fprintf ppt "%a <-- %s(%a)"
-    print_idlist_comma op_decl.param_out
-    op_decl.id
-    print_idlist_comma op_decl.param_in
+  if (List.length op_decl.param_out = 0) && (List.length op_decl.param_in = 0) then
+    fprintf ppt "%s" op_decl.id
+  else if (List.length op_decl.param_out = 0) then
+    fprintf ppt "%s(%a)" op_decl.id print_idlist_comma op_decl.param_in
+  else if (List.length op_decl.param_in = 0) then
+    fprintf ppt "%a <-- %s" print_idlist_comma op_decl.param_out op_decl.id
+  else
+    fprintf ppt "%a <-- %s(%a)"
+      print_idlist_comma op_decl.param_out
+      op_decl.id
+      print_idlist_comma op_decl.param_in
     
 let print_operation ppt operations =
   let sep = if (List.length operations.op_2) > 0 then ";" else "" in
@@ -111,10 +125,11 @@ let print_condition ppt = function
       fprintf ppt "%a : %a"
 	print_bid id
 	print_basetype t
-  | Fun_expr (id, t, e_list, expr, _) ->
-      fprintf ppt "%a : %a & %a "
-	print_bid id
+  | Fun_expr (id, t, e_list, expr,_, index) ->
+      fprintf ppt "%a : %a & !%s.(%s : INT => %a)"
+        print_bid id
 	(print_array_type t) e_list
+	index index
 	print_expr_in_pred expr
   | Fun_no_expr (id, t, e_list, _) ->
       fprintf ppt "%a : %a"
@@ -208,7 +223,7 @@ let print_machine ppt b_impl =
     print_operation b_impl.operation
 
 
-let print_prog b_impl file is_root env_inst env =
+let print_prog b_impl file is_root env_inst =
   node_name := String.sub b_impl.name 2 ((String.length b_impl.name)-4);
   env_instances := env_inst;
   if is_root then
