@@ -5,7 +5,7 @@ scade2b/*~
 scade2b/_build
 scade2b/*#*
 scade2b/scade2b
-scade2b/nav_tests
+scade2b/nav_test
 scade2b/*.cm[iop]
 scade2b/*.out
 scade2b/bisect-report

@@ -1,6 +1,6 @@
 IMPLEMENTATION M_Test_fby_i
 REFINES M_Test_fby
-SEES M_Enum
+
 CONCRETE_VARIABLES yy
 INVARIANT 
    yy : INT

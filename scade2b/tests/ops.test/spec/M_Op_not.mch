@@ -1,5 +1,5 @@
 MACHINE M_Op_not
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Op_not(aa) =

@@ -1,5 +1,5 @@
 MACHINE M_Op_cmp
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Op_cmp(aa, bb, cc, dd, ee, ff) =

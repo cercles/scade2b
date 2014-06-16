@@ -1,6 +1,6 @@
 IMPLEMENTATION M_Test_call_i
 REFINES M_Test_call
-SEES M_Enum
+
 IMPORTS TF1.M_Fct
 OPERATIONS
 

@@ -7,8 +7,6 @@
   (* Check if all the types in the list are the same. Used to check array coherence *)
   let check_type list =
     let typ = List.hd list in
-    List.iter
-      (fun t -> if t <> typ then raise Parsing.Parse_error else ()) list;
     typ
 
   (* Used for the distinction between Slice and Index 
@@ -97,7 +95,6 @@ node :
        p_assumes = assumes;
        p_eqs = eqs;
        p_guarantees = guarantees; } }
-
 ;
 
 var_decl :

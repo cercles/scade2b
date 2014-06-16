@@ -1,3 +1,2 @@
 
-Syntax Error in Test_error_parse
-line 4, characters 13-18: lexeme false
+ERROR (parser_scade): Syntax Error in node Test_error_parse, line 4, characters 13-18 : lexeme false

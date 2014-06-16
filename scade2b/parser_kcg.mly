@@ -5,6 +5,7 @@
   open Ast_base
   open Ast_kcg
 
+
   (* Check if all the types in the list are the same. Used to check array coherence *)
   let check_type list =
     let typ = List.hd list in

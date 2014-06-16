@@ -6,6 +6,7 @@ open Ast_scade
 open Ast_base
 open Ast_kcg
 open Ast_prog
+open Call_graph
 open Ast_xml
 open Xml_utils
 
@@ -256,57 +257,19 @@ let search_input_in_reg eqs ins pres lambdas =
 	
 (*                          2) Traduction                           *)
 
-let check_imports_params imports eqs =
-  let imports_out = ref [] in
-  let find_in_imp_list imp_id inst_id =
-    List.find (fun imp -> (imp.import_name = imp_id) && (imp.instance_id = inst_id) ) imports
-  in
-  let cip_fun_rec eq =
-    match eq with
-      Call c -> (
-	let imp = find_in_imp_list c.call_id c.call_instance in
-	let params_index_list, instname = imp.params_index, imp.instance_id in
-	match params_index_list with 
-	  | Some ((_::_) as param_index_list) when instname = c.call_instance ->
-		    let _, params_op, params_m =
-		      List.fold_left (fun (index, params_op, params_m) param_expr -> 
-					if List.mem index param_index_list then
-					  (index+1, params_op, (List.nth c.call_params index) :: params_m)
-					else
-					  (index+1, (List.nth c.call_params index) :: params_op, params_m)
-				     ) (0, [], []) c.call_params in
-		    imports_out :=  { b_import_name = imp.import_name; 
-				      b_params_expr = Some params_m;
-				      b_instance_id = instname; } :: !imports_out;
-		    Call {c with call_params = params_op}
-	  | _ ->
-	      imports_out := { b_import_name = imp.import_name;
-			       b_params_expr = None;
-			       b_instance_id = instname; } :: !imports_out; eq
-	      )
-      | _ -> eq
-  in
-  List.map cip_fun_rec eqs, !imports_out 
-
-
-
 (*************************** DIVERS ***************************)
 
-
-let sees_list env const_list =
-  if List.exists (fun cst -> Env.mem cst env) const_list then ["M_Consts"; "M_Enum"] else ["M_Enum"]
-
-(* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs *)
+(* a_b_list_equals (l: ('a, 'a) list) returns true if a = b for every pairs (parser_scade) *)
 let a_b_list_equals l=
   List.for_all (fun (a, b) -> a = b) l
 
-(* Find the type related to a variable (dans normalizer) *)
+(* Find the type related to a variable (normalizer) *)
 let rec find_type id declist =
   match declist with
   | [] -> None
   | (ident, typ)::l -> if ident = id then Some typ else find_type id l
 
-(* caret_to_def v n returns [v; ...; v] with n index  *)
+(* caret_to_def v n returns [v; ...; v] with n index (trad) *)
 and caret_to_def e1 e2 = 
   let rec funrec v dim acc =
     if dim = 0 then acc
@@ -314,9 +277,7 @@ and caret_to_def e1 e2 =
   in
   NA_Def (funrec e1 e2 [])
 
-
-
-exception Two_ident of (string * string)
+exception Two_ident_used_in_condition of (string * string)
 
 (* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)
 let find_ident_in_pexpr expr consts =
@@ -324,8 +285,8 @@ let find_ident_in_pexpr expr consts =
   let id = ref "" in
   let rec ident_finder = function
     | PE_Ident iden -> 
-        if (!id <> iden && !id <> "" && (is_not_const iden) && (is_not_const !id)) 
-	then raise (Two_ident (!id, iden)) 
+        if (!id <> iden && !id <> "" && (is_not_const iden) && (is_not_const !id))
+	then raise (Two_ident_used_in_condition (!id, iden)) 
 	else (if (is_not_const iden) then id := iden)
     | PE_Value v -> ()
     | PE_Array array -> idarray_finder array
@@ -342,15 +303,89 @@ let find_ident_in_pexpr expr consts =
     | PA_Def elist -> List.iter ident_finder elist
     | PA_Caret (e1, e2) -> ident_finder e1; ident_finder e2 
     | PA_Concat (e1, e2) -> ident_finder e1; ident_finder e2 
-    | PA_Slice (iden, _) -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
-    | PA_Index (iden, _) -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden
-    | PA_Reverse iden -> if (!id <> "" && !id <> iden) then raise (Two_ident (!id, iden)) else id := iden	
+    | PA_Slice (iden, _) -> if (!id <> "" && !id <> iden) then 
+	raise (Two_ident_used_in_condition (!id, iden)) 
+      else id := iden
+    | PA_Index (iden, _) -> if (!id <> "" && !id <> iden) then 
+	raise (Two_ident_used_in_condition (!id, iden)) 
+      else id := iden
+    | PA_Reverse iden -> if (!id <> "" && !id <> iden) then 
+	raise (Two_ident_used_in_condition (!id, iden)) 
+      else id := iden	
   in
   ident_finder expr;
   !id
 
+(* Find out if a constant and/or an enum is used in the node *)
+let find_const_enum_in_node ast_option consts enums =
+  let const_found = ref false in
+  let enum_found = ref false in
+  let consts = List.map (fun c -> c.c_id) consts in
+  let enum_ids, enum_elts = 
+    List.split (List.map (fun e -> e.p_enum_id, e.p_enum_list) enums) in
+  let enum_elts = List.concat enum_elts in
+  let rec id_expr_finder = function
+    | PE_Ident id -> 
+      const_found := !const_found || (List.mem id consts);
+      enum_found := !enum_found || (List.mem id enum_elts)
+    | PE_Value v -> ()
+    | PE_Array array -> idarray_finder array
+    | PE_Call (_, _, elist) -> List.iter id_expr_finder elist
+    | PE_Op_Arith1 (_, e) -> id_expr_finder e
+    | PE_Op_Arith2 (_, e1, e2)
+    | PE_Op_Relat (_, e1, e2) -> id_expr_finder e1;id_expr_finder e2
+    | PE_Op_Sharp elist -> List.iter id_expr_finder elist
+    | PE_Op_Not e -> id_expr_finder e
+    | PE_Op_Logic (_, e1, e2) -> id_expr_finder e1 ; id_expr_finder e2
+    | PE_Fby (e1, e2, e3) -> id_expr_finder e1; id_expr_finder e2; id_expr_finder e3
+    | PE_If (e1, e2, e3) -> id_expr_finder e1; id_expr_finder e2; id_expr_finder e3
+  and idarray_finder = function
+    | PA_Def elist -> List.iter id_expr_finder elist
+    | PA_Caret (e1, e2) -> id_expr_finder e1; id_expr_finder e2 
+    | PA_Concat (e1, e2) -> id_expr_finder e1; id_expr_finder e2 
+    | PA_Slice (id, _) -> 
+      const_found := !const_found || (List.mem id consts);
+      enum_found := !enum_found || (List.mem id enum_elts)
+    | PA_Index (id, _) -> 
+      const_found := !const_found || (List.mem id consts);
+      enum_found := !enum_found || (List.mem id enum_elts)
+    | PA_Reverse id -> 
+      const_found := !const_found || (List.mem id consts);
+      enum_found := !enum_found || (List.mem id enum_elts)
+  in
+  let rec enum_const_type_finder = function
+    | PT_Base t -> 
+      begin
+	match t with 
+	| T_Enum id -> enum_found := !enum_found || (List.mem id enum_ids)
+	| _ -> ()
+      end;
+    | PT_Array (t, e) -> enum_const_type_finder t; id_expr_finder e
+  in
+  match ast_option with
+  | None -> !const_found, !enum_found
+  | Some ast -> 
+    let (_, eq_expr_list) = List.split ast.p_eqs in
+    List.iter id_expr_finder (eq_expr_list@ast.p_assumes@ast.p_guarantees);
+    let (_, types) = List.split (ast.p_param_in@ast.p_param_out@ast.p_vars) in
+    List.iter enum_const_type_finder types;
+    !const_found, !enum_found
 
-(* Fonctions de rennomage *)
+let const_enums_used_in_prog nodes =
+  List.fold_left (fun (const_used, enum_used) node -> 
+    let n_const_used, n_enum_used = node.sees_cond in
+    (const_used || n_const_used, enum_used || n_enum_used)
+  ) (false, false) nodes
+
+(* (trad) *)
+let sees_list sees_cond =
+  match sees_cond with
+  | (false, false) -> [] 
+  | (false, true) -> ["M_Enum"] 
+  | (true, false) -> ["M_Consts"] 
+  | (true, true) -> ["M_Consts"; "M_Enum"] 
+
+(* Fonctions de rennomage d'ident (trad) *)
 let rec rename_id_expr old new_i = function
   | NE_Ident i -> if i = old then NE_Ident new_i else NE_Ident i
   | NE_Value v -> NE_Value v
@@ -364,7 +399,6 @@ let rec rename_id_expr old new_i = function
                                                  rename_id_expr old new_i e2)
   | NE_Op_Sharp (e_list) -> NE_Op_Sharp (List.map (rename_id_expr old new_i) e_list)
   | NE_Op_Not e -> NE_Op_Not (rename_id_expr old new_i e)
-
 and rename_id_array old new_i = function
   | NA_Def e_list -> NA_Def (List.map (rename_id_expr old new_i) e_list)
   | NA_Caret (e1, e2) -> NA_Caret (rename_id_expr old new_i e1, rename_id_expr old new_i e2)
@@ -379,8 +413,18 @@ and rename_id_array old new_i = function
   | NA_Reverse i -> NA_Reverse (if i = old then new_i else i)
 
 
+(* Creation de l'expression a substituer a l'id d'un tableau pour l'impression des conditions *)
+let make_subst_id index_id dims tab_id =
+  let rec fun_rec size =
+    if size = 1 then tab_id else "conc(" ^ (fun_rec (size-1)) ^ ")"
+  in
+  (fun_rec (List.length dims)) ^ "(" ^ index_id ^ ")"
+    
 
+(************** CHANGEMENT DE LA REPRESENTATION DES CONSTANTES **************)
+    
 (* ast_repr to ast_repr_b functions *)
+
 let rec p_expr_to_b_expr = function
   | PE_Ident id ->  BE_Ident id
   | PE_Value v -> BE_Value v
@@ -425,3 +469,18 @@ let p_const_to_b_const const =
     | PT_Array (_, _) -> (
       let typ, dims = flatten_array t in 
       Const_Fun (id, typ, dims, p_expr_to_b_expr e))
+
+
+(*************************** MISC INITIALISATION ***************************)
+
+let create_dir_output dir_output =
+  if not(Sys.file_exists dir_output) then Unix.mkdir dir_output 0o764
+
+(***************************** LIBRARY STUFF *******************************)
+
+let library_list = [
+"to_int", "ML_math" ; 
+"to_real", "ML_math"
+]
+
+

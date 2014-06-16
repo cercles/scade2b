@@ -1,5 +1,5 @@
 MACHINE M_Test_call
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Test_call(xx) =

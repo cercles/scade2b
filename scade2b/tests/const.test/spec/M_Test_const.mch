@@ -1,5 +1,5 @@
 MACHINE M_Test_const
-SEES M_Consts, M_Enum
+SEES M_Consts
 OPERATIONS
 
 rr <-- Test_const(xx) =

@@ -1,5 +1,5 @@
 MACHINE M_Test_assume
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Test_assume(xx, yy) =

@@ -48,10 +48,13 @@ and print_option_list ppt = function
   | [o] -> fprintf ppt "%a" print_option o
   | o :: l -> fprintf ppt "%a %a" print_option o print_option_list l
 
-and print_option ppt = function
-  | ScadeName id -> fprintf ppt " ScadeName : %s -" id
-  | InstName id -> fprintf ppt " InstName : %s -" id
-  | TargetName id -> fprintf ppt " TargetName : %s -" id
-  | TargetType id -> fprintf ppt " TargetType : %s -" id
-  | CellType id -> fprintf ppt " CellType : %s -" id
-  | Size id -> fprintf ppt " Size : %s -" id
+and print_option ppt (optname, value) =
+  fprintf ppt " %s : %s -" (print_optname optname) value
+
+and print_optname = function
+  | ScadeName -> "ScadeName"
+  | InstName -> "InstName"
+  | TargetName -> "TargetName"
+  | TargetType -> "TargetType"
+  | CellType -> "CellType"
+  | Size -> "Size"

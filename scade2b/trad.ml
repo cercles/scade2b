@@ -7,17 +7,17 @@ open Ast_scade_norm
 open Utils
 
 
-exception Register_cond_error of string
-
-
-
 (******************** ast_repr_norm to ast_repr_b functions ********************)
 
 let id_to_bid env id =
-try
-  let bid, _, _ = Env.find id env in bid
-with Not_found -> 
-  (Printf.printf "Identifier not found: '%s'" id; id) (* TODO : A REMMETTRE EN ETAT *)
+  try
+    let bid, _, _ = Env.find id env in bid
+  with Not_found -> 
+    let msg = Printf.sprintf 
+      "\nWARNING (trad.id_to_bid): Identifier not found: '%s'" id;
+    in
+    output_string stderr msg;
+    id 
 
 let rec n_expr_to_b_expr env = function
   | NE_Ident id ->  BE_Ident (id_to_bid env id)
@@ -65,7 +65,6 @@ let nlp_to_blp env = function
 let n_decl_to_decl env (id, _) =
   id_to_bid env id
 
-
 let n_condition_to_condition env (id, t, e) =
   (* flatten a NT_Array into a n_expr list (a list of dimensions) *)
   let flatten_array env a =
@@ -76,7 +75,7 @@ let n_condition_to_condition env (id, t, e) =
     in
     (!base_t, fun_rec a)
   in
-  let compr_ens_ident = Utils.make_b_ident "ii" env in
+  let compr_ens_ident = Env_builder.make_b_ident "ii" env in
   match t with 
     | NT_Base typ -> (
 	match e with 
@@ -86,13 +85,13 @@ let n_condition_to_condition env (id, t, e) =
 	      Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env2 expr, compr_ens_ident))
     | NT_Array (_, _) -> (
 	let typ, dims = flatten_array env t in
-	(* let index_tab_ident = Utils.make_b_ident "jj" env in *)
+	let index_tab_ident = Env_builder.make_b_ident "jj" env in
+	let subst_id = Utils.make_subst_id index_tab_ident dims compr_ens_ident in
 	match e with 
 	  | None -> Fun_no_expr (id_to_bid env id, typ, dims, compr_ens_ident)
 	  | Some expr -> 
-	      let env2 = Env.add id (compr_ens_ident, t, None) env in
-	      Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env2 expr, compr_ens_ident))
-
+	    let env2 = Env.add id (subst_id, t, None) env in
+	    Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env2 expr, compr_ens_ident, index_tab_ident))
 
 let n_condition_to_condition_pred env (id, t, e) =
   let flatten_array env a =
@@ -110,9 +109,13 @@ let n_condition_to_condition_pred env (id, t, e) =
 	  | Some expr -> Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr, id_to_bid env id))
     | NT_Array (_, _) -> (
 	let typ, dims = flatten_array env t in
+	let index_tab_ident = Env_builder.make_b_ident "jj" env in
+	let subst_id = Utils.make_subst_id index_tab_ident dims (id_to_bid env id) in
 	match e with 
 	  | None -> Fun_no_expr (id_to_bid env id, typ, dims, id_to_bid env id)
-	  | Some expr -> Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env expr, id_to_bid env id))
+	  | Some expr -> 
+	    let env2 = Env.add id (subst_id, t, None) env in
+	    Fun_expr (id_to_bid env id, typ, dims, n_expr_to_b_expr env2 expr, id,index_tab_ident))
 	
 
 
@@ -154,11 +157,12 @@ let retrieve_cond_expr reg node env =
   List.fold_left eqs_folder None eqs
 
 let get_invariant env node reg =
-  n_condition_to_condition_pred env (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env)
+  n_condition_to_condition_pred 
+    env 
+    (reg.n_reg_lpid, reg.n_reg_type, retrieve_cond_expr reg node env)
   
 let get_initialisation env reg =
   (id_to_bid env reg.n_reg_lpid, n_expr_to_b_expr env reg.n_reg_ini)
-
 
 
 
@@ -170,14 +174,13 @@ let rec trad_list env to_call = function
 
 
 
-
 (******************** Traduction du noeud vers l'implantation ********************)
 
-let bimpl_translator env node imports const_list =
+let bimpl_translator env node imports sees_cond =
   let implem_name = "M_" ^ node.n_id ^ "_i" in
   let params_id = List.map (fun l -> l.n_l_ident) node.n_lambdas in
   let refines = "M_" ^ node.n_id in
-  let sees = Utils.sees_list env const_list in
+  let sees = Utils.sees_list sees_cond in
   let concrete_vars = ref [] in
   let invariant = ref [] in
   let initialisation = ref [] in
@@ -224,7 +227,6 @@ let bimpl_translator env node imports const_list =
     (fun eq -> match eq with N_Registre _ -> false | _ -> true) node.n_eqs in
   let op_1 = translate_eqs env eqs in
   let op_2 = translate_regs env regs in
-  let op_1, imports = Utils.check_imports_params imports op_1 in 
   let reg_ids = !concrete_vars in
   let vars = trad_list env n_decl_to_decl node.n_vars in
   let vars_without_regs =
@@ -238,7 +240,7 @@ let bimpl_translator env node imports const_list =
     params = List.map (id_to_bid env) params_id;
     refines = refines;
     sees = sees;
-    imports = imports;
+    imports = [];
     concrete_variables = !concrete_vars;
     invariant = !invariant;
     initialisation = !initialisation;
@@ -246,15 +248,13 @@ let bimpl_translator env node imports const_list =
   }
 
 
-
-
 (******************** Traduction du noeud vers la machine abstraite ********************)
 
-let babst_translator env node const_list =
+let babst_translator env node sees_cond =
   let machine = "M_" ^ node.n_id in
   let params_id, params_cond = 
     List.split (List.map (fun lambda -> lambda.n_l_ident, lambda.n_l_cond) node.n_lambdas) in
-  let sees = Utils.sees_list env const_list in
+  let sees = Utils.sees_list sees_cond in
   let constraints = trad_list env n_condition_to_condition_pred params_cond in
   let abstop_decl = { id = node.n_id;
 		      param_in = trad_list env n_decl_to_decl node.n_param_in;
@@ -274,14 +274,12 @@ let babst_translator env node const_list =
   }
 
 
-
-
 (******************** Traduction du noeud en un couple de machines B ********************)
 
-let translate node imports const_list =
+let translate node imports sees_cond =
   let env = node.n_env in
-  let babst = babst_translator env node const_list in
-  let bimpl = bimpl_translator env node imports const_list in
+  let babst = babst_translator env node sees_cond in
+  let bimpl = bimpl_translator env node imports sees_cond in
   { machine_abstraite = babst;
     implementation = bimpl;
   }

@@ -1,3 +1,3 @@
 
-Lexical Error in Test_error_lex2
-line 4, characters 1-2: lexeme %
+ERROR (lexer_scade): Lexical Error in node Test_error_lex2: lexical error, line 4, characters 1-2 : lexeme %
+Fatal error: exception Lexer_scade_error.Lexical_error("lexical error")

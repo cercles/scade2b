@@ -1,5 +1,5 @@
 MACHINE M_Test_alt
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Test_alt(xx, yy, bb) =

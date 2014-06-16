@@ -1,5 +1,5 @@
 MACHINE M_Fct2
-SEES M_Enum
+
 OPERATIONS
 
 r1, r2 <-- Fct2(xx) =

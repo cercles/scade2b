@@ -1,5 +1,5 @@
 MACHINE M_Test_fby2
-SEES M_Enum
+
 OPERATIONS
 
 y1, y2 <-- Test_fby2(xx) =

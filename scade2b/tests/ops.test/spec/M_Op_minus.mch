@@ -1,5 +1,5 @@
 MACHINE M_Op_minus
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Op_minus(xx, yy) =

@@ -1,6 +1,6 @@
 IMPLEMENTATION M_Test_assume_i
 REFINES M_Test_assume
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Test_assume(xx, yy) =

@@ -10,24 +10,35 @@ begin
         "ast_scade.ml"
         "ast_scade_norm.ml"
         "ast_xml.ml"
+        "call_graph.ml"
+        "env_builder.ml"
+        "ast_printer_scade.ml"
+        "ast_printer_norm.ml"
+        "reg_ini_input.ml"
+        "printer_xml_ast.ml"
         "utils.ml"
-        "babsterror_generator.ml"
         "printer.ml"
         "babst_generator.ml"
+        "babsterror_generator.ml"
         "bconst_generator.ml"
         "benum_generator.ml"
         "bimpl_generator.ml"
         "lexer_kcg.mll" (syntax = "camlp4o")
         "lexer_scade.mll" (syntax = "camlp4o")
+        "lexer_scade_error.mll" (syntax = "camlp4o")
         "lexer_xml.mll" (syntax = "camlp4o")
         "scheduler.ml"
         "normalizer.ml"
-        "parser_kcg.mly" (syntax = "camlp4o")
+        "trad.ml"
+        "conds_retriever.ml"
+        "parser_scade_error.mly" (syntax = "camlp4o")
+        "error_handler.ml"
         "parser_scade.mly" (syntax = "camlp4o")
+        "prog_builder.ml"
+        "parser_kcg.mly" (syntax = "camlp4o")
         "xml_utils.ml"
         "parser_xml.mly" (syntax = "camlp4o")
-        "prog_builder.ml"
-        "trad.ml"
+        "initialisation.ml"
         "scade2b.ml"
     ]
 

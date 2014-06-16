@@ -1,3 +1,2 @@
 
-Syntax Error in XML: 
-line 2, characters 2-5 : lexeme Mod
+CRITICAL ERROR (parser_xml): Syntax error in XML, line 2, characters 2-5 : lexeme Mod

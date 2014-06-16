@@ -1,6 +1,6 @@
 IMPLEMENTATION M_vect_bool_op_concat_i
 REFINES M_vect_bool_op_concat
-SEES M_Enum
+
 OPERATIONS
 
 yy <-- vect_bool_op_concat(xx, zz) =

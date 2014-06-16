@@ -1,5 +1,5 @@
 MACHINE M_Op_mul
-SEES M_Enum
+
 OPERATIONS
 
 rr <-- Op_mul(aa, bb) =
