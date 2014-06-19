@@ -10,3 +10,14 @@ LET
    z = x;  
 TEL 
 
+Node normalized : 
+NODE Id_int (x : int) RETURNS (y : int) 
+VAR z : int; 
+PRE : x : int 
+LET 
+   y = z;
+   z = x; 
+TEL 
+POST : y : int  
+LAMBDAS :  
+
