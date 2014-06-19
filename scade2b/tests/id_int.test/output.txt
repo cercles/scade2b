@@ -21,3 +21,14 @@ TEL
 POST : y : int  
 LAMBDAS :  
 
+Node normalized : 
+NODE Id_int (x : int) RETURNS (y : int) 
+VAR z : int; 
+PRE : x : int 
+LET 
+   z = x;
+   y = z; 
+TEL 
+POST : y : int  
+LAMBDAS :  
+
