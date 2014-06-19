@@ -91,10 +91,8 @@ and print_leftpart ppt = function
   | PLP_Ident id -> print_id ppt id
   | PLP_Tuple id_list -> print_id_list ppt id_list
 
-and print_id_list ppt = function
-  | [] -> ()
-  | [id] -> fprintf ppt "%a" print_id id
-  | id::l -> fprintf ppt "%a, %a" print_id id print_id_list l
+and print_id_list ppt l =
+  print_list print_id ppt l
  
 let rec print_type ppt = function
   | PT_Base b -> print_base_type ppt b
