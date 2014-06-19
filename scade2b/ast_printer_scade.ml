@@ -121,10 +121,11 @@ let print_assume_list ppt l =
   in
   print_list print_assume ~sep:";" ~break:true ~forcebreak:true ppt l
 
-let rec print_guarantee_list ppt = function 
-  | [] -> ()
-  | [e] -> fprintf ppt "GUARANTEE %a" print_expr e
-  | e::l -> fprintf ppt "GUARANTEE %a;@\n%a" print_expr e print_guarantee_list l
+let print_guarantee_list ppt l =
+  let print_guarantee ppt e =
+    fprintf ppt "GUARANTEE %a" print_expr e
+  in
+  print_list print_guarantee ~sep:";" ~break:true ~forcebreak:true ppt l
 
 let print_my_node ppt node =
   fprintf ppt
