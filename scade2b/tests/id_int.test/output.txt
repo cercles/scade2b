@@ -1,0 +1,12 @@
+
+
+ Node Parsed :
+NODE Id_int (x : int) RETURNS (y : int) 
+VAR ; 
+LET 
+    
+   z : int  
+   y = z;
+   z = x;  
+TEL 
+

@@ -70,9 +70,9 @@ let check_exec = "./_obuild/scade2b_cov/scade2b_cov.asm"
 let comp_tests dirs =
   "scade2b">:::
   List.map (fun s ->
-    let d, check_diff, exp_code, check_output = match s with
-      | TestOK d -> d, true, 0, false
-      | TestFail d -> d, false, 1, true
+    let d, check_diff, exp_code = match s with
+      | TestOK d -> d, true, 0
+      | TestFail d -> d, false, 1
     in (d>:: fun ctxt ->
       let opts =
         try
@@ -103,10 +103,14 @@ let comp_tests dirs =
       begin if check_diff then
         assert_command ~ctxt ~env:[||] "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"]
       end;
-      begin if check_output then
-        let spec = read_file (d ^ "/output.txt") in
-        assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
-      end;
+      let exp_output =
+        try
+          Some (read_file (d ^ "/output.txt"))
+        with Sys_error _ -> None
+      in
+      match exp_output with
+      | Some spec -> assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
+      | None -> ()
       )
     ) dirs
 
