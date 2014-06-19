@@ -58,7 +58,7 @@ end
 
 begin program "scade2b_tests"
     files = [ "run_tests.ml" ]
-    requires = [ "oUnit" ]
+    requires = [ "oUnit" "str" ]
 end
 
 begin program "scade2b_tests_cov"

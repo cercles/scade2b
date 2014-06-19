@@ -71,7 +71,16 @@ let comp_tests dirs =
   "scade2b">:::
   List.map (function
     | TestOK d -> (d>:: fun ctxt ->
-        assert_command ~ctxt check_exec [d ^ "/"];
+        let opts =
+          try
+            (d ^ "/options.txt")
+            |> read_file
+            |> String.trim
+            |> Str.split (Str.regexp " ")
+          with Sys_error _ -> []
+        in
+        let all_opts = opts @ [d ^ "/"] in
+        assert_command ~ctxt check_exec all_opts;
         assert_command ~ctxt ~env:[||] "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
       )
     | TestFail d -> (d>:: fun ctxt ->

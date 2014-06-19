@@ -1,0 +1,9 @@
+___AST XML PRINTER___
+
+
+Root :  ScadeName : Id_int -  
+  Input ->  ScadeName : xx -  TargetName : xx -  TargetType : kcg_int - 
+  Output ->  ScadeName : yy -  TargetName : yy -  TargetType : kcg_int - 
+  Local ->  ScadeName : zz -  TargetName : zz -  TargetType : kcg_int - 
+
+
