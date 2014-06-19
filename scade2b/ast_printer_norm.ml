@@ -3,6 +3,7 @@
 open Format
 open Ast_scade_norm
 open Ast_base
+open Printer
 
 let print_id ppt id = fprintf ppt "%s" id
 
@@ -30,10 +31,8 @@ and print_array ppt = function
   | NA_Index (id, e_list) -> fprintf ppt "%a[%a]" print_id id print_index_list e_list
   | NA_Reverse (id) -> fprintf ppt "rev(%a)" print_id id
 
-and print_e_list ppt = function 
-  | [] -> ()
-  | [v] -> fprintf ppt "%a" print_expr v
-  | v::l -> fprintf ppt "%a, %a" print_expr v print_e_list l
+and print_e_list ppt l =
+  print_list print_expr ppt l
 
 and print_slice_list ppt = function
   | [] -> ()
