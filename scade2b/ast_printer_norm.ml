@@ -143,13 +143,11 @@ and print_condition ppt = function
   |(id, ty, Some e) -> fprintf ppt "%a : %a & @[%a@]" print_id id print_type ty print_expr e
   |(id, ty, None) -> fprintf ppt "%a : %a " print_id id print_type ty
 
-let rec print_lambda_list ppt = function
-  | [] -> ()
-  | [la] -> fprintf ppt "%a" print_lambda la
-  | la::l -> fprintf ppt "%a@\n%a" print_lambda la print_lambda_list l
-
-and print_lambda ppt l =
-  fprintf ppt "%a(%d) @[%a@] " print_id l.n_l_ident l.n_l_index print_condition l.n_l_cond 
+let print_lambda_list ppt l =
+  let print_lambda ppt l =
+    fprintf ppt "%a(%d) @[%a@] " print_id l.n_l_ident l.n_l_index print_condition l.n_l_cond
+  in
+  print_list print_lambda ~sep:"" ~break:true ppt l
 
 let print_my_node ppt node =
   fprintf ppt
