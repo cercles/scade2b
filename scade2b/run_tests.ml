@@ -69,40 +69,44 @@ let check_exec = "./_obuild/scade2b_cov/scade2b_cov.asm"
 
 let comp_tests dirs =
   "scade2b">:::
-  List.map (function
-    | TestOK d -> (d>:: fun ctxt ->
-        let opts =
+  List.map (fun s ->
+    let d, check_diff, exp_code, check_output = match s with
+      | TestOK d -> d, true, 0, false
+      | TestFail d -> d, false, 1, true
+    in (d>:: fun ctxt ->
+      let opts =
+        try
+          (d ^ "/options.txt")
+          |> read_file
+          |> String.trim
+          |> Str.split (Str.regexp " ")
+        with Sys_error _ -> []
+      in
+      let all_opts = opts @ [d ^ "/"] in
+      let exit_code =
+        let n =
           try
-            (d ^ "/options.txt")
+            (d ^ "/exitcode.txt")
             |> read_file
             |> String.trim
-            |> Str.split (Str.regexp " ")
-          with Sys_error _ -> []
+            |> int_of_string
+          with Sys_error _ -> exp_code
         in
-        let all_opts = opts @ [d ^ "/"] in
-        assert_command ~ctxt check_exec all_opts;
-        assert_command ~ctxt ~env:[||] "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"];
-      )
-    | TestFail d -> (d>:: fun ctxt ->
-        let buf = Buffer.create 0 in
-        let foutput =
-          Stream.iter (Buffer.add_char buf)
-        in
-        let backtrace = false in
-        let exit_code =
-          let n =
-            try
-              (d ^ "/exitcode.txt")
-              |> read_file
-              |> String.trim
-              |> int_of_string
-            with Sys_error _ -> 1
-          in
-          Unix.WEXITED n
-        in
-        assert_command ~ctxt ~exit_code ~foutput ~backtrace check_exec [d ^ "/"];
+        Unix.WEXITED n
+      in
+      let buf = Buffer.create 0 in
+      let foutput =
+        Stream.iter (Buffer.add_char buf)
+      in
+      let backtrace = false in
+      assert_command ~ctxt ~exit_code ~foutput ~backtrace check_exec all_opts;
+      begin if check_diff then
+        assert_command ~ctxt ~env:[||] "diff" ["-Nru"; d ^ "/spec" ; d ^ "/Machines_B"]
+      end;
+      begin if check_output then
         let spec = read_file (d ^ "/output.txt") in
         assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
+      end;
       )
     ) dirs
 
