@@ -82,8 +82,8 @@
     <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
   </NoExpNode>
   <NoExpNode scadeName="mat_real_op_def">
-    <Input scadeName="x" scadeType="real^2" targetName="x" targetType="array_real"/>
-    <Input scadeName="z" scadeType="real^2" targetName="z" targetType="array_real"/>
+    <Input scadeName="x" scadeType="real^2" targetName="x" targetType="array_real_2"/>
+    <Input scadeName="z" scadeType="real^2" targetName="z" targetType="array_real_2"/>
     <Output scadeName="y" scadeType="real^(2)^(2)" targetName="y" targetType="array_real_2_2"/>
   </NoExpNode>
   <NoExpNode scadeName="vect_real_op_index">
@@ -98,5 +98,8 @@
     <Input scadeName="x" scadeType="real^(4)" targetName="x" targetType="array_real_2"/>
     <Output scadeName="y" scadeType="real^(2)" targetName="y" targetType="array_real_2"/>
   </NoExpNode>
-
+  <ArrayType targetName="array_real_2" cellType="kcg_real" size="2" targetCopyFct="kcg_copy_array_real_2"
+      targetCompFct="kcg_comp_array_real_2"/>
+  <ArrayType targetName="array_real_2_2" cellType="array_real_2" size="2" targetCopyFct="kcg_copy_array_real_2_2"
+      targetCompFct="kcg_comp_array_real_2_2"/>
 </Model>
