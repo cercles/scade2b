@@ -123,11 +123,8 @@ and print_leftpart ppt = function
   | NLP_Ident id -> print_id ppt id
   | NLP_Tuple id_list -> print_id_list ppt id_list
 
-and print_id_list ppt = function
-  | [] -> ()
-  | [id] -> fprintf ppt "%a" print_id id
-  | id::l -> fprintf ppt "%a, %a" print_id id print_id_list l
- 
+and print_id_list ppt l =
+  print_list print_id ppt l
 
 let rec print_decl_list ppt =  function
   | [] -> ()
