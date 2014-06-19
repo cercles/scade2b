@@ -36,10 +36,8 @@ let print_pre_condition ppt input =
 let print_thenlist ppt l =
   print_list print_then_condition ~sep:"||" ~break:true ppt l
 
-let rec print_prelist ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_pre_condition c
-  | c::l -> fprintf ppt "%a &@,%a" print_pre_condition c print_prelist l 
+let print_prelist ppt l =
+  print_list print_pre_condition ~sep:" &" ~break:true ppt l
 
 let print_op_decl ppt xml_decl =
   let in_ids = List.map (fun var -> var.var_id) xml_decl.ins in
