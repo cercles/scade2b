@@ -27,14 +27,18 @@ let with_env e f =
  * The elements are printed using print_elem.
  * They are separated by sep (may be empty).
  * If break is true, a good break hint (@,) is added.
+ * If forcebreak is true, a break (@\n) is added instead of a good break hint.
  *)
-let print_list ?(sep=", ") ?(break=false) print_elem ppt l =
+let print_list ?(sep=", ") ?(break=false) ?(forcebreak=false) print_elem ppt l =
   let rec go ppt = function
   | [] -> ()
   | [x] -> fprintf ppt "%a" print_elem x
   | x::xs ->
       let spc : ((_, _, _, _, _, _) format6) =
-        if break then "@," else ""
+        match break, forcebreak with
+        | false, _ -> ""
+        | true, false -> "@,"
+        | true, true -> "@\n"
       in
       fprintf ppt ("%a%s" ^^ spc ^^ "%a")
         print_elem x sep go xs

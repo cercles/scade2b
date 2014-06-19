@@ -134,14 +134,12 @@ let rec print_decl_list ppt =  function
 and print_decl ppt = function
   | (name, ty) -> fprintf ppt "%a : %a" print_id name print_type ty
 
-let rec print_cond_list ppt = function
-  | [] -> ()
-  | [r] -> fprintf ppt "%a" print_condition r
-  | r::l -> fprintf ppt "%a;@\n%a" print_condition r print_cond_list l
-
-and print_condition ppt = function
+let print_condition ppt = function
   |(id, ty, Some e) -> fprintf ppt "%a : %a & @[%a@]" print_id id print_type ty print_expr e
   |(id, ty, None) -> fprintf ppt "%a : %a " print_id id print_type ty
+
+let print_cond_list ppt l =
+  print_list print_condition ~sep:";" ~break:true ~forcebreak:true ppt l
 
 let print_lambda_list ppt l =
   let print_lambda ppt l =
