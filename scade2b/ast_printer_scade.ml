@@ -45,10 +45,11 @@ and print_slice ppt (e1, e2) =
 and print_slice_list ppt l =
   print_list print_slice ~sep:"" ~break:false ppt l
 
-and print_index_list ppt = function
-  | [] -> ()
-  | [e] -> fprintf ppt "[%a]" print_expr e
-  | e::l -> fprintf ppt "[%a]%a" print_expr e print_index_list l
+and print_index_list ppt l =
+  let print_index ppt e =
+    fprintf ppt "[%a]" print_expr e
+  in
+  print_list print_index ~sep:"" ~break:false ppt l
 
 and print_op_a1 ppt = function
   | Op_minus -> fprintf ppt "-"
