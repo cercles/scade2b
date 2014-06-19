@@ -1,0 +1,31 @@
+
+
+ Node Parsed :
+NODE Test_const (x : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = add(x, C_CST);  
+TEL 
+
+Node normalized : 
+NODE Test_const (x : int) RETURNS (r : bool) 
+VAR ; 
+PRE : x : int 
+LET 
+   r = add(x, C_CST); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_const (x : int) RETURNS (r : bool) 
+VAR ; 
+PRE : x : int 
+LET 
+   r = add(x, C_CST); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+

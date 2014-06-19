@@ -1,0 +1,132 @@
+
+
+ Node Parsed :
+NODE Fct2 (x : int) RETURNS (r1 : int; r2 : int) 
+VAR ; 
+LET 
+    
+     
+   r2 = x;
+   r1 = x;  
+TEL 
+
+Node normalized : 
+NODE Fct2 (x : int) RETURNS (r1 : int; r2 : int) 
+VAR ; 
+PRE : x : int 
+LET 
+   r2 = x;
+   r1 = x; 
+TEL 
+POST : r2 : int ;
+       r1 : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE Fct2 (x : int) RETURNS (r1 : int; r2 : int) 
+VAR ; 
+PRE : x : int 
+LET 
+   r2 = x;
+   r1 = x; 
+TEL 
+POST : r2 : int ;
+       r1 : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Fct (x : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = true;  
+TEL 
+
+Node normalized : 
+NODE Fct (x : int) RETURNS (r : bool) 
+VAR ; 
+PRE : x : int 
+LET 
+   r = true; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE Fct (x : int) RETURNS (r : bool) 
+VAR ; 
+PRE : x : int 
+LET 
+   r = true; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Test_call2 (x : int) RETURNS (r : int) 
+VAR ; 
+LET 
+    
+   i : int; j : int  
+   r = add(i, j);
+   i, j = 2(add(x, 2));  
+TEL 
+
+Node normalized : 
+NODE Test_call2 (x : int) RETURNS (r : int) 
+VAR i : int; j : int; 
+PRE : x : int 
+LET 
+   r = add(i, j);
+   i, j = Fct2_2(add(x, 2)); 
+TEL 
+POST : r : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_call2 (x : int) RETURNS (r : int) 
+VAR i : int; j : int; 
+PRE : x : int 
+LET 
+   i, j = Fct2_2(add(x, 2));
+   r = add(i, j); 
+TEL 
+POST : r : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Test_call (x : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = 1(add(x, 2));  
+TEL 
+
+Node normalized : 
+NODE Test_call (x : int) RETURNS (r : bool) 
+VAR ; 
+PRE : x : int 
+LET 
+   r = Fct_1(add(x, 2)); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_call (x : int) RETURNS (r : bool) 
+VAR ; 
+PRE : x : int 
+LET 
+   r = Fct_1(add(x, 2)); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+

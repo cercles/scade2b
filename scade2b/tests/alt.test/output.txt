@@ -1,0 +1,38 @@
+
+
+ Node Parsed :
+NODE Test_alt (x : int; y : int; b : bool) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = if b then 
+       x 
+       else 
+       y;  
+TEL 
+
+Node normalized : 
+NODE Test_alt (x : int; y : int; b : bool) RETURNS (r : bool) 
+VAR ; 
+PRE : b : bool ;
+      y : int ;
+      x : int 
+LET 
+   r = IF b THEN x ELSE y ; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_alt (x : int; y : int; b : bool) RETURNS (r : bool) 
+VAR ; 
+PRE : b : bool ;
+      y : int ;
+      x : int 
+LET 
+   r = IF b THEN x ELSE y ; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+

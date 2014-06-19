@@ -1,0 +1,34 @@
+
+
+ Node Parsed :
+NODE Test_assume (x : int; y : int) RETURNS (r : bool) 
+VAR ASSUME le(y, 100);
+    ASSUME le(x, 100); 
+LET 
+    
+     
+   r = le(add(x, y), 100);  
+TEL 
+
+Node normalized : 
+NODE Test_assume (x : int; y : int) RETURNS (r : bool) 
+VAR ; 
+PRE : y : int & le(y, 100);
+      x : int & le(x, 100)
+LET 
+   r = le(add(x, y), 100); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_assume (x : int; y : int) RETURNS (r : bool) 
+VAR ; 
+PRE : y : int & le(y, 100);
+      x : int & le(x, 100)
+LET 
+   r = le(add(x, y), 100); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
