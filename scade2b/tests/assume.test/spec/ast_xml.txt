@@ -1,0 +1,9 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : Test_assume -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Input ->  ScadeName : y -  TargetName : y -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+

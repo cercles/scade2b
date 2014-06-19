@@ -1,0 +1,23 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : Fct -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : Test_call -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+  NodeInstance ->  ScadeName : Fct -  InstName : 1 - 
+
+Node :  ScadeName : Fct2 -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : r1 -  TargetName : r1 -  TargetType : kcg_int - 
+  Output ->  ScadeName : r2 -  TargetName : r2 -  TargetType : kcg_int - 
+
+Node :  ScadeName : Test_call2 -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+  NodeInstance ->  ScadeName : Fct2 -  InstName : 2 - 
+
+

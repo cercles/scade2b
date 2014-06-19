@@ -1,0 +1,15 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : Test_fby -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : kcg_int - 
+  Local ->  ScadeName : z -  TargetName : z -  TargetType : kcg_int - 
+
+Node :  ScadeName : Test_fby2 -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : y1 -  TargetName : y1 -  TargetType : kcg_int - 
+  Output ->  ScadeName : y2 -  TargetName : y2 -  TargetType : kcg_int - 
+  Local ->  ScadeName : z -  TargetName : z -  TargetType : kcg_int - 
+
+

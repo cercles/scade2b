@@ -1,0 +1,8 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : Test_enum -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_bool - 
+
+

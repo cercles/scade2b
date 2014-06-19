@@ -1,0 +1,103 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : vect_int_op_aff -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_int_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_int_2 - 
+
+Node :  ScadeName : vect_int_op_rev -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_int_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_int_2 - 
+
+Node :  ScadeName : vect_int_op_concat -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_int_2 - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : array_int_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_int_4 - 
+
+Node :  ScadeName : vect_int_op_def -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : kcg_int - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_int_2 - 
+
+Node :  ScadeName : vect_int_op_index -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_int_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : kcg_int - 
+
+Node :  ScadeName : vect_int_op_caret -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_int_2 - 
+
+Node :  ScadeName : vect_int_op_slice -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_int_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_int_2 - 
+
+Node :  ScadeName : vect_bool_op_aff -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_bool_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_bool_2 - 
+
+Node :  ScadeName : vect_bool_op_rev -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_bool_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_bool_2 - 
+
+Node :  ScadeName : vect_bool_op_concat -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_bool_2 - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : array_bool_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_bool_4 - 
+
+Node :  ScadeName : vect_bool_op_def -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_bool - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : kcg_bool - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_bool_2 - 
+
+Node :  ScadeName : vect_bool_op_index -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_bool_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : kcg_bool - 
+
+Node :  ScadeName : vect_bool_op_caret -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_bool - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_bool_2 - 
+
+Node :  ScadeName : vect_bool_op_slice -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_bool_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_bool_2 - 
+
+Node :  ScadeName : vect_real_op_aff -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_real_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_2 - 
+
+Node :  ScadeName : vect_real_op_rev -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_real_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_2 - 
+
+Node :  ScadeName : vect_real_op_concat -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_real_2 - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : array_real_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_4 - 
+
+Node :  ScadeName : vect_real_op_def -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_real - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : kcg_real - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_2 - 
+
+Node :  ScadeName : mat_real_op_def -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_real_2 - 
+  Input ->  ScadeName : z -  TargetName : z -  TargetType : array_real_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_2_2 - 
+
+Node :  ScadeName : vect_real_op_index -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_real_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : kcg_real - 
+
+Node :  ScadeName : vect_real_op_caret -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_real - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_2 - 
+
+Node :  ScadeName : vect_real_op_slice -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : array_real_2 - 
+  Output ->  ScadeName : y -  TargetName : y -  TargetType : array_real_2 - 
+
+ArrayType :  TargetName : array_real_2 -  CellType : kcg_real -  Size : 2 - 
+
+ArrayType :  TargetName : array_real_2_2 -  CellType : array_real_2 -  Size : 2 - 
+
+

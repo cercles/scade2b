@@ -1,0 +1,51 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : Op_plus -  
+  Input ->  ScadeName : xx -  TargetName : xx -  TargetType : kcg_int - 
+  Input ->  ScadeName : yy -  TargetName : yy -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
+  Local ->  ScadeName : zz -  TargetName : zz -  TargetType : kcg_int - 
+
+Node :  ScadeName : Op_minus -  
+  Input ->  ScadeName : xx -  TargetName : xx -  TargetType : kcg_int - 
+  Input ->  ScadeName : yy -  TargetName : yy -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
+  Local ->  ScadeName : zz -  TargetName : zz -  TargetType : kcg_int - 
+
+Node :  ScadeName : Op_cmp -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_int - 
+  Input ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_int - 
+  Input ->  ScadeName : cc -  TargetName : cc -  TargetType : kcg_int - 
+  Input ->  ScadeName : dd -  TargetName : dd -  TargetType : kcg_int - 
+  Input ->  ScadeName : ee -  TargetName : ee -  TargetType : kcg_int - 
+  Input ->  ScadeName : ff -  TargetName : ff -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_bool - 
+  Local ->  ScadeName : zz -  TargetName : zz -  TargetType : kcg_bool - 
+
+Node :  ScadeName : Op_unops -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
+  Local ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_int - 
+  Local ->  ScadeName : cc -  TargetName : cc -  TargetType : kcg_int - 
+
+Node :  ScadeName : Op_div -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_int - 
+  Input ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
+
+Node :  ScadeName : Op_not -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_bool - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_bool - 
+
+Node :  ScadeName : Op_mul -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_int - 
+  Input ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
+
+Node :  ScadeName : Op_mod -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_int - 
+  Input ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_int - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
+
+
