@@ -13,10 +13,8 @@ let print_bid ppt id =
   let id_ok = Env_builder.make_b_ident_without_env id in
   fprintf ppt "%s" id_ok
 
-let rec print_idlist_comma ppt = function
-  | [] -> ()
-  | [id] -> fprintf ppt "%a" print_bid id
-  | id::l -> fprintf ppt "%a, %a" print_bid id print_idlist_comma l
+let print_idlist_comma ppt l =
+  print_list print_bid ppt l
 
 let print_type ppt typ =
   match typ with
