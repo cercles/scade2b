@@ -11,10 +11,8 @@ let print_enum ppt enum =
     enum.p_enum_id
     print_idlist_comma enum.p_enum_list
 
-let rec print_enum_list ppt = function 
-  | [] -> ()
-  | [e] -> fprintf ppt "%a" print_enum e
-  | e::l -> fprintf ppt "%a; @\n%a" print_enum e print_enum_list l 
+let print_enum_list =
+  print_list ~sep:"; " ~break:true ~forcebreak:true print_enum
 
 let print_sets_clause ppt enum_list =
   if enum_list <> [] then
