@@ -36,10 +36,8 @@ let print_property ppt = function
       print_bid id
       print_expr expr
 
-let rec print_properties_list ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_property c
-  | c::l -> fprintf ppt "%a & @,%a" print_property c print_properties_list l 
+let print_properties_list ppt l =
+  print_list print_property ~sep:" & " ~break:true ppt l
 
 let print_properties ppt = function
   | [] -> ()
