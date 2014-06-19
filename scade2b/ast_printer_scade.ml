@@ -115,10 +115,11 @@ let print_decl_list ppt l =
   in
   print_list print_decl ~sep:"; " ppt l
 
-let rec print_assume_list ppt = function 
-  | [] -> ()
-  | [e] -> fprintf ppt "ASSUME %a" print_expr e
-  | e::l -> fprintf ppt "ASSUME %a;@\n%a" print_expr e print_assume_list l
+let print_assume_list ppt l =
+  let print_assume ppt e =
+    fprintf ppt "ASSUME %a" print_expr e
+  in
+  print_list print_assume ~sep:";" ~break:true ~forcebreak:true ppt l
 
 let rec print_guarantee_list ppt = function 
   | [] -> ()
