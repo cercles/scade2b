@@ -18,4 +18,5 @@ doc/
 notes/
 reunion/
 scade2b/tests/*.test/Machines_B
+scade2b/tests/*.fail/Machines_B
 scade2b/tests/*.ok
