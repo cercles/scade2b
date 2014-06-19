@@ -36,10 +36,14 @@ and print_array ppt = function
 and print_e_list ppt l =
   print_list print_expr ppt l
 
-and print_slice_list ppt = function
-  | [] -> ()
-  | [(e1, e2)] -> fprintf ppt "[%a .. %a]" print_expr e1 print_expr e2
-  | (e1, e2)::l -> fprintf ppt "[%a .. %a]%a" print_expr e1 print_expr e2 print_slice_list l
+and print_slice ppt (e1, e2) =
+  if e1 = e2 then
+    fprintf ppt "[%a]" print_expr e1
+  else
+    fprintf ppt "[%a .. %a]" print_expr e1 print_expr e2
+
+and print_slice_list ppt l =
+  print_list print_slice ~sep:"" ~break:false ppt l
 
 and print_index_list ppt = function
   | [] -> ()
