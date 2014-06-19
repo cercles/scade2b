@@ -126,13 +126,11 @@ and print_leftpart ppt = function
 and print_id_list ppt l =
   print_list print_id ppt l
 
-let rec print_decl_list ppt =  function
-  | [] -> ()
-  | [d] -> fprintf ppt "%a" print_decl d
-  | d::l -> fprintf ppt "%a; %a" print_decl d print_decl_list l
-
-and print_decl ppt = function
-  | (name, ty) -> fprintf ppt "%a : %a" print_id name print_type ty
+let print_decl_list ppt l =
+  let print_decl ppt (name, ty) =
+    fprintf ppt "%a : %a" print_id name print_type ty
+  in
+  print_list print_decl ~sep:"; " ppt l
 
 let print_condition ppt = function
   |(id, ty, Some e) -> fprintf ppt "%a : %a & @[%a@]" print_id id print_type ty print_expr e
