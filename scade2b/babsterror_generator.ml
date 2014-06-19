@@ -6,6 +6,7 @@ open Ast_repr_b
 open Ast_base
 open Ast_xml
 open Utils
+open Printer
 
 
 let print_bid ppt id =
@@ -32,10 +33,8 @@ let print_then_condition ppt output =
 let print_pre_condition ppt input =
   fprintf ppt "%a : %a" print_bid input.var_id print_type input.var_type
 
-let rec print_thenlist ppt = function 
-  | [] -> ()
-  | [c] -> fprintf ppt "%a" print_then_condition c
-  | c::l -> fprintf ppt "%a||@,%a" print_then_condition c print_thenlist l 
+let print_thenlist ppt l =
+  print_list print_then_condition ~sep:"||" ~break:true ppt l
 
 let rec print_prelist ppt = function 
   | [] -> ()
