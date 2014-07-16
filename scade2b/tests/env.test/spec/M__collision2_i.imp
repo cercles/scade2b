@@ -1,0 +1,11 @@
+IMPLEMENTATION M__collision2_i
+REFINES M__collision2
+
+OPERATIONS
+
+bb <-- _collision2(aa) =
+ 
+   bb := aa
+   
+ 
+END

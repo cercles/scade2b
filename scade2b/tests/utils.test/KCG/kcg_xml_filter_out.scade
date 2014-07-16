@@ -1,0 +1,14 @@
+node link_assume(a, c, d : int; b : bool)
+  returns (r : bool)
+var
+  e, g, h : int;
+let
+  assume A1 : -a > 1;
+  /*NE FONCTIONNE PAS !! assume A2 : fby(c;1;0) > 1;*/
+  /*NE FONCTIONNE PAS !! assume A3 : if true then d else 1;*/
+  assume A4 : not b = true;
+  e = -a;
+  g = fby(c; 1; 0);
+  h = if true then d else g;
+  r = not b;
+tel

@@ -1,6 +1,39 @@
 
 
  Node Parsed :
+NODE Test_guarantee (x : int; y : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+  GUARANTEE le(r, 100)  
+     
+   r = le(add(x, y), 100);  
+TEL 
+
+Node normalized : 
+NODE Test_guarantee (x : int; y : int) RETURNS (r : bool) 
+VAR ; 
+PRE : y : int ;
+      x : int 
+LET 
+   r = le(add(x, y), 100); 
+TEL 
+POST : r : bool & le(r, 100) 
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_guarantee (x : int; y : int) RETURNS (r : bool) 
+VAR ; 
+PRE : y : int ;
+      x : int 
+LET 
+   r = le(add(x, y), 100); 
+TEL 
+POST : r : bool & le(r, 100) 
+LAMBDAS :  
+
+
+
+ Node Parsed :
 NODE Test_assume (x : int; y : int) RETURNS (r : bool) 
 VAR ASSUME le(y, 100);
     ASSUME le(x, 100); 

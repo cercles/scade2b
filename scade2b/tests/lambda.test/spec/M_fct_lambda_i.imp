@@ -1,0 +1,16 @@
+IMPLEMENTATION M_fct_lambda_i
+REFINES M_fct_lambda
+
+CONCRETE_VARIABLES rr
+INVARIANT 
+   rr : BOOL
+INITIALISATION 
+   rr := bb
+OPERATIONS
+
+rr <-- fct_lambda(aa, bb) =
+ 
+   ;
+   rr := aa
+ 
+END

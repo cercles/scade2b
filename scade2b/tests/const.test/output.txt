@@ -6,7 +6,7 @@ VAR ;
 LET 
     
      
-   r = add(x, C_CST);  
+   r = add(x, C_CST_2[1]);  
 TEL 
 
 Node normalized : 
@@ -14,7 +14,7 @@ NODE Test_const (x : int) RETURNS (r : bool)
 VAR ; 
 PRE : x : int 
 LET 
-   r = add(x, C_CST); 
+   r = add(x, C_CST_2[[1]]); 
 TEL 
 POST : r : bool  
 LAMBDAS :  
@@ -24,7 +24,7 @@ NODE Test_const (x : int) RETURNS (r : bool)
 VAR ; 
 PRE : x : int 
 LET 
-   r = add(x, C_CST); 
+   r = add(x, C_CST_2[[1]]); 
 TEL 
 POST : r : bool  
 LAMBDAS :  

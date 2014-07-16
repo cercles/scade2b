@@ -1,0 +1,24 @@
+node collision1(_a : int) returns (ANY : int)
+var
+  collision1 : int;
+let
+  collision1 = _a;
+  ANY = collision1;
+tel
+
+
+node ANY(a : int) returns (b : int)
+let
+  b = a;
+tel
+
+node collision2(a : int) returns (b : int)
+let
+  b = a;
+tel
+
+node _collision2(a : int) returns (b : int)
+let
+  b = a;
+tel
+

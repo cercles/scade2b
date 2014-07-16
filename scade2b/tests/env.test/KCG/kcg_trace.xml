@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="collision1" targetCycleFct="collision1">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="ANY" scadeType="int" targetName="ANY" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="ANY" targetCycleFct="ANY">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="b" scadeType="int" targetName="b" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="collision2" targetCycleFct="collision2">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="b" scadeType="int" targetName="b" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="_collision2" targetCycleFct="_collision2">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="b" scadeType="int" targetName="b" targetType="kcg_int"/>
+  </NoExpNode>
+
+</Model>

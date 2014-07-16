@@ -1,0 +1,16 @@
+IMPLEMENTATION M_fct_lambda_2_i(aa)
+REFINES M_fct_lambda_2
+
+CONCRETE_VARIABLES rr
+INVARIANT 
+   rr : BOOL
+INITIALISATION 
+   rr := aa
+OPERATIONS
+
+rr <-- fct_lambda_2 =
+ VAR xx IN
+   xx := aa;
+   rr := aa
+ END
+END

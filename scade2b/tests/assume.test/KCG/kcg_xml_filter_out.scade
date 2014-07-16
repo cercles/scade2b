@@ -5,3 +5,10 @@ let
   assume A1 : x <= 100;
   assume A2 : y <= 100;
 tel
+
+node Test_guarantee(x : int; y : int)
+  returns (r : bool)
+let
+  r = (x + y <= 100);
+  guarantee G1 : r <= 100;
+tel

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="link_assume" targetCycleFct="link_assume">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Input scadeName="c" scadeType="int" targetName="c" targetType="kcg_int"/>
+    <Input scadeName="d" scadeType="int" targetName="d" targetType="kcg_int"/>
+    <Input scadeName="b" scadeType="bool" targetName="b" targetType="kcg_bool"/>
+    <Output scadeName="r" scadeType="bool" targetName="r" targetType="kcg_bool"/>
+  </NoExpNode>
+</Model>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="fct_lambda" targetCycleFct="fct_lambda">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Input scadeName="b" scadeType="int" targetName="b" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="call_lambda" targetCycleFct="call_lambda">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+    <NodeInstance scadeName="fct_lambda" instName="1" refName="fct_lambda"/>
+  </NoExpNode>
+  <NoExpNode scadeName="fct_lambda_2" targetCycleFct="fct_lambda_2">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="call_lambda_2" targetCycleFct="call_lambda_2">
+    <Input scadeName="a" scadeType="int" targetName="a" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+    <NodeInstance scadeName="fct_lambda_2" instName="1" refName="fct_lambda_2"/>
+  </NoExpNode>
+</Model>

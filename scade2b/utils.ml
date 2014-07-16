@@ -29,6 +29,7 @@ and caret_to_def e1 e2 =
   in
   NA_Def (funrec e1 e2 [])
 
+
 exception Two_ident_used_in_condition of (string * string)
 
 (* Find an ident in an expr. Used in handle_assume/guarantee (normalizer), find the ident linked to a condition *)

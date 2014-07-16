@@ -34,6 +34,9 @@ realclean: clean
 
 cleanall: realclean
 
+cleanall_bis: realclean
+	rm -rf *.out *.cmp *.log *.old
+
 check_clean:
 	rm -rf tests/*/Machines_B/ tests/*.ok tests/*.diff
 

@@ -1,0 +1,11 @@
+IMPLEMENTATION M_ANY_i
+REFINES M_ANY
+
+OPERATIONS
+
+bb <-- ANY(aa) =
+ 
+   bb := aa
+   
+ 
+END

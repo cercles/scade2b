@@ -1,0 +1,16 @@
+IMPLEMENTATION M_register_error_type_i
+REFINES M_register_error_type
+
+CONCRETE_VARIABLES rr
+INVARIANT 
+   rr : INT
+INITIALISATION 
+   rr := 0
+OPERATIONS
+
+rr <-- register_error_type(aa, bb) =
+ 
+   ;
+   rr := c
+ 
+END

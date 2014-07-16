@@ -6,4 +6,9 @@ Node :  ScadeName : Test_assume -
   Input ->  ScadeName : y -  TargetName : y -  TargetType : kcg_int - 
   Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
 
+Node :  ScadeName : Test_guarantee -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Input ->  ScadeName : y -  TargetName : y -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
 

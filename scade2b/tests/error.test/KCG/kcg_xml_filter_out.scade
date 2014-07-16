@@ -1,0 +1,54 @@
+node assert_id_assum_2_ids (a : int ; b : int) returns (r : int)
+let   
+  assume A1: a > b and a < 2;
+  r = a + b;
+tel
+
+node assert_id_guar_2_ids (a : int ; b : int) returns (r : int)
+let   
+  guarantee A1: r > a and r < b;
+  r = a + b;
+tel
+
+/*NE DEVRAIT PAS ARRIVER AVEC KCG*/
+node assert_id_assum_type (a : int ; b : int) returns (r : int)
+let   
+  assume A1: x > 0 and x < 2;
+  r = a + b;
+tel
+
+/*NE DEVRAIT PAS ARRIVER AVEC KCG*/
+node assert_id_guar_type (a : int ; b : int) returns (r : int)
+let   
+  guarantee A1: x > 0 and x < 1;
+  r = a + b;
+tel
+
+/*NE DEVRAIT PAS ARRIVER AVEC KCG*/
+node register_error_type (a : int ; b : int) returns (r : int)
+let
+  r = fby(c; 1; 0);
+tel
+
+node register_error_struct (a : int ; b : int) returns (r : int)
+var
+  x : int;
+  y : int;
+let   
+  x, r = fby(a; 1; 0);
+tel
+
+/*NE DEVRAIT PAS ARRIVER AVEC KCG (causality) */
+node eqs_schedul_err (a : int ; b : int) returns (r : int)
+var
+  x : int;
+let   
+  x = b + a;
+  r = a - r;
+tel
+
+node conds_retr_err (a : int) returns (r : int)
+let   
+  assume A1: a > 1 ad a < 2;
+  r = a+1;
+tel

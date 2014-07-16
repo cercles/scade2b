@@ -1,0 +1,28 @@
+node fct_lambda(a : int; b :int)
+  returns (r : bool)
+let
+  r = fby(a;1;b);
+tel
+
+node call_lambda(a : int)
+  returns (r : bool)
+let
+  r = #1 fct_lambda(a);
+tel
+
+node fct_lambda_2(a : int)
+  returns (r : bool)
+var
+  x : int;
+let
+  x = a;
+  r = fby(a;1;x);
+tel
+
+node call_lambda_2(a : int)
+  returns (r : bool)
+let
+  r = #1 fct_lambda_2(a);
+tel
+
+
