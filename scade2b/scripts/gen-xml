@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+"""
+Generate a scade2b-compatible xml file
+
+Usage:
+    gen-xml <spec>
+    gen-xml --tests
+
+"""
+
+import docopt
+import re
+import sys
+import unittest
+
+
+def main():
+    arguments = docopt.docopt(__doc__)
+    if arguments['--tests']:
+        unittest.main(argv=sys.argv[:1])
+    node = parse_decl(arguments['<spec>'])
+    print gen_xml(node)
+
+
+def parse_decl(spec):
+    pattern = r'(\w+)\((\w+):int\)->(\w+):int'
+    m = re.match(pattern, spec)
+    assert m is not None
+    name = m.group(1)
+    args = [m.group(2)]
+    ret = [m.group(3)]
+    return {'name': name,
+            'args': args,
+            'ret': ret,
+            }
+
+
+class TestParse(unittest.TestCase):
+    def _tc(self, spec, exp):
+        actual = parse_decl(spec)
+        self.assertEqual(exp, actual)
+
+    def test_basic(self):
+        self._tc('Fct(x:int)->r:int', {'name': 'Fct',
+                                       'args': ['x'],
+                                       'ret': ['r']})
+
+
+def gen_xml(spec):
+    fmt = '<NoExpNode scadeName="{name}" targetCycleFct="{name}">\n'
+    r = fmt.format(name=spec['name'])
+    r += gen_inputs(spec['args'])
+    r += gen_outputs(spec['ret'])
+    r += """</NoExpNode>"""
+    return r
+
+
+def gen_inputs(args):
+    r = ""
+    for arg in args:
+        fmt = '  <Input scadeName="{name}" scadeType="int"'
+        fmt += ' targetName="{name}" targetType="kcg_int"/>\n'
+        r += fmt.format(name=arg)
+    return r
+
+
+def gen_outputs(rets):
+    r = ""
+    for ret in rets:
+        fmt = '  <Output scadeName="{name}" scadeType="int"'
+        fmt += ' targetName="{name}" targetType="kcg_int"/>\n'
+        r += fmt.format(name=ret)
+    return r
+
+
+if __name__ == '__main__':
+    main()
