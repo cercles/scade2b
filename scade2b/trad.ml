@@ -1,5 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
-
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == trad.ml                                                               == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_base
 open Ast_repr_b
@@ -25,7 +32,6 @@ let rec n_expr_to_b_expr env = function
   | NE_Array ar -> BE_Array (n_array_to_b_array env ar)
   | NE_Op_Arith1 (op, e) -> BE_Op_Arith1 (op, n_expr_to_b_expr env e)
   | NE_Op_Arith2 (op, e1, e2) -> BE_Op_Arith2 (op, n_expr_to_b_expr env e1, n_expr_to_b_expr env e2)
-  | NE_Op_Sharp e_list -> BE_Op_Sharp (List.map (n_expr_to_b_expr env) e_list)
   | ( NE_Op_Logic _
     | NE_Op_Not _
     | NE_Op_Relat _
@@ -41,7 +47,6 @@ and n_expr_to_b_pred env = function
     | NE_Array _
     | NE_Op_Arith1 _
     | NE_Op_Arith2 _
-    | NE_Op_Sharp _
     ) as e ->
         BP_Expr (n_expr_to_b_expr env e)
 
@@ -69,11 +74,11 @@ let n_condition_to_condition env (id, t, e) =
   (* flatten a NT_Array into a n_expr list (a list of dimensions) *)
   let flatten_array env a =
     let base_t = ref T_Int in (* default ref *)
-    let rec fun_rec = function
+    let rec flatten_rec = function
       | NT_Base t -> base_t := t; []
-      | NT_Array (t, expr) -> (n_expr_to_b_expr env expr) :: (fun_rec t)
+      | NT_Array (t, expr) -> (n_expr_to_b_expr env expr) :: (flatten_rec t)
     in
-    (!base_t, fun_rec a)
+    (!base_t, flatten_rec a)
   in
   let compr_ens_ident = Env_builder.make_b_ident "ii" env in
   match t with 
@@ -82,11 +87,11 @@ let n_condition_to_condition env (id, t, e) =
 	  | None -> Base_no_expr (id_to_bid env id, typ, compr_ens_ident)
 	  | Some expr -> 
 	      let env2 = Env.add id (compr_ens_ident, t, None) env in
-	      Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env2 expr, compr_ens_ident))
+	      Base_expr (id_to_bid env id, typ, n_expr_to_b_expr env expr, compr_ens_ident))
     | NT_Array (_, _) -> (
 	let typ, dims = flatten_array env t in
 	let index_tab_ident = Env_builder.make_b_ident "jj" env in
-	let subst_id = Utils.make_subst_id index_tab_ident dims compr_ens_ident in
+	let subst_id = Utils.make_subst_id index_tab_ident dims id in
 	match e with 
 	  | None -> Fun_no_expr (id_to_bid env id, typ, dims, compr_ens_ident)
 	  | Some expr -> 

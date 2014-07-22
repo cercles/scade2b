@@ -1,5 +1,13 @@
 %{
-  (* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == parser_scade.mly                                                      == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
   open Ast_scade
   open Ast_base
@@ -31,8 +39,8 @@
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
 %token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOT
-%token DOTDOT CARET CONCAT REVERSE
-%token T_BOOL T_INT T_REAL T_POLY
+%token DOTDOT CARET CONCAT REVERSE TRANSPOSE
+%token T_BOOL T_INT T_REAL
 %token <bool> BOOL
 %token <int> INT
 %token <float> REAL
@@ -123,7 +131,6 @@ base_type :
  | T_BOOL { T_Bool }
  | T_INT { T_Int }
  | T_REAL { T_Float }
- | T_POLY { T_Poly }
  | IDENT { T_Enum $1 }
 ;
 
@@ -175,14 +182,14 @@ expr :
  | expr SUP expr { PE_Op_Relat (Op_gt, $1, $3) }
  | expr SUPEQ expr { PE_Op_Relat (Op_ge, $1, $3) }
  | MINUS expr { PE_Op_Arith1 (Op_minus, $2) }
- | T_REAL expr { PE_Op_Arith1 (Op_cast_real, $2) }
- | T_INT expr { PE_Op_Arith1 (Op_cast_int, $2) }
- | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Sharp ($3 :: $5) }
+/* | T_REAL expr { PE_Op_Arith1 (Op_cast_real, $2) }*/
+/* | T_INT expr { PE_Op_Arith1 (Op_cast_int, $2) }*/
  | expr AND expr { PE_Op_Logic (Op_and, $1, $3) }
  | expr OR expr { PE_Op_Logic (Op_or, $1, $3) }
  | expr XOR expr { PE_Op_Logic (Op_xor, $1, $3) }
  | NOT expr { PE_Op_Not $2 }
- | FBY LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Fby ($3, $5, $7) }
+ | FBY LPAREN expr SEMICOL INT SEMICOL expr RPAREN { if $5 = 1 then PE_Fby ($3, PE_Value (Int $5), $7) 
+   else failwith " delay isn't set to 1" }
  | IF expr THEN expr ELSE expr { PE_If ($2, $4, $6) }
  | LPAREN PRAGMA IDENT DOUBLE_COLON IDENT DOUBLE_CHEVIN expr_list DOUBLE_CHEVOUT RPAREN LPAREN expr_list RPAREN 
      { PE_Call ($2, $5, $11) }
@@ -190,7 +197,11 @@ expr :
  | PRAGMA IDENT DOUBLE_COLON IDENT LPAREN expr_list RPAREN { PE_Call ($1, $4, $6) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
- | ARRAY_PRED LPAREN IDENT COMMA expr RPAREN { $5 }                /* <<< ARRAY_PRED à tester! */
+ | ARRAY_PRED LPAREN IDENT COMMA expr RPAREN { $5 }
+ | T_REAL expr { PE_Call ("", "to_real", [$2]) }
+ | T_INT expr { PE_Call ("", "to_int", [$2]) }
+ | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Call ("", "sharp", $3 :: $5) }
+ | TRANSPOSE LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Call ("", "transpose", [$3; $5; $7]) }
 ;
 
 expr_list :

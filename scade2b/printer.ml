@@ -1,3 +1,13 @@
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == printer.ml                                                            == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
+
 open Ast_base
 open Ast_repr_b
 open Ast_scade_norm
@@ -35,11 +45,12 @@ let print_list ?(sep=", ") ?(break=false) ?(forcebreak=false) print_elem ppt l =
   | [x] -> fprintf ppt "%a" print_elem x
   | x::xs ->
       (** Coerce type of string to format6 *)
+      let format_string s = s ^^ "" in
       let spc =
         match break, forcebreak with
-        | false, _ -> format_of_string ""
-        | true, false -> format_of_string "@,"
-        | true, true -> format_of_string "@\n"
+        | false, _ -> format_string ""
+        | true, false -> format_string "@,"
+        | true, true -> format_string "@\n"
       in
       fprintf ppt ("%a%s" ^^ spc ^^ "%a")
         print_elem x sep go xs
@@ -58,8 +69,6 @@ let print_value ppt = function
 
 let print_op_arith1 ppt = function
   | Op_minus -> fprintf ppt "-"
-  | Op_cast_real -> fprintf ppt "REAL"
-  | Op_cast_int -> fprintf ppt "INT"
 
 let print_op_arith2 ppt = function
   | Op_eq -> fprintf ppt "="
@@ -85,17 +94,13 @@ let rec print_expr ppt = function
       match op with
 	| Op_minus ->
 	    fprintf ppt "(%a%a)" print_op_arith1 op print_expr e
-	| Op_cast_real | Op_cast_int ->
-	    fprintf ppt "(%a (%a))" print_op_arith1 op print_expr e
-    )
+  )
   | BE_Op_Arith2 (op, e1, e2) -> (
       match op with
 	| Op_eq | Op_neq ->
             fprintf ppt "bool(%a %a %a)" print_expr e1 print_op_arith2 op print_expr e2
         | _ -> fprintf ppt "%a %a %a" print_expr e1 print_op_arith2 op print_expr e2
     )
-  | BE_Op_Sharp e_list ->
-      fprintf ppt "sharp(%a)" print_expr_list e_list
   | BE_Pred p ->
       fprintf ppt "bool%a" print_pred p
 
@@ -107,17 +112,13 @@ and print_expr_in_pred ppt = function
       match op with
 	| Op_minus ->
 	    fprintf ppt "(%a%a)" print_op_arith1 op print_expr e
-	| Op_cast_real | Op_cast_int ->
-	    fprintf ppt "(%a (%a))" print_op_arith1 op print_expr e
-    )
+  )
   | BE_Op_Arith2 (op, e1, e2) -> (
       match op with
 	| Op_eq | Op_neq ->
-            fprintf ppt "bool(%a %a %a)" print_expr e1 print_op_arith2 op print_expr e2
+            fprintf ppt "(%a %a %a)" print_expr e1 print_op_arith2 op print_expr e2
         | _ -> fprintf ppt "%a %a %a" print_expr e1 print_op_arith2 op print_expr e2
     )
-  | BE_Op_Sharp e_list ->
-      fprintf ppt "sharp(%a)" print_expr_list e_list
   | BE_Pred p ->
       fprintf ppt "%a" print_pred p
 
@@ -140,19 +141,24 @@ and print_expr_list ppt = print_list print_expr ppt
 
 and print_array ppt = function
   | BA_Def e_list -> fprintf ppt "{%a}" print_def_list e_list
-  | BA_Index (id, e_list) -> fprintf ppt "%a(%a)" print_bid id print_expr_list e_list
-  | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2
+  | BA_Caret (e1, e2) -> fprintf ppt "caret(%a, %a)" print_expr e1 print_expr e2 (* TODO : traiter caret multiple *)
+  | BA_Index (id, e_list) -> fprintf ppt "%a%a" print_bid id print_index_list e_list
   | BA_Concat (e1, e2) -> fprintf ppt "%a ^ %a" print_expr e1 print_expr e2
   | BA_Slice (id, e_list) -> fprintf ppt "(%a)" (print_slice id) (List.rev e_list)
   | BA_Reverse (id) -> fprintf ppt "rev(%a)" print_bid id
 
+and print_index_list ppt = function
+  | [] -> ()
+  | [e] -> fprintf ppt "(%a)" print_expr e
+  | e :: l -> fprintf ppt "(%a)%a" print_expr e print_index_list l
+  
 and print_def_list ppt e_list =
   let rec fun_rec n ppt = function
     | [] -> ()
     | [v] -> fprintf ppt "%d |-> %a" n print_expr v
     | v::l -> fprintf ppt "%d |-> %a, %a" n print_expr v (fun_rec (n+1)) l
   in
-  fun_rec 0 ppt e_list
+  fun_rec 1 ppt e_list
 
 and print_slice id ppt e_list_rev =
   match e_list_rev with
@@ -166,7 +172,6 @@ let print_basetype ppt = function
   | T_Bool -> fprintf ppt "%s" "BOOL"
   | T_Int -> fprintf ppt "%s" "INT"
   | T_Float -> fprintf ppt "%s" "REAL"
-  | T_Poly -> fprintf ppt "%s" "BIG"
   | T_Enum id -> fprintf ppt "%s" id 
 
 let print_sees ppt = function
@@ -177,7 +182,21 @@ let print_params_machine ppt = function
     | [] -> ()
     | params_machine -> fprintf ppt "(%a)" print_idlist_comma params_machine
 
-let rec print_array_type t ppt e_list =
+let print_dom ppt = function
+  | [] -> ()
+  | [BE_Value (Int i)] -> fprintf ppt "1 .. %a" print_value (Int (i))
+  | BE_Value (Int i) :: _ -> fprintf ppt "1 .. %a " print_value (Int (i))
+  | [d] -> fprintf ppt "1 .. (%a)" print_expr d
+  | d :: _ -> fprintf ppt "1 .. (%a)" print_expr d 
+
+let rec print_array_type_rec t ppt e_list =
   match e_list with
   | [] -> fprintf ppt "%a" print_basetype t
-  | _ :: l -> fprintf ppt "seq(%a)" (print_array_type t) l
+  | _ :: l -> fprintf ppt "seq(%a)" (print_array_type_rec t) l
+
+let print_array_type t id ppt e_list =
+  fprintf ppt "%a & dom(%a) = %a" 
+    (print_array_type_rec t) e_list 
+    print_bid id 
+    print_dom e_list
+

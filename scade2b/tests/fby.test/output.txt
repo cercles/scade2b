@@ -1,6 +1,191 @@
 
 
  Node Parsed :
+NODE Test_fby7 (x : int ^ 2; P_INI : int ^ 2) RETURNS (y : int ^ 2) 
+VAR ; 
+LET 
+    
+   l : int ^ 2  
+   y = fby(l, 1, P_INI);
+   l = x;  
+TEL 
+
+Node normalized : 
+NODE Test_fby7 (x : int ^ 2; P_INI : int ^ 2) RETURNS (y : int ^ 2) 
+VAR l : int ^ 2; 
+PRE : P_INI : int ^ 2 ;
+      x : int ^ 2 
+LET 
+   y = REG(P_INI,l) : int ^ 2;
+   l = x; 
+TEL 
+POST : y : int ^ 2  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_fby7 (x : int ^ 2; P_INI : int ^ 2) RETURNS (y : int ^ 2) 
+VAR l : int ^ 2; 
+PRE : P_INI : int ^ 2 ;
+      x : int ^ 2 
+LET 
+   y = REG(P_INI,l) : int ^ 2;
+   l = x; 
+TEL 
+POST : y : int ^ 2  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Test_fby6 (x : int ^ 2; P_INI : int ^ 2) RETURNS (y : int ^ 2) 
+VAR ASSUME gt(x, 0); 
+LET 
+    
+   l : int ^ 2  
+   y = fby(l, 1, P_INI);
+   l = x;  
+TEL 
+
+Node normalized : 
+NODE Test_fby6 (x : int ^ 2; P_INI : int ^ 2) RETURNS (y : int ^ 2) 
+VAR l : int ^ 2; 
+PRE : P_INI : int ^ 2 ;
+      x : int ^ 2 & gt(x, 0)
+LET 
+   y = REG(P_INI,l) : int ^ 2;
+   l = x; 
+TEL 
+POST : y : int ^ 2  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_fby6 (x : int ^ 2; P_INI : int ^ 2) RETURNS (y : int ^ 2) 
+VAR l : int ^ 2; 
+PRE : P_INI : int ^ 2 ;
+      x : int ^ 2 & gt(x, 0)
+LET 
+   y = REG(P_INI,l) : int ^ 2;
+   l = x; 
+TEL 
+POST : y : int ^ 2  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Test_fby5 (x : int) RETURNS (y : int; z : int) 
+VAR ; 
+LET 
+    
+   l : int; g : int  
+   l = x;
+   z = fby(l, 1, 3);
+   y = l;  
+TEL 
+
+Node normalized : 
+NODE Test_fby5 (x : int) RETURNS (y : int; z : int) 
+VAR l : int; g : int; 
+PRE : x : int 
+LET 
+   l = x;
+   z = REG(3,l) : int;
+   y = l; 
+TEL 
+POST : z : int ;
+       y : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_fby5 (x : int) RETURNS (y : int; z : int) 
+VAR l : int; g : int; 
+PRE : x : int 
+LET 
+   z = REG(3,l) : int;
+   l = x;
+   y = l; 
+TEL 
+POST : z : int ;
+       y : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Test_fby4 (x : int) RETURNS (y : int; z : int) 
+VAR ; 
+LET 
+  GUARANTEE gt(y, 0)  
+   l : int; m : int  
+   z = fby(l, 1, 3);
+   _ = x;
+   l = x;
+   y = l;  
+TEL 
+
+Node normalized : 
+NODE Test_fby4 (x : int) RETURNS (y : int; z : int) 
+VAR l : int; m : int; 
+PRE : x : int 
+LET 
+   z = REG(3,l) : int;
+   l = x;
+   y = l; 
+TEL 
+POST : z : int ;
+       y : int & gt(y, 0) 
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_fby4 (x : int) RETURNS (y : int; z : int) 
+VAR l : int; m : int; 
+PRE : x : int 
+LET 
+   z = REG(3,l) : int;
+   l = x;
+   y = l; 
+TEL 
+POST : z : int ;
+       y : int & gt(y, 0) 
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Test_fby3 (x : int) RETURNS (y : int) 
+VAR ASSUME gt(x, 0); 
+LET 
+    
+   l : int  
+   y = fby(l, 1, 3);
+   l = x;  
+TEL 
+
+Node normalized : 
+NODE Test_fby3 (x : int) RETURNS (y : int) 
+VAR l : int; 
+PRE : x : int & gt(x, 0)
+LET 
+   y = REG(3,l) : int;
+   l = x; 
+TEL 
+POST : y : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE Test_fby3 (x : int) RETURNS (y : int) 
+VAR l : int; 
+PRE : x : int & gt(x, 0)
+LET 
+   y = REG(3,l) : int;
+   l = x; 
+TEL 
+POST : y : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
 NODE Test_fby2 (x : int) RETURNS (y1 : int; y2 : int) 
 VAR ; 
 LET 

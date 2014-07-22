@@ -11,4 +11,27 @@
     <Output scadeName="y2" scadeType="int" targetName="y2" targetType="kcg_int"/>
     <Local scadeName="z" scadeType="int" targetName="z" targetType="kcg_int"/>
   </NoExpNode>
+  <NoExpNode scadeName="Test_fby3" targetCycleFct="Test_fby3">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Test_fby4" targetCycleFct="Test_fby4">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
+    <Output scadeName="z" scadeType="int" targetName="z" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Test_fby5" targetCycleFct="Test_fby5">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Test_fby6" targetCycleFct="Test_fby6">
+    <Input scadeName="x" scadeType="int^2" targetName="x" targetType="kcg_int_2"/>
+    <Input scadeName="P_INI" scadeType="int^2" targetName="P_INI" targetType="kcg_int_2"/>
+    <Output scadeName="y" scadeType="int^2" targetName="y" targetType="kcg_int_2"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Test_fby7" targetCycleFct="Test_fby7">
+    <Input scadeName="x" scadeType="int^2" targetName="x" targetType="kcg_int_2"/>
+    <Input scadeName="P_INI" scadeType="int^2" targetName="P_INI" targetType="kcg_int_2"/>
+    <Output scadeName="y" scadeType="int^2" targetName="y" targetType="kcg_int_2"/>
+  </NoExpNode>
 </Model>

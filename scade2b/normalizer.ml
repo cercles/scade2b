@@ -1,5 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
-
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == normalizer.ml                                                         == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_base
 open Ast_scade
@@ -22,7 +29,6 @@ let rec p_expr_to_n_expr = function
   | PE_Op_Arith2 (op, e1, e2) -> NE_Op_Arith2 (op, p_expr_to_n_expr e1, p_expr_to_n_expr e2)
   | PE_Op_Relat (op, e1, e2) -> NE_Op_Relat (op, p_expr_to_n_expr e1, p_expr_to_n_expr e2)
   | PE_Op_Logic (op, e1, e2) -> NE_Op_Logic (op, p_expr_to_n_expr e1, p_expr_to_n_expr e2)
-  | PE_Op_Sharp e_list -> NE_Op_Sharp (List.map p_expr_to_n_expr e_list)
   | PE_Op_Not e -> NE_Op_Not (p_expr_to_n_expr e)
   | _ -> assert false
 

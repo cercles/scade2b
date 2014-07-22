@@ -1,5 +1,13 @@
 %{
-  (* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == parser_scade_error.mly                                                == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
   open Ast_scade
   open Ast_base
@@ -33,8 +41,8 @@
 %token EQ NEQ INF INFEQ SUP SUPEQ
 %token AND OR NOT XOR SHARP
 %token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOL COMMA DOT
-%token DOTDOT CARET CONCAT REVERSE
-%token T_BOOL T_INT T_REAL T_POLY
+%token DOTDOT CARET CONCAT REVERSE TRANSPOSE
+%token T_BOOL T_INT T_REAL
 %token <bool> BOOL
 %token <int> INT
 %token <float> REAL
@@ -120,9 +128,6 @@ expr :
  | expr SUP expr { PE_Op_Relat (Op_gt, $1, $3) }
  | expr SUPEQ expr { PE_Op_Relat (Op_ge, $1, $3) }
  | MINUS expr { PE_Op_Arith1 (Op_minus, $2) }
- | T_REAL expr { PE_Op_Arith1 (Op_cast_real, $2) }
- | T_INT expr { PE_Op_Arith1 (Op_cast_int, $2) }
- | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Op_Sharp ($3 :: $5) }
  | expr AND expr { PE_Op_Logic (Op_and, $1, $3) }
  | expr OR expr { PE_Op_Logic (Op_or, $1, $3) }
  | expr XOR expr { PE_Op_Logic (Op_xor, $1, $3) }
@@ -136,6 +141,10 @@ expr :
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
  | ARRAY_PRED LPAREN IDENT COMMA expr RPAREN { $5 }                /* <<< ARRAY_PRED à tester! */
+ | T_REAL expr { PE_Call ("", "to_real", [$2]) }
+ | T_INT expr { PE_Call ("", "to_int", [$2]) }
+ | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Call ("", "sharp", $3 :: $5) }
+ | TRANSPOSE LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Call ("", "transpose", [$3; $5; $7]) }
  | error { if !eq_scanning then PE_Ident "" else raise Parsing.Parse_error }
 ;
 

@@ -16,3 +16,56 @@ let
   y1 = fby(z; 1; 0);
   y2 = fby(z; 1; 3);
 tel
+
+node Test_fby3(x : int)
+  returns (y : int)
+var
+  l : int;
+let
+  assume A1 : x > 0;
+  l = x;
+  y = fby(l; 1; 3);
+tel
+
+node Test_fby4(x : int)
+  returns (y, z : int)
+var
+  l : int;
+  m : int;
+let
+  guarantee G1 : y > 0;
+  y = l;
+  l = x;
+  _ = x;
+  z = fby(l; 1; 3);
+tel
+
+node Test_fby5(x : int)
+  returns (y, z : int)
+var
+  l : int;
+  g : int;
+let
+  y = l;
+  z = fby(l; 1; 3);
+  l = x;
+tel
+
+node Test_fby6(x : int^2; P_INI: int^2)
+  returns (y : int^2)
+var
+  l : int^2;
+let
+  assume A1 : x > 0;
+  l = x;
+  y = fby(l; 1; P_INI);
+tel
+
+node Test_fby7(x : int^2; P_INI: int^2)
+  returns (y : int^2)
+var
+  l : int^2;
+let
+  l = x;
+  y = fby(l; 1; P_INI);
+tel

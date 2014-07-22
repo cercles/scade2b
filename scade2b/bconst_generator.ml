@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == bconst_generator.ml                                                   == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Format
 open Ast_kcg
@@ -7,19 +15,6 @@ open Ast_repr_b
 open Ast_prog
 open Ast_scade_norm
 open Printer
-
-(* let rec print_dim_list ppt = function *)
-(*   | [] -> () *)
-(*   | [BE_Value (Int i)] -> fprintf ppt "0 .. %a" print_value (Int (i-1)) *)
-(*   | BE_Value (Int i) :: l -> fprintf ppt "0 .. %a, %a " print_value (Int (i-1)) print_dim_list l *)
-(*   | [d] -> fprintf ppt "0 .. (%a-1)" print_expr d *)
-(*   | d :: l -> fprintf ppt "0 .. (%a-1), %a " print_expr d print_dim_list l *)
-
-(* let print_array_type t ppt e_list = *)
-(*   fprintf ppt "(%a) --> %a" print_dim_list e_list print_basetype t *)
-
-
-
 
 
 let print_property ppt = function
@@ -32,7 +27,7 @@ let print_property ppt = function
   | Const_Fun (id, t, e_list, expr) ->
     fprintf ppt "%a : %a & %a = %a "
       print_bid id
-      (print_array_type t) e_list
+      (print_array_type t id) e_list
       print_bid id
       print_expr expr
 

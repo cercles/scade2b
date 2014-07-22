@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == ast_scade_norm.ml                                                     == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_base
 
@@ -9,7 +17,6 @@ type n_expression =
   | NE_Op_Arith2 of op_arith2 * n_expression * n_expression
   | NE_Op_Relat of op_relat * n_expression * n_expression
   | NE_Op_Logic of op_logic * n_expression * n_expression
-  | NE_Op_Sharp of n_expression list
   | NE_Op_Not of n_expression
   | NE_Array of n_array_expr
 

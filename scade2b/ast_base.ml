@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == ast_base.ml                                                           == *)
+(* == Types et opérations de base du fragment scade                         == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 type ident = string
 
@@ -11,11 +19,10 @@ type base_type =
   T_Bool
 | T_Int
 | T_Float
-| T_Poly
 | T_Enum of ident
 
 type op_arith1 =
- Op_minus | Op_cast_real | Op_cast_int
+ Op_minus
 
 type op_arith2 =
   Op_eq | Op_neq

@@ -1,5 +1,13 @@
 {
-  (* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == lexer_scade_error.mll                                                 == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
   open Lexing
   open Parser_scade_error
@@ -50,7 +58,6 @@ let pragma_simpl = '#'(digit|alpha)+
     | "bool"                     { T_BOOL }
     | "int"                      { T_INT }
     | "real"                     { T_REAL }
-    | "'T"                       { T_POLY }
 
     | "if"                       { IF }
     | "then"                     { THEN }
@@ -81,6 +88,7 @@ let pragma_simpl = '#'(digit|alpha)+
     | '#'                        { SHARP }
 
     | "reverse"                  { REVERSE }
+    | "transpose"                { TRANSPOSE }
 
     | '('                        { LPAREN }
     | ')'                        { RPAREN }

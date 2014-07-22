@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == error_handler.ml                                                      == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Lexing
 open Ast_xml
@@ -57,7 +65,7 @@ let initialisation_kcg_parsing e lexbuf =
     output_string stderr (msg^msg2);
     exit 2
   | Parsing.Parse_error ->
-    let msg = Printf.sprintf "\nCRITICAL ERROR (lexer_kcg): Lexical Error in SCADE," in
+    let msg = Printf.sprintf "\nCRITICAL ERROR (lexer_kcg): Syntax Error in SCADE," in
     let msg2 = handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf) in
     output_string !error_log (msg^msg2);
     output_string stderr (msg^msg2);
@@ -107,7 +115,7 @@ let node_parsing e lexbuf node_xml dir_output node_string consts enums arraytype
     let conditions = Conds_retriever.compute_conditions_error_m conditions consts enums node_xml arraytypes in
     Babsterror_generator.generate node_xml dir_output conditions
   with e ->
-    Printf.printf "\n\n !!!!!!!!!!!!!!!!!!!!! ERRORORORORORO!!";
+    Printf.printf "\nERROR UNKNOWN (node_parsing)";
     Babsterror_generator.generate_without_cond node_xml dir_output
     
 
