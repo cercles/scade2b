@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == reg_ini_input.ml                                                      == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_repr_b
 open Ast_scade_norm
@@ -95,8 +103,18 @@ let search_input_in_reg ast_n =
 let check_imports_params ast_b imports = 
   let eqs = ast_b.implementation.operation.op_1 in
   let imports_out = ref [] in
-  let find_in_imp_list imp_id inst_id =
-    List.find (fun imp -> (imp.call_name = imp_id) && (imp.instance_id = inst_id)) imports
+  let special_op imp_id inst_id =
+    if List.mem imp_id ["to_real"; "to_int"; "sharp"; "transpose"]
+    then { call_name = "maths";
+	   params_index = None;
+	   instance_id = "1"; }
+    else failwith "This should not happen. (Reg_ini_input.check_import_params.special_op)"
+  in
+  let find_in_imp_list imp_id inst_id = 
+    try
+      List.find (fun imp -> (imp.call_name = imp_id) && (imp.instance_id = inst_id)) imports
+    with Not_found -> 
+      (special_op imp_id inst_id)
   in
   let cip_fun_rec eq =
     match eq with
@@ -140,7 +158,8 @@ let check_imports_params ast_b imports =
   let eqs_out = List.map cip_fun_rec eqs in 
   { ast_b with implementation =
       { ast_b.implementation with 
-	imports = !imports_out; 
+	imports = List.fold_left (fun acc import -> 
+	  if List.mem import acc then acc else import::acc) [] !imports_out; 
 	operation = { ast_b.implementation.operation with op_1 = eqs_out };
       }
   }

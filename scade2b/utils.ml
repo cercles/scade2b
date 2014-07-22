@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == utils.ml                                                              == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_repr_b
 open Ast_scade_norm
@@ -47,7 +55,6 @@ let find_ident_in_pexpr expr consts =
     | PE_Op_Arith1 (_, e) -> ident_finder e
     | PE_Op_Arith2 (_, e1, e2)
     | PE_Op_Relat (_, e1, e2) -> ident_finder e1;ident_finder e2
-    | PE_Op_Sharp elist -> List.iter ident_finder elist
     | PE_Op_Not e -> ident_finder e
     | PE_Op_Logic (_, e1, e2) -> ident_finder e1 ; ident_finder e2
     | PE_Fby (e1, e2, e3) -> ident_finder e1; ident_finder e2; ident_finder e3
@@ -87,7 +94,6 @@ let find_const_enum_in_node ast_option consts enums =
     | PE_Op_Arith1 (_, e) -> id_expr_finder e
     | PE_Op_Arith2 (_, e1, e2)
     | PE_Op_Relat (_, e1, e2) -> id_expr_finder e1;id_expr_finder e2
-    | PE_Op_Sharp elist -> List.iter id_expr_finder elist
     | PE_Op_Not e -> id_expr_finder e
     | PE_Op_Logic (_, e1, e2) -> id_expr_finder e1 ; id_expr_finder e2
     | PE_Fby (e1, e2, e3) -> id_expr_finder e1; id_expr_finder e2; id_expr_finder e3
@@ -150,7 +156,6 @@ let rec rename_id_expr old new_i = function
                                                  rename_id_expr old new_i e2)
   | NE_Op_Logic (op, e1, e2) -> NE_Op_Logic (op, rename_id_expr old new_i e1,
                                                  rename_id_expr old new_i e2)
-  | NE_Op_Sharp (e_list) -> NE_Op_Sharp (List.map (rename_id_expr old new_i) e_list)
   | NE_Op_Not e -> NE_Op_Not (rename_id_expr old new_i e)
 and rename_id_array old new_i = function
   | NA_Def e_list -> NA_Def (List.map (rename_id_expr old new_i) e_list)
@@ -228,12 +233,5 @@ let p_const_to_b_const const =
 
 let create_dir_output dir_output =
   if not(Sys.file_exists dir_output) then Unix.mkdir dir_output 0o764
-
-(***************************** LIBRARY STUFF *******************************)
-
-let library_list = [
-"to_int", "ML_math" ; 
-"to_real", "ML_math"
-]
 
 

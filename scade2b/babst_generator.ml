@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == babst_generator.ml                                                    == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Format
 open Ast_repr_b
@@ -7,32 +15,29 @@ open Printer
 
 let print_then_condition ppt = function
   | Base_expr (id, t, expr, ens_id) -> 
-    fprintf ppt "%a :: { %a | %a : %a & %a }"
+    fprintf ppt "%a : ( %a : %a & %a )"
       print_bid id
-      print_bid ens_id
-      print_bid ens_id
+      print_bid id
       print_basetype t
       print_expr_in_pred expr
   | Base_no_expr (id, t, ens_id) -> 
-    fprintf ppt "%a :: { %a | %a : %a }"
+    fprintf ppt "%a : ( %a : %a )"
       print_bid id
-      print_bid ens_id
-      print_bid ens_id
+      print_bid id
       print_basetype t
   | Fun_expr (id, t, e_list, expr, ens_id, index) ->
-    fprintf ppt "%a :: { %a | %a : %a & !%s.(%s : INT => %a) } "
+    fprintf ppt "%a : ( %a : %a & !%s.(%s : dom(%a) => %a) )"
       print_bid id
-      print_bid ens_id
-      print_bid ens_id
-      (print_array_type t) e_list 
+      print_bid id
+      (print_array_type t id) e_list 
       index index
+      print_bid id
       print_expr_in_pred expr;
   | Fun_no_expr (id, t, e_list, ens_id) ->
-    fprintf ppt "%a :: { %a | %a : %a }"
+    fprintf ppt "%a : ( %a : %a )"
       print_bid id
-      print_bid ens_id
-      print_bid ens_id
-      (print_array_type t) e_list
+      print_bid id
+      (print_array_type t id) e_list
 
 let print_thenlist ppt = function
   | [] -> fprintf ppt "skip" 
@@ -49,15 +54,16 @@ let print_pre_condition ppt = function
 	print_bid id
 	print_basetype t
   | Fun_expr (id, t, e_list, expr,_, index) ->
-    fprintf ppt "%a : %a & !%s.(%s : INT => %a)"
+    fprintf ppt "%a : %a & !%s.(%s : dom(%a) => %a)"
       print_bid id
-      (print_array_type t) e_list
+      (print_array_type t id) e_list
       index index
+      print_bid id
       print_expr_in_pred expr
   | Fun_no_expr (id, t, e_list, _) ->
     fprintf ppt "%a : %a"
       print_bid id
-      (print_array_type t) e_list
+      (print_array_type t id) e_list
 
 let print_prelist ppt = function
   | [] -> fprintf ppt "TRUE = TRUE" 

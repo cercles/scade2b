@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == ast_repr_b.ml                                                         == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_base
 
@@ -7,7 +15,6 @@ type b_expression =
 | BE_Value of value
 | BE_Op_Arith1 of op_arith1 * b_expression
 | BE_Op_Arith2 of op_arith2 * b_expression * b_expression
-| BE_Op_Sharp of b_expression list
 | BE_Array of array_expr
 | BE_Pred of b_predicate
 

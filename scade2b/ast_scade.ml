@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == ast_scade.ml                                                          == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Ast_base
 
@@ -10,16 +18,15 @@ type p_expression =
   | PE_Op_Arith1 of op_arith1 * p_expression
   | PE_Op_Arith2 of op_arith2 * p_expression * p_expression
   | PE_Op_Relat of op_relat * p_expression * p_expression
-  | PE_Op_Sharp of p_expression list
   | PE_Op_Not of p_expression
   | PE_Op_Logic of op_logic * p_expression * p_expression
   | PE_Fby of p_expression * p_expression * p_expression
   | PE_If of p_expression * p_expression * p_expression
 
 and p_array_expr =
-    (* Initialisation avec [e1, e2, ...] (ex: [3,4,5] ) *)
+  (* Initialisation avec [e1, e2, ...] (ex: [3,4,5] ) *)
     PA_Def of p_expression list
-      (* Initialisation avec e1^ e2 (ex: false^4) *)
+  (* Initialisation avec e1^ e2 (ex: false^4) *)
   | PA_Caret of p_expression * p_expression
   | PA_Concat of p_expression * p_expression
   | PA_Slice of ident * (p_expression * p_expression) list

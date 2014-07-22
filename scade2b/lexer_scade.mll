@@ -1,5 +1,13 @@
 {
-  (* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == lexer_scade.mll                                                       == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
   open Lexing
   open Parser_scade
@@ -50,7 +58,6 @@ rule token = parse
 	  | "bool"                     { T_BOOL }
 	  | "int"                      { T_INT }
 	  | "real"                     { T_REAL }
-	  | "'T"                       { T_POLY }
 
 	  | "if"                       { IF }
 	  | "then"                     { THEN }
@@ -81,6 +88,7 @@ rule token = parse
 	  | '#'                        { SHARP }
 
 	  | "reverse"                  { REVERSE }
+	  | "transpose"                { TRANSPOSE }
 
 	  | '('                        { LPAREN }
 	  | ')'                        { RPAREN }

@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == bimpl_generator.ml                                                    == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Format
 open Ast_repr_b
@@ -11,7 +19,6 @@ let env_instances = ref Env_instances.empty
 let node_name = ref ""
 
 let print_instname imp_name ppt inst_id =
-  
   let bid = 
     try 
       Env_instances.find (!node_name, imp_name, inst_id) !env_instances
@@ -20,11 +27,9 @@ let print_instname imp_name ppt inst_id =
   in
   if bid = "" then () else fprintf ppt "%s." bid
 
-
 let print_lp ppt = function
   | BLP_Ident id -> print_bid ppt id
   | BLP_Tuple id_list -> print_idlist_comma ppt id_list
-
 
 let print_alternative ppt a =
   fprintf ppt "IF %a = TRUE THEN %a := %a ELSE %a := %a END" 
@@ -117,15 +122,16 @@ let print_condition ppt = function
 	print_bid id
 	print_basetype t
   | Fun_expr (id, t, e_list, expr,_, index) ->
-      fprintf ppt "%a : %a & !%s.(%s : INT => %a)"
+      fprintf ppt "%a : %a & !%s.(%s : dom(%a) => %a)"
         print_bid id
-	(print_array_type t) e_list
+	(print_array_type t id) e_list
 	index index
+	print_bid id
 	print_expr_in_pred expr
   | Fun_no_expr (id, t, e_list, _) ->
       fprintf ppt "%a : %a"
 	print_bid id
-	(print_array_type t) e_list
+	(print_array_type t id) e_list
 
 let print_invariant ppt inv_list = 
   let print_invariant_list ppt l =

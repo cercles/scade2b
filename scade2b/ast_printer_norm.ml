@@ -1,4 +1,12 @@
-(* Florian Thibord  --  Projet CERCLES *)
+(* =========================================================================== *)
+(* == CERCLES2 -- ANR-10-SEGI-017                                           == *)
+(* =========================================================================== *)
+(* == ast_printer_norm.ml                                                   == *)
+(* ==                                                                       == *)
+(* ==                                                                       == *)
+(* =========================================================================== *)
+(* == Florian Thibord - florian.thibord[at]gmail.com                        == *)
+(* =========================================================================== *)
 
 open Format
 open Ast_scade_norm
@@ -19,7 +27,6 @@ let rec print_expr ppt = function
   | NE_Op_Arith1 (op, e) -> fprintf ppt "%a@[(%a)@]" print_op_a1 op print_expr e
   | NE_Op_Arith2 (op, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_op_a2 op print_expr e1 print_expr e2
   | NE_Op_Relat (op, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_op_r op print_expr e1 print_expr e2
-  | NE_Op_Sharp e_list -> fprintf ppt "#@[(%a)@]" print_e_list e_list
   | NE_Op_Not e -> fprintf ppt "@[!(%a)@]" print_expr e
   | NE_Op_Logic (op, e1, e2) -> fprintf ppt "%a@[(%a, %a)@]" print_op_l op print_expr e1 print_expr e2
 
@@ -51,8 +58,6 @@ and print_index_list ppt l =
 
 and print_op_a1 ppt = function
   | Op_minus -> fprintf ppt "-"
-  | Op_cast_real -> fprintf ppt "real"
-  | Op_cast_int -> fprintf ppt "int"
 
 and print_op_a2 ppt = function
   | Op_eq -> fprintf ppt "eq"
@@ -87,7 +92,6 @@ and print_base_type ppt = function
   | T_Bool -> fprintf ppt "bool"
   | T_Int -> fprintf ppt "int"
   | T_Float -> fprintf ppt "real"
-  | T_Poly -> fprintf ppt "'T"
   | T_Enum id -> fprintf ppt "%s" id
 
 let rec print_eq_list ppt = function
