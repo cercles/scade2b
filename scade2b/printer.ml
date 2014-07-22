@@ -35,12 +35,11 @@ let print_list ?(sep=", ") ?(break=false) ?(forcebreak=false) print_elem ppt l =
   | [x] -> fprintf ppt "%a" print_elem x
   | x::xs ->
       (** Coerce type of string to format6 *)
-      let format_string s = s ^^ "" in
       let spc =
         match break, forcebreak with
-        | false, _ -> format_string ""
-        | true, false -> format_string "@,"
-        | true, true -> format_string "@\n"
+        | false, _ -> format_of_string ""
+        | true, false -> format_of_string "@,"
+        | true, true -> format_of_string "@\n"
       in
       fprintf ppt ("%a%s" ^^ spc ^^ "%a")
         print_elem x sep go xs
