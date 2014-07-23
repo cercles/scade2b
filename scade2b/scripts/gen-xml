@@ -27,14 +27,22 @@ def parse_decl(spec):
     pattern = r'(\w+)\(' + arg_pat + r'((;' + arg_pat + r')*)\)->(\w+):int'
     m = re.match(pattern, spec)
     name = m.group(1)
+    kcg_types = {'int': 'kcg_int',
+                 'real': 'kcg_real',
+                 }
 
     def parse_extra_arg(arg):
         m = re.match(arg_pat, arg)
-        return {'name': m.group(1),
-                'type': m.group(2)
+        return make_arg(m.group(1), m.group(2))
+
+    def make_arg(name, typ):
+        return {'name': name,
+                'type': typ,
+                'kcg_type': kcg_types[typ],
                 }
     extra_args = m.group(4).split(';')[1:]
-    args = [{'name': m.group(2), 'type': m.group(3)}] + [parse_extra_arg(a) for a in extra_args]
+    first_arg = make_arg(m.group(2), m.group(3))
+    args = [first_arg] + [parse_extra_arg(a) for a in extra_args]
     ret = [m.group(8)]
     return {'name': name,
             'args': args,
@@ -48,25 +56,39 @@ class TestParse(unittest.TestCase):
         self.assertEqual(exp, actual)
 
     def test_basic(self):
-        self._tc('Fct(x:int)->r:int', {'name': 'Fct',
-                                       'args': [{'name': 'x', 'type': 'int'}],
-                                       'ret': ['r']})
+        self._tc('Fct(x:int)->r:int',
+                 {'name': 'Fct',
+                  'args': [{'name': 'x',
+                            'type': 'int',
+                            'kcg_type': 'kcg_int'}],
+                  'ret': ['r']})
 
     def test_three_args(self):
-        self._tc('Fct(x:int;y:int;z:int)->r:int', {'name': 'Fct',
-                                                   'args': [{'name': 'x', 'type': 'int'},
-                                                            {'name': 'y', 'type': 'int'},
-                                                            {'name': 'z', 'type': 'int'},
-                                                            ],
-                                                   'ret': ['r']})
+        self._tc('Fct(x:int;y:int;z:int)->r:int',
+                 {'name': 'Fct',
+                  'args': [{'name': 'x',
+                            'type': 'int',
+                            'kcg_type': 'kcg_int'},
+                           {'name': 'y',
+                            'type': 'int',
+                            'kcg_type': 'kcg_int'},
+                           {'name': 'z',
+                            'type': 'int',
+                            'kcg_type': 'kcg_int'},
+                           ],
+                  'ret': ['r']})
 
     def test_real(self):
-        self._tc('Fct(x:int;y:real)->r:int', {'name': 'Fct',
-                                       'args': [{'name': 'x', 'type': 'int'},
-                                                {'name': 'y', 'type': 'real'},
-                                                ],
-                                       'ret': ['r']})
-
+        self._tc('Fct(x:int;y:real)->r:int',
+                 {'name': 'Fct',
+                  'args': [{'name': 'x',
+                            'type': 'int',
+                            'kcg_type': 'kcg_int'},
+                           {'name': 'y',
+                            'type': 'real',
+                            'kcg_type': 'kcg_real'},
+                           ],
+                  'ret': ['r']})
 
 
 def gen_xml(spec):
@@ -81,9 +103,9 @@ def gen_xml(spec):
 def gen_inputs(args):
     r = ""
     for arg in args:
-        fmt = '  <Input scadeName="{name}" scadeType="int"'
-        fmt += ' targetName="{name}" targetType="kcg_int"/>\n'
-        r += fmt.format(name=arg)
+        fmt = '  <Input scadeName="{name}" scadeType="{typ}"'
+        fmt += ' targetName="{name}" targetType="{kcg}"/>\n'
+        r += fmt.format(name=arg['name'], typ=arg['type'], kcg=arg['kcg_type'])
     return r
 
 
