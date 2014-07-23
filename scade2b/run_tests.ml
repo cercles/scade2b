@@ -113,7 +113,29 @@ let find_objectives () =
   List.iter (fun str -> Hashtbl.add objs str ObjNotCovered) lines;
   objs
 
+let all_matches pattern s =
+  let rec extract_delims = function
+    | [] -> []
+    | Str.Text _::xs -> extract_delims xs
+    | Str.Delim s::xs -> s::extract_delims xs
+  in
+  extract_delims (Str.full_split pattern s)
+
+let collect_objectives dir =
+  let pattern = Str.regexp "--@.*$" in
+  (dir ^ "/KCG/kcg_xml_filter_out.scade")
+  |> read_file
+  |> String.trim
+  |> all_matches pattern
+  |> List.map (fun s -> String.trim (String.sub s 3 (String.length s - 4)))
+
 let comp_tests dirs objs =
+  let update_objectives obj_list =
+    List.iter (fun obj ->
+      assert(Hashtbl.mem objs obj);
+      Hashtbl.replace objs obj ObjCovered
+    ) obj_list
+  in
   let run_test s =
     let d, check_diff, exp_code = match s with
       | TestOK d -> d, true, 0
@@ -128,6 +150,7 @@ let comp_tests dirs objs =
         with Sys_error _ -> []
       in
       let all_opts = opts @ [d ^ "/"] in
+      let obj_of_this_test = collect_objectives d in
       let exit_code =
         let n =
           try
@@ -155,7 +178,9 @@ let comp_tests dirs objs =
       in
       match exp_output with
       | Some spec -> assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
-      | None -> ()
+      | None -> ();
+      (* Everything went fine: clear objectives *)
+      update_objectives obj_of_this_test
       )
   in
   let test_objs_covered = "Objectives covered">:: fun ctxt ->
