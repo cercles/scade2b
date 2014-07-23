@@ -23,17 +23,19 @@ def main():
 
 
 def parse_decl(spec):
-    arg_pat = r'(\w+):int'
+    arg_pat = r'(\w+):(int|real)'
     pattern = r'(\w+)\(' + arg_pat + r'((;' + arg_pat + r')*)\)->(\w+):int'
     m = re.match(pattern, spec)
     name = m.group(1)
 
     def parse_extra_arg(arg):
         m = re.match(arg_pat, arg)
-        return m.group(1)
-    extra_args = m.group(3).split(';')[1:]
-    args = [m.group(2)] + [parse_extra_arg(a) for a in extra_args]
-    ret = [m.group(6)]
+        return {'name': m.group(1),
+                'type': m.group(2)
+                }
+    extra_args = m.group(4).split(';')[1:]
+    args = [{'name': m.group(2), 'type': m.group(3)}] + [parse_extra_arg(a) for a in extra_args]
+    ret = [m.group(8)]
     return {'name': name,
             'args': args,
             'ret': ret,
@@ -47,13 +49,24 @@ class TestParse(unittest.TestCase):
 
     def test_basic(self):
         self._tc('Fct(x:int)->r:int', {'name': 'Fct',
-                                       'args': ['x'],
+                                       'args': [{'name': 'x', 'type': 'int'}],
                                        'ret': ['r']})
 
     def test_three_args(self):
         self._tc('Fct(x:int;y:int;z:int)->r:int', {'name': 'Fct',
-                                                   'args': ['x', 'y', 'z'],
+                                                   'args': [{'name': 'x', 'type': 'int'},
+                                                            {'name': 'y', 'type': 'int'},
+                                                            {'name': 'z', 'type': 'int'},
+                                                            ],
                                                    'ret': ['r']})
+
+    def test_real(self):
+        self._tc('Fct(x:int;y:real)->r:int', {'name': 'Fct',
+                                       'args': [{'name': 'x', 'type': 'int'},
+                                                {'name': 'y', 'type': 'real'},
+                                                ],
+                                       'ret': ['r']})
+
 
 
 def gen_xml(spec):
