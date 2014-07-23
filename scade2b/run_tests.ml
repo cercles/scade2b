@@ -98,9 +98,23 @@ let find_tests () =
 
 let check_exec = "./_obuild/scade2b_cov/scade2b_cov.asm"
 
-let comp_tests dirs =
-  "scade2b">:::
-  List.map (fun s ->
+type obj_coverage =
+  | ObjNotCovered
+  | ObjCovered
+
+let find_objectives () =
+  let lines =
+    "tests/objectives.txt"
+      |> read_file
+      |> String.trim
+      |> Str.split (Str.regexp "\n")
+  in
+  let objs = Hashtbl.create 0 in
+  List.iter (fun str -> Hashtbl.add objs str ObjNotCovered) lines;
+  objs
+
+let comp_tests dirs objs =
+  let run_test s =
     let d, check_diff, exp_code = match s with
       | TestOK d -> d, true, 0
       | TestFail d -> d, false, 1
@@ -143,10 +157,25 @@ let comp_tests dirs =
       | Some spec -> assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
       | None -> ()
       )
-    ) dirs
+  in
+  let test_objs_covered = "Objectives covered">:: fun ctxt ->
+    Hashtbl.iter (fun obj cov ->
+      non_fatal ctxt (fun ctxt ->
+        let msg = "Coverage of objective "^ obj in
+        let printer = function
+        | ObjNotCovered -> "not covered"
+        | ObjCovered -> "covered"
+        in
+        assert_equal ~ctxt ~msg ~printer ObjCovered cov
+      )
+    ) objs
+  in
+  let all_tests = List.map run_test dirs @ [test_objs_covered] in
+  "scade2b">:::all_tests
 
 let main () =
   let tests = find_tests () in
-  run_test_tt_main (comp_tests tests)
+  let objectives = find_objectives () in
+  run_test_tt_main (comp_tests tests objectives)
 
 let _ = main ()
