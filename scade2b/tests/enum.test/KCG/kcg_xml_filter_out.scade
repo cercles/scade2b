@@ -1,4 +1,6 @@
-type Day = enum { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday };
+--@ /type_block/check/1
+--@ /type_def/enum/check/1
+type Day = enum { Work, Weekend };
 node Test_enum(x : Day)
   returns (r : bool)
 let
