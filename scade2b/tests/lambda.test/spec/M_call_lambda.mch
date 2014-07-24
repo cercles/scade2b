@@ -6,6 +6,6 @@ rr <-- call_lambda(aa) =
  PRE
    aa : INT
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

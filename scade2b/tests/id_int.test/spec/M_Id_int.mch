@@ -6,6 +6,6 @@ yy <-- Id_int(xx) =
  PRE
    xx : INT
  THEN
-   yy :: { ii | ii : INT }
+   yy : ( yy : INT )
  END 
 END

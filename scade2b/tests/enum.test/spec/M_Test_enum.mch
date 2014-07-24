@@ -6,6 +6,6 @@ rr <-- Test_enum(xx) =
  PRE
    xx : Day
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

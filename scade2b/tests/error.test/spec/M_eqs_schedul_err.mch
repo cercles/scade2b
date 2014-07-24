@@ -5,6 +5,6 @@ rr <-- eqs_schedul_err(bb) =
  PRE
    bb : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( rr : INT )
  END
 END

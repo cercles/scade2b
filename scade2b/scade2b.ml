@@ -16,7 +16,6 @@ open Utils
 open Call_graph
 open Lexing
 
-
   
 (*** FONCTION DE TRADUCTION D'UN NOEUD SCADE 
        VERS UN COUPLE DE MACHINES B                *)

@@ -4,9 +4,9 @@ OPERATIONS
 
 yy <-- mat_real_op_def(xx, zz) =
  PRE
-   zz : seq(REAL) &
-   xx : seq(REAL) & !jj.(jj : INT => ((xx(jj) > 0.000000) & (xx(jj) < 1000.000000)))
+   zz : seq(REAL) & dom(zz) = 1 .. 2 &
+   xx : seq(REAL) & dom(xx) = 1 .. 2 & !jj.(jj : dom(xx) => ((xx(jj) > 0.000000) & (xx(jj) < 1000.000000)))
  THEN
-   yy :: { ii | ii : seq(seq(REAL)) & !jj.(jj : INT => ((conc(ii)(jj) > 0.000000) & (conc(ii)(jj) < 1000.000000))) } 
+   yy : ( yy : seq(seq(REAL)) & dom(yy) = 1 .. 2  & !jj.(jj : dom(yy) => ((conc(y)(jj) > 0.000000) & (conc(y)(jj) < 1000.000000))) )
  END 
 END

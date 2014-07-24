@@ -6,7 +6,7 @@ r1, r2 <-- Fct2(xx) =
  PRE
    xx : INT
  THEN
-   r2 :: { ii | ii : INT }||
-   r1 :: { ii | ii : INT }
+   r2 : ( r2 : INT )||
+   r1 : ( r1 : INT )
  END 
 END

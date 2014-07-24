@@ -6,6 +6,6 @@ bb <-- _collision2(aa) =
  PRE
    aa : INT
  THEN
-   bb :: { ii | ii : INT }
+   bb : ( bb : INT )
  END 
 END

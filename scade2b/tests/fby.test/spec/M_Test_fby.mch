@@ -6,6 +6,6 @@ yy <-- Test_fby(xx) =
  PRE
    xx : INT
  THEN
-   yy :: { ii | ii : INT }
+   yy : ( yy : INT )
  END 
 END

@@ -5,7 +5,7 @@ OPERATIONS
 
 yy <-- vect_int_op_def(xx, zz) =
  
-   yy := {0 |-> xx, 1 |-> zz}
+   yy := {1 |-> xx, 2 |-> zz}
    
  
 END

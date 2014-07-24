@@ -1,0 +1,12 @@
+IMPLEMENTATION M_Op_transpose_i
+REFINES M_Op_transpose
+
+IMPORTS M_maths
+OPERATIONS
+
+rr <-- Op_transpose(xx) =
+ 
+   rr <-- transpose(xx, 1, 2)
+   
+ 
+END

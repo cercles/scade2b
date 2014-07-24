@@ -7,6 +7,6 @@ rr <-- Op_mod(aa, bb) =
    bb : INT &
    aa : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( rr : INT )
  END 
 END

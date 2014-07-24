@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_guarantee_i
+REFINES M_Test_guarantee
+
+OPERATIONS
+
+rr <-- Test_guarantee(xx, yy) =
+ 
+   rr := bool(xx + yy <= 100)
+   
+ 
+END

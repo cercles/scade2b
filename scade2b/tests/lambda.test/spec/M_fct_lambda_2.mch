@@ -8,6 +8,6 @@ rr <-- fct_lambda_2 =
  PRE
    TRUE = TRUE
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

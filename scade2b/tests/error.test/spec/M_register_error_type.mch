@@ -7,6 +7,6 @@ rr <-- register_error_type(aa, bb) =
    bb : INT &
    aa : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( rr : INT )
  END 
 END

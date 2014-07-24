@@ -4,8 +4,8 @@ OPERATIONS
 
 yy <-- vect_int_op_rev(xx) =
  PRE
-   xx : seq(INT)
+   xx : seq(INT) & dom(xx) = 1 .. 2
  THEN
-   yy :: { ii | ii : seq(INT) }
+   yy : ( yy : seq(INT) & dom(yy) = 1 .. 2 )
  END 
 END

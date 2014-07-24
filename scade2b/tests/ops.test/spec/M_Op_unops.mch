@@ -6,6 +6,6 @@ rr <-- Op_unops(aa) =
  PRE
    aa : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( rr : INT )
  END 
 END

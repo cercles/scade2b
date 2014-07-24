@@ -1,0 +1,14 @@
+IMPLEMENTATION M_Op_cast_i
+REFINES M_Op_cast
+
+IMPORTS M_maths
+OPERATIONS
+
+rr <-- Op_cast(xx, yy) =
+ VAR L1, L2 IN
+   L1 <-- to_real(xx); 
+   L2 := L1 + yy; 
+   rr <-- to_int(L2)
+   
+ END
+END

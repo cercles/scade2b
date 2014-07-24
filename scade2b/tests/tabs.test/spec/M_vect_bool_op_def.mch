@@ -7,6 +7,6 @@ yy <-- vect_bool_op_def(xx, zz) =
    zz : BOOL &
    xx : BOOL
  THEN
-   yy :: { ii | ii : seq(BOOL) }
+   yy : ( yy : seq(BOOL) & dom(yy) = 1 .. 2 )
  END 
 END

@@ -8,6 +8,6 @@ rr <-- Test_alt(xx, yy, bb) =
    yy : INT &
    xx : INT
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

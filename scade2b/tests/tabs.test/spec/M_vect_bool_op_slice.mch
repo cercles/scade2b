@@ -4,8 +4,8 @@ OPERATIONS
 
 yy <-- vect_bool_op_slice(xx) =
  PRE
-   xx : seq(BOOL)
+   xx : seq(BOOL) & dom(xx) = 1 .. 4
  THEN
-   yy :: { ii | ii : seq(BOOL) }
+   yy : ( yy : seq(BOOL) & dom(yy) = 1 .. 2 )
  END 
 END

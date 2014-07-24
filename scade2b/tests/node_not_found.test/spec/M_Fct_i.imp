@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Fct_i
+REFINES M_Fct
+
+OPERATIONS
+
+rr <-- Fct(xx) =
+ 
+   rr := TRUE
+   
+ 
+END

@@ -4,9 +4,9 @@ OPERATIONS
 
 yy <-- vect_bool_op_concat(xx, zz) =
  PRE
-   zz : seq(BOOL) &
-   xx : seq(BOOL)
+   zz : seq(BOOL) & dom(zz) = 1 .. 2 &
+   xx : seq(BOOL) & dom(xx) = 1 .. 2
  THEN
-   yy :: { ii | ii : seq(BOOL) }
+   yy : ( yy : seq(BOOL) & dom(yy) = 1 .. 4 )
  END 
 END

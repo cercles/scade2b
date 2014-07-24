@@ -7,6 +7,6 @@ rr <-- Op_plus(xx, yy) =
    yy : INT &
    xx : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( rr : INT )
  END 
 END

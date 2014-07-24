@@ -1,0 +1,18 @@
+IMPLEMENTATION M_link_assume_i
+REFINES M_link_assume
+
+CONCRETE_VARIABLES gg
+INVARIANT 
+   gg : INT
+INITIALISATION 
+   gg := 0
+OPERATIONS
+
+rr <-- link_assume(aa, cc, dd, bb) =
+ VAR ee, hh IN
+   rr := bool(not (bb = TRUE)); 
+   ee := (-aa); 
+   IF TRUE = TRUE THEN hh := dd ELSE hh := gg END;
+   gg := cc
+ END
+END

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="Fct" targetCycleFct="Fct">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="test_call" targetCycleFct="test_call">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+    <NodeInstance scadeName="Fct" instName="1" refName="Fct"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Test_call" targetCycleFct="Test_call">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+    <NodeInstance scadeName="Fct" instName="1" refName="Fct"/>
+  </NoExpNode>
+  
+</Model>

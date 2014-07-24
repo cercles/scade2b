@@ -1,0 +1,16 @@
+IMPLEMENTATION M_Test_fby3_i
+REFINES M_Test_fby3
+
+CONCRETE_VARIABLES yy
+INVARIANT 
+   yy : INT & (yy > 0)
+INITIALISATION 
+   yy := 3
+OPERATIONS
+
+yy <-- Test_fby3(xx) =
+ VAR ll IN
+   ll := xx;
+   yy := ll
+ END
+END

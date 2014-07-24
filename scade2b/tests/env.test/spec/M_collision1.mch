@@ -6,6 +6,6 @@ ANY_ <-- collision1(aa) =
  PRE
    aa : INT
  THEN
-   ANY_ :: { ii | ii : INT }
+   ANY_ : ( ANY_ : INT )
  END 
 END

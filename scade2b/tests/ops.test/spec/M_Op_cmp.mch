@@ -11,6 +11,6 @@ rr <-- Op_cmp(aa, bb, cc, dd, ee, ff) =
    bb : INT &
    aa : INT
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

@@ -4,9 +4,9 @@ OPERATIONS
 
 yy <-- vect_int_op_concat(xx, zz) =
  PRE
-   zz : seq(INT) &
-   xx : seq(INT)
+   zz : seq(INT) & dom(zz) = 1 .. 2 &
+   xx : seq(INT) & dom(xx) = 1 .. 2
  THEN
-   yy :: { ii | ii : seq(INT) }
+   yy : ( yy : seq(INT) & dom(yy) = 1 .. 4 )
  END 
 END

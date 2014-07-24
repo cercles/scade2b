@@ -6,6 +6,6 @@ yy <-- vect_int_op_caret(xx) =
  PRE
    xx : INT
  THEN
-   yy :: { ii | ii : seq(INT) }
+   yy : ( yy : seq(INT) & dom(yy) = 1 .. 2 )
  END 
 END

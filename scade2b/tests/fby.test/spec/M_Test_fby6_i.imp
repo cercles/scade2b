@@ -1,0 +1,16 @@
+IMPLEMENTATION M_Test_fby6_i
+REFINES M_Test_fby6
+
+CONCRETE_VARIABLES yy
+INVARIANT 
+   yy : seq(INT) & dom(yy) = 1 .. 2 & !jj.(jj : dom(yy) => (yy(jj) > 0))
+INITIALISATION 
+   yy := P_INI
+OPERATIONS
+
+yy <-- Test_fby6(xx, P_INI) =
+ VAR ll IN
+   ll := xx;
+   yy := ll
+ END
+END

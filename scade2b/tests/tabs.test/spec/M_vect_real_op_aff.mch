@@ -4,8 +4,8 @@ OPERATIONS
 
 yy <-- vect_real_op_aff(xx) =
  PRE
-   xx : seq(REAL)
+   xx : seq(REAL) & dom(xx) = 1 .. 2
  THEN
-   yy :: { ii | ii : seq(REAL) }
+   yy : ( yy : seq(REAL) & dom(yy) = 1 .. 2 )
  END 
 END

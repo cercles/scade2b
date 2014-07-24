@@ -1,0 +1,16 @@
+IMPLEMENTATION M_Test_fby7_i
+REFINES M_Test_fby7
+
+CONCRETE_VARIABLES yy
+INVARIANT 
+   yy : seq(INT) & dom(yy) = 1 .. 2
+INITIALISATION 
+   yy := P_INI
+OPERATIONS
+
+yy <-- Test_fby7(xx, P_INI) =
+ VAR ll IN
+   ll := xx;
+   yy := ll
+ END
+END

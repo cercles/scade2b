@@ -6,6 +6,6 @@ rr <-- Test_const(xx) =
  PRE
    xx : INT
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

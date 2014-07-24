@@ -4,8 +4,8 @@ OPERATIONS
 
 yy <-- vect_int_op_index(xx) =
  PRE
-   xx : seq(INT)
+   xx : seq(INT) & dom(xx) = 1 .. 2
  THEN
-   yy :: { ii | ii : INT }
+   yy : ( yy : INT )
  END 
 END

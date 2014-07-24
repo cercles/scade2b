@@ -1,0 +1,17 @@
+IMPLEMENTATION M_Test_fby5_i
+REFINES M_Test_fby5
+
+CONCRETE_VARIABLES zz
+INVARIANT 
+   zz : INT
+INITIALISATION 
+   zz := 3
+OPERATIONS
+
+yy, zz <-- Test_fby5(xx) =
+ VAR ll, gg IN
+   ll := xx; 
+   yy := ll;
+   zz := ll
+ END
+END

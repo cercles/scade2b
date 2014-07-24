@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="Op_cast" targetCycleFct="Op_cast">
+    <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Input scadeName="y" scadeType="real" targetName="y" targetType="kcg_real"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Op_sharp" targetCycleFct="Op_sharp">
+    <Input scadeName="x" scadeType="bool" targetName="x" targetType="kcg_bool"/>
+    <Input scadeName="y" scadeType="bool" targetName="y" targetType="kcg_bool"/>
+    <Output scadeName="r" scadeType="bool" targetName="r" targetType="kcg_bool"/>
+  </NoExpNode>
+  <NoExpNode scadeName="Op_transpose" targetCycleFct="Op_transpose">
+    <Input scadeName="x" scadeType="int^3^2" targetName="x" targetType="kcg_int_3_2"/>
+    <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>
+  </NoExpNode>
+</Model>

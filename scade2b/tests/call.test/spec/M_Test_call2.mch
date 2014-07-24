@@ -6,6 +6,6 @@ rr <-- Test_call2(xx) =
  PRE
    xx : INT
  THEN
-   rr :: { ii_ | ii_ : INT }
+   rr : ( rr : INT )
  END 
 END

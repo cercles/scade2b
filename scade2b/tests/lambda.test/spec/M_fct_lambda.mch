@@ -7,6 +7,6 @@ rr <-- fct_lambda(aa, bb) =
    bb : INT &
    aa : INT
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

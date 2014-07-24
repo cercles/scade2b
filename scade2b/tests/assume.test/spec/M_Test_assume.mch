@@ -7,6 +7,6 @@ rr <-- Test_assume(xx, yy) =
    yy : INT & (yy <= 100) &
    xx : INT & (xx <= 100)
  THEN
-   rr :: { ii | ii : BOOL }
+   rr : ( rr : BOOL )
  END 
 END

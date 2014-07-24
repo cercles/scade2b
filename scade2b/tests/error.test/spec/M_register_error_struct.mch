@@ -6,6 +6,6 @@ rr <-- register_error_struct(aa, bb) =
    aa : INT &
    bb : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( rr : INT )
  END
 END

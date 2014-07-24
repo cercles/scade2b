@@ -33,7 +33,7 @@ let print_type ppt typ =
     | _ as a -> fprintf ppt "%s" a
 
 let print_then_condition ppt output =
-  fprintf ppt "%a :: { ii | ii : %a }" print_bid output.var_id print_type output.var_type
+  fprintf ppt "%a : ( ii | ii : %a )" print_bid output.var_id print_type output.var_type
 
 let print_pre_condition ppt input =
   fprintf ppt "%a : %a" print_bid input.var_id print_type input.var_type
