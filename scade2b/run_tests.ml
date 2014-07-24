@@ -130,7 +130,7 @@ let collect_objectives dir =
   |> read_file
   |> String.trim
   |> all_matches pattern
-  |> List.map (fun s -> String.trim (String.sub s 3 (String.length s - 4)))
+  |> List.map (fun s -> String.trim (String.sub s 3 (String.length s - 3)))
 
 let comp_tests dirs objs =
   let update_objectives obj_list =
