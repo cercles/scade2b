@@ -176,9 +176,9 @@ let comp_tests dirs objs =
           Some (read_file (d ^ "/output.txt"))
         with Sys_error _ -> None
       in
-      match exp_output with
+      begin match exp_output with
       | Some spec -> assert_equal ~printer:(fun s -> s) spec (Buffer.contents buf)
-      | None -> ();
+      | None -> () end;
       (* Everything went fine: clear objectives *)
       update_objectives obj_of_this_test
       )
