@@ -9,7 +9,6 @@
 /bin_arith_op/minus/check
 /bin_arith_op/slash/check
 /type_decl/id/error
-/apply_expr/check
 /apply_expr/list/check/0
 /apply_expr/list/check/2
 /apply_expr/list/check/1
@@ -26,7 +25,6 @@
 /const_block/check/0
 /const_block/check/2
 /const_block/check/1
-/tempo_expr/check
 /tempo_expr/when/error
 /tempo_expr/merge/error
 /tempo_expr/times/error
@@ -38,7 +36,6 @@
 /state_machine/ignore
 /switch_expr/if/check
 /switch_expr/case/error
-/switch_expr/check
 /opt_body/local_block/check/0
 /opt_body/local_block/check/1
 /opt_body/check/0
@@ -48,14 +45,12 @@
 /op_kind/function/check
 /op_kind/node/check
 /label_expr/error
-/arith_expr/check
 /local_block/var_decls/0
 /local_block/var_decls/2
 /local_block/var_decls/1
 /clock_block/ignore
 /var_decls/var_id/check/0
 /var_decls/var_id/check/1
-/bool_expr/check
 /bool_expr/not/check
 /bool_expr/sharp/check/0
 /bool_expr/sharp/check/2
@@ -87,7 +82,6 @@
 /emission_body/ids/ignore/0
 /emission_body/ids/ignore/1
 /emission_body/id/ignore
-/list_expr/check
 /list_expr/list/0
 /list_expr/list/1
 /prefix/prefixop/error
@@ -96,18 +90,16 @@
 /lhs/lhs_id/check/0
 /lhs/lhs_id/check/1
 /lhs/unit/error
-/visibility/error
+/visibility/ignore
 /sig/error
 /path/error
 /spec_decl/error
 /atom/constraint/error
 /atom/char/error
-/atom/check
 /atom/float/check
 /atom/integer/check
 /array_expr/transpose/check
 /array_expr/index/check
-/array_expr/check
 /array_expr/reverse/check
 /array_expr/build/check
 /array_expr/dyn_proj/error
@@ -141,7 +133,6 @@
 /op/eq/error
 /id_expr/last/error
 /id_expr/check
-/relation_expr/check
 /type/interface/ignore
 /mixed_constructor/error
 /operator/restart/error
@@ -158,6 +149,6 @@
 /type_block/check/0
 /type_block/check/2
 /type_block/check/1
-/struct_expr/accrss/error
+/struct_expr/access/error
 /list/expr/0
 /list/expr/1
