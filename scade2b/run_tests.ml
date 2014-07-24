@@ -187,11 +187,8 @@ let comp_tests dirs objs =
     Hashtbl.iter (fun obj cov ->
       non_fatal ctxt (fun ctxt ->
         let msg = "Coverage of objective "^ obj in
-        let printer = function
-        | ObjNotCovered -> "not covered"
-        | ObjCovered -> "covered"
-        in
-        assert_equal ~ctxt ~msg ~printer ObjCovered cov
+        if cov <> ObjCovered then
+          todo msg
       )
     ) objs
   in
