@@ -3,9 +3,9 @@ var
   L1 : int;
   L2 : int;
 let
-  L1 = real x;
+  L1 = real x; --@ /unary_arith_op/real/check
   L2 = L1 + y;
-  r = int L2;
+  r = int L2; --@ /unary_arith_op/int/check
 tel
 
 function Op_sharp(x : bool; y : bool) returns (r : bool)
@@ -15,10 +15,10 @@ var
 let
   L1 = x;
   L2 = y;
-  r = #(x, y, L1, L2);
+  r = #(L1, L2); --@ /bool_expr/sharp/check/2
 tel
 
 function Op_transpose(x : int^3^2) returns (r : int^2^3)
 let
-  r = transpose (x; 1; 2);
+  r = transpose (x; 1; 2); --@ /array_expr/transpose/check
 tel
