@@ -135,7 +135,8 @@ let collect_objectives dir =
 let comp_tests dirs objs =
   let update_objectives obj_list =
     List.iter (fun obj ->
-      assert(Hashtbl.mem objs obj);
+      let msg = "Objective '" ^ obj ^ "' is unknown" in
+      assert_equal ~msg true (Hashtbl.mem objs obj);
       Hashtbl.replace objs obj ObjCovered
     ) obj_list
   in
