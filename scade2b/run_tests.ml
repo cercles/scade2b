@@ -190,8 +190,8 @@ let comp_tests dirs objs =
   let test_objs_covered = "Objectives covered">:: fun ctxt ->
     Hashtbl.iter (fun obj cov ->
       non_fatal ctxt (fun ctxt ->
-        if cov <> ObjCovered then
-          todo obj
+        let msg = "Objective '" ^ obj ^ "'" in
+        assert_equal ~ctxt ~msg ObjCovered cov
       )
     ) objs
   in
