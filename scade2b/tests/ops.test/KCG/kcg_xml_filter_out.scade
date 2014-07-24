@@ -1,3 +1,4 @@
+--@ /bin_arith_op/plus/check
 function Op_plus(xx : int; yy : int)
   returns (rr : int)
 var
@@ -7,6 +8,7 @@ let
   rr = zz;
 tel
 
+--@ /bin_arith_op/minus/check
 function Op_minus(xx : int; yy : int)
   returns (rr : int)
 var
@@ -16,6 +18,12 @@ let
   rr = zz;
 tel
 
+--@ /bin_relation_op/le/check
+--@ /bin_relation_op/ge/check
+--@ /bin_relation_op/lt/check
+--@ /bin_relation_op/gt/check
+--@ /bin_relation_op/eq/check
+--@ /bin_relation_op/neq/check
 function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
   returns (rr : bool)
 var
@@ -27,6 +35,7 @@ let
   rr = zz;
 tel
 
+--@ /unary_arith_op/minus/check
 function Op_unops(aa: int)
   returns (rr: int)
 var
@@ -45,18 +54,21 @@ let
   rr = aa div bb;
 tel
 
+--@ /bool_expr/not/check
 function Op_not(aa:bool)
   returns (rr:bool)
 let
   rr = not aa;
 tel
 
+--@ /bin_arith_op/star/check
 function Op_mul(aa: int; bb: int)
   returns (rr: int)
 let
   rr = aa * bb;
 tel
 
+--@ /bin_arith_op/mod/check
 function Op_mod(aa: int; bb: int)
   returns (rr: int)
 let
