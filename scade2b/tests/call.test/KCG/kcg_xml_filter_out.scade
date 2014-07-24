@@ -4,6 +4,7 @@ let
   r = true;
 tel
 
+--@ /apply_expr/list/check/1
 node Test_call(x : int)
   returns (r : bool)
 let
@@ -16,6 +17,7 @@ let
     r2 = x;
 tel
 
+--@ /apply_expr/list/check/2
 node Test_call2(x : int)
   returns (r : int)
 var
