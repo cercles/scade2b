@@ -1,41 +1,46 @@
+--@ /lhs/lhs_id/check/1
 function vect_int_op_aff(x : int^2)
   returns (y : int^2)
 let
   y = x;
 tel
 
+--@ /array_expr/reverse/check
 function vect_int_op_rev(x : int^2)
   returns (y : int^2)
 let
   y = reverse x;
 tel
 
+--@ /array_expr/append/check
 function vect_int_op_concat(x : int^2; z : int^2)
   returns (y : int^4)
 let
   y = x @ z;
 tel
 
-
+--@ /array_expr/list/check/2
 function vect_int_op_def(x : int; z : int)
   returns (y : int^2)
 let
   y = [x, z];
 tel
 
-
+--@ /array_expr/index/check
 function vect_int_op_index(x : int^2)
   returns (y : int)
 let
   y = x[0];
 tel
 
+--@ /array_expr/build/check
 function vect_int_op_caret(x : int)
   returns (y : int^2)
 let
   y = 3^2;
 tel
 
+--@ /array_expr/slice/check
 function vect_int_op_slice(x : int^4)
   returns (y : int^2)
 let

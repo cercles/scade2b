@@ -113,7 +113,9 @@
 /array_expr/dyn_proj/error
 /array_expr/append/check
 /array_expr/slice/check
-/array_expr/list/check
+/array_expr/list/check/0
+/array_expr/list/check/1
+/array_expr/list/check/2
 /probe/error
 /last_decl/error
 /clock_expr/match/error
