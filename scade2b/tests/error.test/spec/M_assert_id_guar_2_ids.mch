@@ -5,6 +5,6 @@ rr <-- assert_id_guar_2_ids(bb) =
  PRE
    bb : INT
  THEN
-   rr :: { ii | ii : INT }
+   rr : ( ii | ii : INT )
  END
 END
