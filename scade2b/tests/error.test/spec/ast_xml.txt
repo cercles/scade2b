@@ -1,0 +1,36 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : assert_id_assum_2_ids -  
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : assert_id_guar_2_ids -  
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : assert_id_assum_type -  
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : assert_id_guar_type -  
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : register_error_type -  
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : register_error_struct -  
+  Input ->  ScadeName : a -  TargetName : a -  TargetType : kcg_int - 
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : eqs_schedul_err -  
+  Input ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : conds_retr_err -  
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+

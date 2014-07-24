@@ -1,0 +1,50 @@
+
+
+ Node Parsed :
+NODE link_assume (a : int; c : int; d : int; b : bool) RETURNS (r : bool) 
+VAR ASSUME eq(!(b), true);
+    ASSUME gt(-(a), 1); 
+LET 
+    
+   e : int; g : int; h : int  
+   r = !(b);
+   h = if true then 
+       d 
+       else 
+       g;
+   g = fby(c, 1, 0);
+   e = -(a);  
+TEL 
+
+Node normalized : 
+NODE link_assume (a : int; c : int; d : int; b : bool) RETURNS (r : bool) 
+VAR e : int; g : int; h : int; 
+PRE : d : int ;
+      c : int ;
+      b : bool & eq(!(b), true);
+      a : int & gt(-(a), 1)
+LET 
+   r = !(b);
+   h = IF true THEN d ELSE g ;
+   g = REG(0,c) : int;
+   e = -(a); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE link_assume (a : int; c : int; d : int; b : bool) RETURNS (r : bool) 
+VAR e : int; g : int; h : int; 
+PRE : d : int ;
+      c : int ;
+      b : bool & eq(!(b), true);
+      a : int & gt(-(a), 1)
+LET 
+   g = REG(0,c) : int;
+   r = !(b);
+   e = -(a);
+   h = IF true THEN d ELSE g ; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+

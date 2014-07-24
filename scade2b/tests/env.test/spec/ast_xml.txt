@@ -1,0 +1,20 @@
+___AST XML PRINTER___
+
+
+Node :  ScadeName : collision1 -  
+  Input ->  ScadeName : a -  TargetName : a -  TargetType : kcg_int - 
+  Output ->  ScadeName : ANY -  TargetName : ANY -  TargetType : kcg_int - 
+
+Node :  ScadeName : ANY -  
+  Input ->  ScadeName : a -  TargetName : a -  TargetType : kcg_int - 
+  Output ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+
+Node :  ScadeName : collision2 -  
+  Input ->  ScadeName : a -  TargetName : a -  TargetType : kcg_int - 
+  Output ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+
+Node :  ScadeName : _collision2 -  
+  Input ->  ScadeName : a -  TargetName : a -  TargetType : kcg_int - 
+  Output ->  ScadeName : b -  TargetName : b -  TargetType : kcg_int - 
+
+

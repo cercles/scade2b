@@ -1,0 +1,127 @@
+
+
+ Node Parsed :
+NODE _collision2 (a : int) RETURNS (b : int) 
+VAR ; 
+LET 
+    
+     
+   b = a;  
+TEL 
+
+Node normalized : 
+NODE _collision2 (a : int) RETURNS (b : int) 
+VAR ; 
+PRE : a : int 
+LET 
+   b = a; 
+TEL 
+POST : b : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE _collision2 (a : int) RETURNS (b : int) 
+VAR ; 
+PRE : a : int 
+LET 
+   b = a; 
+TEL 
+POST : b : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE collision2 (a : int) RETURNS (b : int) 
+VAR ; 
+LET 
+    
+     
+   b = a;  
+TEL 
+
+Node normalized : 
+NODE collision2 (a : int) RETURNS (b : int) 
+VAR ; 
+PRE : a : int 
+LET 
+   b = a; 
+TEL 
+POST : b : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE collision2 (a : int) RETURNS (b : int) 
+VAR ; 
+PRE : a : int 
+LET 
+   b = a; 
+TEL 
+POST : b : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE ANY (a : int) RETURNS (b : int) 
+VAR ; 
+LET 
+    
+     
+   b = a;  
+TEL 
+
+Node normalized : 
+NODE ANY (a : int) RETURNS (b : int) 
+VAR ; 
+PRE : a : int 
+LET 
+   b = a; 
+TEL 
+POST : b : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE ANY (a : int) RETURNS (b : int) 
+VAR ; 
+PRE : a : int 
+LET 
+   b = a; 
+TEL 
+POST : b : int  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE collision1 (_a : int) RETURNS (ANY : int) 
+VAR ; 
+LET 
+    
+   collision1 : int  
+   ANY = collision1;
+   collision1 = _a;  
+TEL 
+
+Node normalized : 
+NODE collision1 (_a : int) RETURNS (ANY : int) 
+VAR collision1 : int; 
+PRE : _a : int 
+LET 
+   ANY = collision1;
+   collision1 = _a; 
+TEL 
+POST : ANY : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE collision1 (_a : int) RETURNS (ANY : int) 
+VAR collision1 : int; 
+PRE : _a : int 
+LET 
+   collision1 = _a;
+   ANY = collision1; 
+TEL 
+POST : ANY : int  
+LAMBDAS :  
+

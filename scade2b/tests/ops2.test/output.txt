@@ -1,0 +1,109 @@
+
+
+ Node Parsed :
+NODE Op_transpose (x : int ^ 3 ^ 2) RETURNS (r : int ^ 2 ^ 3) 
+VAR ; 
+LET 
+    
+     
+   r = (x, 1, 2);  
+TEL 
+
+Node normalized : 
+NODE Op_transpose (x : int ^ 3 ^ 2) RETURNS (r : int ^ 2 ^ 3) 
+VAR ; 
+PRE : x : int ^ 3 ^ 2 
+LET 
+   r = transpose_(x, 1, 2); 
+TEL 
+POST : r : int ^ 2 ^ 3  
+LAMBDAS :  
+
+Node normalized : 
+NODE Op_transpose (x : int ^ 3 ^ 2) RETURNS (r : int ^ 2 ^ 3) 
+VAR ; 
+PRE : x : int ^ 3 ^ 2 
+LET 
+   r = transpose_(x, 1, 2); 
+TEL 
+POST : r : int ^ 2 ^ 3  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Op_sharp (x : bool; y : bool) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+   L1 : int; L2 : int  
+   r = (x, y, L1, L2);
+   L2 = y;
+   L1 = x;  
+TEL 
+
+Node normalized : 
+NODE Op_sharp (x : bool; y : bool) RETURNS (r : bool) 
+VAR L1 : int; L2 : int; 
+PRE : y : bool ;
+      x : bool 
+LET 
+   r = sharp_(x, y, L1, L2);
+   L2 = y;
+   L1 = x; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE Op_sharp (x : bool; y : bool) RETURNS (r : bool) 
+VAR L1 : int; L2 : int; 
+PRE : y : bool ;
+      x : bool 
+LET 
+   L2 = y;
+   L1 = x;
+   r = sharp_(x, y, L1, L2); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE Op_cast (x : int; y : real) RETURNS (r : int) 
+VAR ; 
+LET 
+    
+   L1 : int; L2 : int  
+   r = (L2);
+   L2 = add(L1, y);
+   L1 = (x);  
+TEL 
+
+Node normalized : 
+NODE Op_cast (x : int; y : real) RETURNS (r : int) 
+VAR L1 : int; L2 : int; 
+PRE : y : real ;
+      x : int 
+LET 
+   r = to_int_(L2);
+   L2 = add(L1, y);
+   L1 = to_real_(x); 
+TEL 
+POST : r : int  
+LAMBDAS :  
+
+Node normalized : 
+NODE Op_cast (x : int; y : real) RETURNS (r : int) 
+VAR L1 : int; L2 : int; 
+PRE : y : real ;
+      x : int 
+LET 
+   L1 = to_real_(x);
+   L2 = add(L1, y);
+   r = to_int_(L2); 
+TEL 
+POST : r : int  
+LAMBDAS :  
+

@@ -1,0 +1,129 @@
+
+
+ Node Parsed :
+NODE fct_lambda_2 (a : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+   x : int  
+   r = fby(a, 1, x);
+   x = a;  
+TEL 
+
+Node normalized : 
+NODE fct_lambda_2 (a : int) RETURNS (r : bool) 
+VAR x : int; 
+PRE : a : int 
+LET 
+   r = REG(x,a) : bool;
+   x = a; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE fct_lambda_2 () RETURNS (r : bool) 
+VAR x : int; 
+PRE : 
+LET 
+   r = REG(a,a) : bool;
+   x = a; 
+TEL 
+POST : r : bool  
+LAMBDAS : a(0) a : int   
+
+
+
+ Node Parsed :
+NODE fct_lambda (a : int; b : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = fby(a, 1, b);  
+TEL 
+
+Node normalized : 
+NODE fct_lambda (a : int; b : int) RETURNS (r : bool) 
+VAR ; 
+PRE : b : int ;
+      a : int 
+LET 
+   r = REG(b,a) : bool; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE fct_lambda (a : int; b : int) RETURNS (r : bool) 
+VAR ; 
+PRE : b : int ;
+      a : int 
+LET 
+   r = REG(b,a) : bool; 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE call_lambda_2 (a : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = 1(a);  
+TEL 
+
+Node normalized : 
+NODE call_lambda_2 (a : int) RETURNS (r : bool) 
+VAR ; 
+PRE : a : int 
+LET 
+   r = fct_lambda_2_1(a); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE call_lambda_2 (a : int) RETURNS (r : bool) 
+VAR ; 
+PRE : a : int 
+LET 
+   r = fct_lambda_2_1(a); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+
+
+ Node Parsed :
+NODE call_lambda (a : int) RETURNS (r : bool) 
+VAR ; 
+LET 
+    
+     
+   r = 1(a);  
+TEL 
+
+Node normalized : 
+NODE call_lambda (a : int) RETURNS (r : bool) 
+VAR ; 
+PRE : a : int 
+LET 
+   r = fct_lambda_1(a); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
+Node normalized : 
+NODE call_lambda (a : int) RETURNS (r : bool) 
+VAR ; 
+PRE : a : int 
+LET 
+   r = fct_lambda_1(a); 
+TEL 
+POST : r : bool  
+LAMBDAS :  
+
