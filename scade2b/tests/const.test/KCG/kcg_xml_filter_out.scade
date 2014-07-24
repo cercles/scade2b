@@ -1,3 +1,4 @@
+--@ /const_block/check/1
 const C_CST : int = 100;
 
 const C_CST_2 : int^2 = [1, 2];
