@@ -38,7 +38,7 @@ let
   rr = bb + cc;
 tel
 
---@ bin_arith_op/slash/check
+--@ /bin_arith_op/slash/check
 function Op_div(aa: int; bb: int)
   returns (rr: int)
 let
