@@ -194,12 +194,23 @@ let comp_tests dirs objs =
       )
     ) objs
   in
-  let all_tests = List.map run_test dirs @ [test_objs_covered] in
-  "scade2b">:::all_tests
+  "scade2b">:::
+    [ "Unit tests" >::: List.map run_test dirs
+    ; "Objectives" >::: [test_objs_covered]
+    ]
+
+let perform_test test =
+  let conf = OUnitConf.default () in
+    OUnitCore.run_test_tt
+      conf
+      (OUnitLoggerStd.std_logger conf OUnitLogger.shard_default)
+      OUnitRunner.sequential_runner
+      OUnitChooser.simple
+      test
 
 let main () =
   let tests = find_tests () in
   let objectives = find_objectives () in
-  run_test_tt_main (comp_tests tests objectives)
+  perform_test (comp_tests tests objectives)
 
 let _ = main ()
