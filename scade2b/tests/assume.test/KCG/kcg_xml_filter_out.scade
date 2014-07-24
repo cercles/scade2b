@@ -1,3 +1,4 @@
+--@ /assert/assume/check
 node Test_assume(x : int; y : int)
   returns (r : bool)
 let
@@ -6,6 +7,7 @@ let
   assume A2 : y <= 100;
 tel
 
+--@ /assert/guarantee/check
 node Test_guarantee(x : int; y : int)
   returns (r : bool)
 let
