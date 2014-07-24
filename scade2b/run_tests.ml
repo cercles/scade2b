@@ -114,12 +114,15 @@ let find_objectives () =
   objs
 
 let all_matches pattern s =
-  let rec extract_delims = function
-    | [] -> []
-    | Str.Text _::xs -> extract_delims xs
-    | Str.Delim s::xs -> s::extract_delims xs
+  let rec go start =
+    try
+      let next = Str.search_forward pattern s start in
+      let r = Str.matched_string s in
+      r :: go (next+1)
+    with Not_found -> []
   in
-  extract_delims (Str.full_split pattern s)
+  go 0
+
 
 let collect_objectives dir =
   let pattern = Str.regexp "--@.*$" in
