@@ -1,0 +1,6 @@
+node Test_alt(x : int ; y : int ; b : bool) returns (r : bool)
+let
+    r = case b of --@ /switch_expr/case/error
+        | true : x
+        | false : y;
+tel
