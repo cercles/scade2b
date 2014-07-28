@@ -64,7 +64,6 @@ rule token = parse
 
 	  | "package " ident         { token lexbuf }
 	  | "end;"                   { token lexbuf }
-	  | "open " ident ";"        { token lexbuf }
 
 	  | "type" (sep | '\n')* (ident as id) sep '=' sep "enum"
 	      { ENUM(id) }  
