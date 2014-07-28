@@ -107,6 +107,7 @@ and node_text = parse
     | '\n' as char { Lexing.new_line lexbuf; 
 		     Buffer.add_char buf char;
 		     node_text lexbuf }
+    | "where"      { raise (Lexical_error "where clause") }
     | _ as char    { Buffer.add_char buf char;
 		     node_text lexbuf }
 	
