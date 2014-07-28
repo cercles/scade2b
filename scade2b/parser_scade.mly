@@ -90,21 +90,6 @@ node :
        p_assumes = assumes;
        p_eqs = eqs;
        p_guarantees = guarantees; } }
- | NODE IDENT DOUBLE_CHEVIN id_list DOUBLE_CHEVOUT LPAREN decl RPAREN RETURNS LPAREN decl RPAREN semi_opt
-   var_decl
-   LET eq_list TEL semi_opt
-   { let (assumes, guarantees, eqs) = 
-       List.fold_left (fun (a, g, e) eq -> match eq with
-       | Eq p_eq -> (a, g, p_eq :: e)
-       | Assume p_cond -> (p_cond :: a, g, e)
-       | Guarantee p_cond -> (a, p_cond :: g, e)) ([], [], []) $16 in
-     { p_id = $2;
-       p_param_in = $7;
-       p_param_out = $11;
-       p_vars = $14;
-       p_assumes = assumes;
-       p_eqs = eqs;
-       p_guarantees = guarantees; } }
 ;
 
 var_decl :

@@ -1,0 +1,8 @@
+node Id_int<<N>>(x : int) --@ /size_decl/error
+  returns (y : int)
+var
+  z : int;
+let
+  z = x;
+  y = z;
+tel
