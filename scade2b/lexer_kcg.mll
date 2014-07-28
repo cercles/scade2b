@@ -68,8 +68,6 @@ rule token = parse
 	  | "type" (sep | '\n')* (ident as id) sep '=' sep "enum"
 	      { ENUM(id) }  
 
-	  | "type " ident " ="       { typ lexbuf; token lexbuf }
-
 	  | "const"                  { CONST }
 
 	  | "bool"                   { T_BOOL }
