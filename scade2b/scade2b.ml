@@ -141,4 +141,11 @@ let () =
   translate_prog prog; 
 
   (*** FERMETURE DU CANAL DE SORTIE D'ERREURS      *)
-  Error_handler.close_error_log_output ()
+  Error_handler.close_error_log_output ();
+
+  (* If an error machine was produced somewhere, exit 3 *)
+  let only_error_machine =
+    List.exists (fun node -> node.ast_scade = None) prog.nodes
+  in
+  if only_error_machine then
+    exit 3
