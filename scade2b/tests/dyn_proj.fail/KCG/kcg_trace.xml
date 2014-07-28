@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Model>
+  <NoExpNode scadeName="vect_int_op_index">
+    <Input scadeName="x" scadeType="int^(2)" targetName="x" targetType="array_int_2"/>
+    <Output scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
+  </NoExpNode>
+</Model>

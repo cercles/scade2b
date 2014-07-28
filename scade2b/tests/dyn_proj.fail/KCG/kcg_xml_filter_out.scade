@@ -1,0 +1,5 @@
+function vect_int_op_index(x : int^2)
+  returns (y : int)
+let
+  y = (x.[0] default 1); --@ /array_expr/dyn_proj/error
+tel
