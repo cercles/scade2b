@@ -1,0 +1,10 @@
+type t = 'A; --@ /type_def/type_var/error
+
+node Id_int(x : int)
+  returns (y : int)
+var
+  z : int;
+let
+  z = x;
+  y = z;
+tel
