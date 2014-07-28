@@ -108,6 +108,7 @@ and node_text = parse
 		     Buffer.add_char buf char;
 		     node_text lexbuf }
     | "where"      { raise (Lexical_error "where clause") }
+    | "specialize" { raise (Lexical_error "spec clause") }
     | _ as char    { Buffer.add_char buf char;
 		     node_text lexbuf }
 	
