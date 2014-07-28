@@ -1,0 +1,10 @@
+type t = real; --@ /type_def/real/error
+
+node Id_int(x : int)
+  returns (y : int)
+var
+  z : int;
+let
+  z = x;
+  y = z;
+tel
