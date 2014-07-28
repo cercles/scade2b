@@ -1,0 +1,9 @@
+node Id_int(x : int)
+  returns (y : int)
+var
+  z : int;
+let
+  () = 1; --@ /lhs/unit/error
+  z = x;
+  y = z;
+tel
