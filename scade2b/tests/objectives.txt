@@ -124,7 +124,7 @@
 /type_def/enum/check/0
 /type_def/enum/check/1
 /type_def/path/error
-/type_def/type_var/error
+/type_var/error
 /type_def/bool/error
 /type_def/real/error
 /group_block/error
