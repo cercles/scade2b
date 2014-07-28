@@ -1,0 +1,8 @@
+node Id_int(x : int)
+  returns (y : int)
+var
+  z : int;
+let
+  z = (activate f every s default 3)(x); --@ /operator/activate/default/error
+  y = z;
+tel
