@@ -1,0 +1,8 @@
+node Id_int(x : int)
+  returns (y : int)
+var
+  z : int;
+let
+  z = (restart f every s)(x); --@ /operator/restart/error
+  y = z;
+tel
