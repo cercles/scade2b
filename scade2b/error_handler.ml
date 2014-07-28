@@ -111,12 +111,15 @@ let node_parsing e lexbuf node_xml dir_output node_string consts enums arraytype
       output_string stderr (msg^msg2);
       [], []
   in
+  begin
   try
     let conditions = Conds_retriever.compute_conditions_error_m conditions consts enums node_xml arraytypes in
     Babsterror_generator.generate node_xml dir_output conditions
   with e ->
     Printf.printf "\nERROR UNKNOWN (node_parsing)";
     Babsterror_generator.generate_without_cond node_xml dir_output
+  end;
+  exit 3 (* an error machine has been produced *)
     
 
     
