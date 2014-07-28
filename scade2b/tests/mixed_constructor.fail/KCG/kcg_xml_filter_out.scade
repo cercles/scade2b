@@ -1,0 +1,5 @@
+function vect_int_op_aff(x : int^2)
+  returns (y : int^2)
+let
+  y = (x with [0] = 1); --@ /mixed_constructor/error
+tel
