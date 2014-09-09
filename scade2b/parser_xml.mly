@@ -44,9 +44,9 @@
 | CHEV_IN NOEXPNODE option_list CHEV_OUT balise_node_list balise_model_list
       { (Node ($3, $5)) :: $6 }
 | CHEV_IN ROOTNODE option_list CHEV_OUT balise_node_list balise_model_list
-	  { (Root ($3, $5)) :: $6 }
+	  { $6 }
 | CHEV_IN ARRAYTYPE option_list SLASH CHEV_OUT balise_model_list
-	      { (ArrayType $3) :: $6 }
+	      { $6 }
 | balise_dummy balise_model_list { $2 }
   ;
 

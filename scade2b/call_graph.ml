@@ -22,7 +22,7 @@ let retrieve_instances_list xml_nodes =
   let get_instance_ids instances =
     List.map (fun instance -> instance.inst_name) instances
   in
-  List.map (fun node -> node.xml_node_name, (get_instance_ids node.instances)) xml_nodes
+  List.map (fun node -> node.name, (get_instance_ids node.instances)) xml_nodes
 
 let schedule_node_list xml_nodes = 
   let to_schedule = retrieve_instances_list xml_nodes in 
@@ -60,7 +60,7 @@ let get_insts_node node =
 
 let build_imports_map xml_nodes =
   List.fold_left 
-    (fun map node -> Call_map.add node.xml_node_name (get_insts_node node) map)
+    (fun map node -> Call_map.add node.name (get_insts_node node) map)
     Call_map.empty xml_nodes
 
 

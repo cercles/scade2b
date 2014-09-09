@@ -101,7 +101,7 @@ let search_input_in_reg ast_n =
 (*  2) Côté appelant                                                            *)
 
 let check_imports_params ast_b imports = 
-  let eqs = ast_b.implementation.operation.op_1 in
+  let eqs = ast_b.imp_substitutions in
   let imports_out = ref [] in
   let special_op imp_id inst_id =
     if List.mem imp_id ["to_real"; "to_int"; "sharp"; "transpose"]
@@ -156,10 +156,9 @@ let check_imports_params ast_b imports =
       | _ -> eq
   in
   let eqs_out = List.map cip_fun_rec eqs in 
-  { ast_b with implementation =
-      { ast_b.implementation with 
-	imports = List.fold_left (fun acc import -> 
-	  if List.mem import acc then acc else import::acc) [] !imports_out; 
-	operation = { ast_b.implementation.operation with op_1 = eqs_out };
-      }
+  { ast_b with 
+    m_imports = List.fold_left (fun acc import -> 
+      if List.mem import acc then acc else import::acc) [] !imports_out; 
+    imp_substitutions =  eqs_out ;
   }
+

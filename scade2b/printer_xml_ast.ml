@@ -23,22 +23,11 @@ and print_prog_list ppt = function
 and print_prog ppt nbs = 
     match nbs with
       | Node (options, node_bs) -> fprintf ppt "%a @\n@\n" (print_node options) node_bs
-      | Root (options, node_bs) -> fprintf ppt "%a @\n@\n" (print_root options) node_bs
-      | ArrayType options -> fprintf ppt "%a @\n@\n" print_arraytype options
 
 and print_node options ppt node_bs =
   fprintf ppt "Node : %a  %a"
     print_option_list options 
     print_node_list node_bs
-
-and print_root options ppt node_bs =
-  fprintf ppt "Root : %a  %a"
-    print_option_list options
-    print_node_list node_bs
-
-and print_arraytype ppt options =
-  fprintf ppt "ArrayType : %a"
-    print_option_list options
 
 and print_node_list ppt = function
   | [] -> ()

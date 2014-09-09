@@ -50,76 +50,39 @@ type call =
     call_instance: ident;
   }
 
-type op_base =
-  { op_lp: left_part;
-    op_expr: b_expression;
+type simpl =
+  { simpl_lp: left_part;
+    simpl_expr: b_expression;
   }
 
-type registre =
-  { reg_lpid: ident;
-    reg_val: b_expression;
-  }
+type substitution = 
+  Simpl of simpl 
+| Call of call 
+| Alt of alternative
 
-type substitution =
-  Alternative of alternative
-| Call of call
-| Op_Base of op_base
+type set =
+  base_type * b_expression list option
 
-type initialisation =
-  ident * b_expression
-
-type condition =
-  Base_no_expr of ident * base_type * ident
-| Fun_no_expr of ident * base_type * b_expression list * ident
-| Base_expr of ident * base_type * b_expression * ident
-| Fun_expr of ident * base_type * b_expression list * b_expression * ident * ident
-
-type op_decl =
-  { id: ident;
-    param_in: ident list;
-    param_out: ident list;
-  }
-
-type imports_b = 
+type imports = 
   { b_import_name : ident; 
     b_params_expr : b_expression list option; 
-    b_instance_id : ident 
+    b_instance_id : ident;
   } 
 
-type impl_operation =
-  { op_decl: op_decl;
-    vars: ident list;
-    op_1: substitution list;
-    op_2: registre list;
-  }
-
-type b_impl =
-  { name: ident;
-    params: ident list;
-    refines: ident;
-    sees: ident list;
-    imports: imports_b list;
-    concrete_variables: ident list;
-    invariant: condition list;
-    initialisation: initialisation list;
-    operation: impl_operation;
-  }
-
-type abst_operation =
-  { abstop_decl: op_decl;
-    abstop_pre: condition list;
-    abstop_post: condition list;
-  }
-
-type b_abst =
-  { machine: ident;
-    abst_params: ident list;
-    abst_constraints: condition list;
-    abst_sees: ident list;
-    abst_operation: abst_operation;
-  }
-
-type prog =
-  { machine_abstraite: b_abst;
-    implementation: b_impl;
+type b_elt =
+  { name : ident;
+    m_params : ident list;
+    m_see_const : bool;
+    m_see_enum : bool;
+    m_imports : imports list;
+    m_constraints : (ident * set * b_expression option) list;
+    m_concrete_vars : ident list;
+    m_invariant : (ident * set * b_expression option) list;
+    m_initialisation : (ident * b_expression) list;
+    op_in_params : ident list;
+    op_out_params : ident list;
+    m_vars : ident list;
+    abs_pre_condition : (ident * set * b_expression option) list;
+    abs_post_condition : (ident * set * b_expression option) list;
+    imp_substitutions : substitution list;
   }

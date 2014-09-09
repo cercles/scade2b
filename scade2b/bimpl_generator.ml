@@ -52,53 +52,45 @@ let print_call ppt f =
     f.call_id
     print_expr_list f.call_params
     
-let print_op ppt o =
+let print_simpl ppt s =
   fprintf ppt "%a := %a"
-    print_lp o.op_lp
-    print_expr o.op_expr
+    print_lp s.simpl_lp
+    print_expr s.simpl_expr
     
-let print_eq ppt = function
-  | Alternative a -> fprintf ppt "%a" print_alternative a
+let print_subs ppt = function
+  | Alt a -> fprintf ppt "%a" print_alternative a
   | Call f -> fprintf ppt "%a" print_call f
-  | Op_Base o -> fprintf ppt "%a" print_op o
+  | Simpl s -> fprintf ppt "%a" print_simpl s
 
-let print_eq_list ppt = print_list_semicolon print_eq ppt
-      
-let print_registre ppt r =
-  fprintf ppt "%a := %a"
-    print_bid r.reg_lpid
-    print_expr r.reg_val
-    
-let print_reg_list ppt = print_list_semicolon print_registre ppt
+let print_subs_list ppt = print_list_semicolon print_subs ppt
 
 let print_vars ppt var_list =
   if var_list <> [] then
     fprintf ppt "VAR %a IN" print_idlist_comma var_list
-
-
-let print_op_decl ppt op_decl =
-  if (List.length op_decl.param_out = 0) && (List.length op_decl.param_in = 0) then
-    fprintf ppt "%s" op_decl.id
-  else if (List.length op_decl.param_out = 0) then
-    fprintf ppt "%s(%a)" op_decl.id print_idlist_comma op_decl.param_in
-  else if (List.length op_decl.param_in = 0) then
-    fprintf ppt "%a <-- %s" print_idlist_comma op_decl.param_out op_decl.id
+  else
+    fprintf ppt "BEGIN"
+    
+let print_op_decl ppt b_impl =
+  if (List.length b_impl.op_out_params = 0) && (List.length b_impl.op_in_params = 0) then
+    fprintf ppt "%s" b_impl.name
+  else if (List.length b_impl.op_out_params = 0) then
+    fprintf ppt "%s(%a)" b_impl.name print_idlist_comma b_impl.op_in_params
+  else if (List.length b_impl.op_in_params = 0) then
+    fprintf ppt "%a <-- %s" print_idlist_comma b_impl.op_out_params b_impl.name
   else
     fprintf ppt "%a <-- %s(%a)"
-      print_idlist_comma op_decl.param_out
-      op_decl.id
-      print_idlist_comma op_decl.param_in
-    
-let print_operation ppt operations =
-  let sep = if operations.op_2 <> [] then ";" else "" in
-  let print_end = if operations.vars <> [] then "END" else "" in
+      print_idlist_comma b_impl.op_out_params
+      b_impl.name
+      print_idlist_comma b_impl.op_in_params
+
+
+let print_operation ppt b_impl =
+  let print_end = "END" in
   fprintf ppt 
-    "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a%s@,%a@]@\n %s"
-    print_op_decl operations.op_decl
-    print_vars operations.vars
-    print_eq_list operations.op_1
-    sep
-    print_reg_list operations.op_2
+    "OPERATIONS@\n@\n@[%a =@]@\n %a@\n@[<v 3>   %a@]@\n %s"
+    print_op_decl b_impl
+    print_vars b_impl.m_vars
+    print_subs_list b_impl.imp_substitutions
     print_end
 
 let print_initialisation ppt ini_list = 
@@ -111,27 +103,34 @@ let print_initialisation ppt ini_list =
   if ini_list <> [] then
     fprintf ppt "INITIALISATION @\n@[<v 3>   %a@]@\n" print_initialisation_list ini_list
 
-let print_condition ppt = function
-  | Base_expr (id, t, expr, _) -> 
+let print_condition ppt (id, set, cond) = 
+  match set with
+  | typ, None -> (
+    match cond with
+    | None ->
+      fprintf ppt "%a : %a"
+	print_bid id
+	print_basetype typ
+    | Some expr -> 
       fprintf ppt "%a : %a & %a"
 	print_bid id
-	print_basetype t
+	print_basetype typ
 	print_expr_in_pred expr 
-  | Base_no_expr (id, t, _) ->
+  )
+  | typ, Some dims -> (
+    match cond with
+    | None ->
       fprintf ppt "%a : %a"
 	print_bid id
-	print_basetype t
-  | Fun_expr (id, t, e_list, expr,_, index) ->
+	(print_array_type typ id) dims
+    | Some expr ->
       fprintf ppt "%a : %a & !%s.(%s : dom(%a) => %a)"
-        print_bid id
-	(print_array_type t id) e_list
-	index index
+	print_bid id
+	(print_array_type typ id) dims
+	"jj_index" "jj_index"
 	print_bid id
 	print_expr_in_pred expr
-  | Fun_no_expr (id, t, e_list, _) ->
-      fprintf ppt "%a : %a"
-	print_bid id
-	(print_array_type t id) e_list
+  )
 
 let print_invariant ppt inv_list = 
   let print_invariant_list ppt l =
@@ -160,29 +159,25 @@ let print_imports ppt imports =
     fprintf ppt "IMPORTS %a@\n" (print_list print_import) imports
 
 let print_refines ppt id =
-  fprintf ppt "REFINES %s" id
+  fprintf ppt "REFINES M_%s" id
 
 let print_implementation ppt impl_name =
-  fprintf ppt "%s" impl_name
+  fprintf ppt "M_%s_i" impl_name
 
-let print_machine ppt b_impl =
+let print_impl_machine ppt b_impl =
   fprintf ppt
     "IMPLEMENTATION %a%a@\n%a@\n%a@\n%a%a%a%a%a@\nEND"
     print_implementation b_impl.name
-    print_params_machine b_impl.params
-    print_refines b_impl.refines
-    print_sees b_impl.sees
-    print_imports b_impl.imports
-    print_concrete_var b_impl.concrete_variables
-    print_invariant b_impl.invariant
-    print_initialisation b_impl.initialisation
-    print_operation b_impl.operation
+    print_params_machine b_impl.m_params
+    print_refines b_impl.name
+    print_sees b_impl
+    print_imports b_impl.m_imports
+    print_concrete_var b_impl.m_concrete_vars
+    print_invariant b_impl.m_invariant
+    print_initialisation b_impl.m_initialisation
+    print_operation b_impl
 
 
-let print_prog b_impl file is_root env_inst =
-  node_name := String.sub b_impl.name 2 ((String.length b_impl.name)-4);
+let print_prog b_elt file env_inst =
   env_instances := env_inst;
-  if is_root then
-    fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl
-  else 
-    fprintf (formatter_of_out_channel file) "%a@." print_machine b_impl
+  fprintf (formatter_of_out_channel file) "%a@." print_impl_machine b_elt

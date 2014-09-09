@@ -9,6 +9,8 @@
 (* =========================================================================== *)
 
 open Ast_xml
+open Ast_scade
+open Ast_base
 
 (*******************        parser_xml function        *********************)
 
@@ -68,22 +70,6 @@ let get_outs nbs =
 		    | None -> acc 
 		 ) [] nbs
     
-let get_locals nbs =
-  let fold_fun element =
-    match element with
-      | Local options -> 
-	  let local_id = get_scadename options in
-	  let local_target = get_targetname options in
-	  Some { local_id = local_id;
-		 local_target = local_target;
-	       }
-      | _ -> None
-  in
-  List.fold_left (fun acc nb -> match fold_fun nb with 
-		    | Some local -> local :: acc 
-		    | None -> acc 
-		 ) [] nbs
-
 let get_instances nbs =
   let fold_fun element =
     match element with
@@ -104,34 +90,15 @@ let etr_get_nodes list =
   let fold_fun element =
     match element with
       | Node (options, nbs) -> 
-	  let node_name = get_scadename options in
-	  let is_root = false in
-	  let ins = get_ins nbs in
-	  let outs = get_outs nbs in
-	  let locals = get_locals nbs in
+	  let name = get_scadename options in
+	  let in_params = get_ins nbs in
+	  let out_params = get_outs nbs in
 	  let instances = get_instances nbs in
-	  Some { xml_node_name = node_name;
-		 is_root = is_root;
-		 ins = ins;
-		 outs = outs;
-		 locals = locals;
+	  Some { name = name;
+		 in_params = in_params;
+		 out_params = out_params;
 		 instances = instances;
 	       }
-      | Root (options, nbs) -> 
-	  let node_name = get_scadename options in
-	  let is_root = true in
-	  let ins = get_ins nbs in
-	  let outs = get_outs nbs in
-	  let locals = get_locals nbs in
-	  let instances = get_instances nbs in
-	  Some { xml_node_name = node_name;
-		 is_root = is_root;
-		 ins = ins;
-		 outs = outs;
-		 locals = locals;
-		 instances = instances;
-	       } 
-      | ArrayType _ -> None
   in
   List.fold_left (fun acc node -> 
 		    match fold_fun node with 
@@ -139,28 +106,42 @@ let etr_get_nodes list =
 		      | None -> acc 
 		 ) [] list
 
-let etr_get_arraytypes list =
-  let fold_fun element =
-    match element with
-      | ArrayType options -> 
-	  let name = get_targetname options in
-	  let celltype = get_celltype options in
-	  let size = int_of_string (get_size options) in
-	  Some { name = name;
-		 celltype = celltype; 
-		 size = size;
-	       }
-      | Root _ | Node _ -> None
-  in
-  List.fold_left (fun acc node -> 
-		    match fold_fun node with 
-		      | Some node -> node :: acc 
-		      | None -> acc 
-		 ) [] list
-    
+
 let e_t_r_prog prog_list =
   let node_list = etr_get_nodes prog_list in
-  let arraytypes = etr_get_arraytypes prog_list in
   { xml_nodes = node_list;
-    xml_arraytypes = arraytypes; 
   }
+
+(******************** ast_xml to ast_scade functions ********************)
+
+
+let rec xml_to_scade_prog xml_prog = 
+  let rec xml_to_scade_node xml_prog =
+    let p_id = xml_prog.name in
+    let p_param_in = List.map xml_to_scade_param xml_prog.in_params in 
+    let p_param_out = List.map xml_to_scade_param xml_prog.out_params in 
+    { p_id = p_id;
+      p_param_in = p_param_in;
+      p_param_out = p_param_out;
+      p_assumes = [];
+      p_guarantees = [];
+      p_vars = [];
+      p_eqs = []; 
+    }
+  in
+  match xml_prog with
+  | [] -> []
+  | xml_node :: xml_prog_bis -> 
+      xml_to_scade_node xml_node :: (xml_to_scade_prog xml_prog_bis)
+
+and xml_to_scade_param xml_param =
+  let id = xml_param.var_id in
+  let typ = xml_to_scade_type xml_param.var_type in
+  (id, typ)
+
+and xml_to_scade_type = function
+  | "int" -> PT_Base (T_Int)
+  | "real" -> PT_Base (T_Float)
+  | "bool" -> PT_Base (T_Bool)
+  | _ as id -> PT_Base (T_Enum (id))
+

@@ -21,23 +21,21 @@ open Error_handler
       CHAQUE INSTANCE DE NOEUD POSSEDE 
       UN IDENT UNIQUE                              *)
 
-let get_insts_node node =
-  let node_name = node.node_name in
-  let node_xml = node.node_xml in
+let get_insts_node node_xml =
+  let node_name = node_xml.name in
   let instances = node_xml.instances in
   List.map (fun inst -> node_name, inst.inst_name, inst.inst_id) instances
 
-let get_insts_nodes nodes =
-  List.fold_left (fun insts node -> (get_insts_node node) @ insts) [] nodes
+let get_insts_nodes xml_nodes =
+  List.fold_left (fun insts node -> (get_insts_node node) @ insts) [] xml_nodes
 
-let build_env_instances nodes =
-  let insts = get_insts_nodes nodes in
+let build_env_instances xml_nodes =
+  let insts = get_insts_nodes xml_nodes in
   let env_instances = List.fold_left (fun env inst ->
 					let b_id = Env_builder.make_instance_bid inst env in
 					Env_instances.add inst b_id env
 				     ) Env_instances.empty insts in
   env_instances
-
 
 
 (*** CREATION DE L'ENVIRONNEMENT GLOBAL 
@@ -71,17 +69,17 @@ let build_env nodes enum_types consts =
 			   ) env const_ids in
   env
 
-
 (*** PARSER DE NOEUDS SCADE
       -> retourne un ast_scade                     *)
 
-let node_parser node_name node_xml dir_output node consts enums arraytypes =
+let node_parser node_name node_xml dir_output node consts enums =
   let lexbuf = Lexing.from_string node in 
   let ast = 
     try 
       Some (Parser_scade.prog Lexer_scade.token lexbuf)
     with
-    | e -> Error_handler.node_parsing e lexbuf node_xml dir_output node consts enums arraytypes; None
+    | e -> Error_handler.node_parsing e lexbuf node_xml dir_output node consts enums; 
+      None
   in
   ast
 
@@ -89,31 +87,29 @@ let node_parser node_name node_xml dir_output node consts enums arraytypes =
 (*** CONSTRUIT LA LISTE DE NOEUDS
       -> retourne une liste de ast_prog.nodes      *)
 
-let build_node_list xml_nodes kcg_prog scheduled_nodename_list dir_output arraytypes =
+let build_node_list kcg_prog xml_nodes scheduled_nodename_list dir_output =
   let kcg_nodes = kcg_prog.node_map in
-  List.map 
-    (fun node_name -> 
-      let node_xml = List.find (fun n_xml -> n_xml.xml_node_name = node_name) xml_nodes in
-      let node_scade = 
-	try 
-	  node_parser 
-	    node_name 
+  List.map
+    (fun node_name ->
+      let node_xml = List.find (fun n_xml -> n_xml.name = node_name) xml_nodes in
+      let node_scade =
+	try
+	  node_parser
+	    node_name
 	    node_xml
-	    dir_output 
-	    (T_Node.find node_name kcg_nodes) 
+	    dir_output
+	    (T_Node.find node_name kcg_nodes)
 	    kcg_prog.const_list
 	    kcg_prog.enum_list
-	    arraytypes
-	with 
+	with
 	| Not_found -> None
       in
       { node_name = node_name;
-	node_xml = node_xml;
 	ast_scade = node_scade;
 	sees_cond = Utils.find_const_enum_in_node node_scade kcg_prog.const_list kcg_prog.enum_list;
       }
     ) scheduled_nodename_list
-
+	    
 
 (*** PROG_BUILDER
       -> retourne un ast_prog                      *)
@@ -127,28 +123,25 @@ let build_prog xml_prog kcg_prog s2b_params =
     Call_graph.compute_call_map xml_prog.xml_nodes in
 
   (*** RECUPERATION DE LA LISTE DE NOEUDS (ORDONNEE) : 
-       nodes <- prog.nodes                        *)
+       nodes <- prog.nodes                         *)
   let nodes = 
-    build_node_list 
-      xml_prog.xml_nodes 
+    build_node_list  
       kcg_prog
-      scheduled_nodename_list 
+      xml_prog.xml_nodes
+      scheduled_nodename_list
       s2b_params.dir_output 
-      xml_prog.xml_arraytypes
   in
   
+  (*** CONSTRUCTION DU PROG                        *)
   let enum_types = kcg_prog.enum_list in
   let consts = kcg_prog.const_list in
-  let arraytypes = xml_prog.xml_arraytypes in
   let env = build_env nodes enum_types consts in
-  let env_instances = build_env_instances nodes in
+  let env_instances = build_env_instances xml_prog.xml_nodes in
   let const_used, enum_used = Utils.const_enums_used_in_prog nodes in
-
   { nodes = nodes;
     call_map = call_map;
     enum_types = enum_types;
     consts = consts;
-    arraytypes = arraytypes;
     env_prog = env;
     env_instances = env_instances;
     s2b_params = 

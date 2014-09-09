@@ -23,7 +23,6 @@ open Lexing
 let node_translator node call_map s2b_params prog =
   let dir_output = s2b_params.dir_output in
   let node_name = node.node_name in
-  let node_xml = node.node_xml in
 
   (* Récupération de la liste de noeud appelés par le noeud traduit *)
   let node_call_list =
@@ -32,9 +31,7 @@ let node_translator node call_map s2b_params prog =
     with Not_found -> []
   in
   match node.ast_scade with
-  | None -> 
-      (* Babsterror_generator.generate node_xml dir_output; *)(*DEJA FAIT DANS PROG_BUILDER*)
-    call_map, s2b_params
+  | None -> call_map, s2b_params
   | Some ast_scade -> 
     try
       if s2b_params.ast_scade_print then Ast_printer_scade.print_node ast_scade;
@@ -52,7 +49,7 @@ let node_translator node call_map s2b_params prog =
       let ast_n = Reg_ini_input.search_input_in_reg ast_n in
       
       (* Traduction *)
-      let ast_b = Trad.translate ast_n node_call_list node.sees_cond in
+      let ast_b = Trad.translate ast_n node.sees_cond in
 
       (* Initialisation d'un registre par une entrée - côté appelant: 
 	 déplacement des paramètres d'appels en imports *)
@@ -62,25 +59,21 @@ let node_translator node call_map s2b_params prog =
 
       (* Impression des machines *)
       let babst_file =
-	open_out (Filename.concat dir_output ("M_" ^ node_name ^ ".mch")) in
-      Babst_generator.print_prog 
-	ast_b.machine_abstraite babst_file node_xml.is_root;
+      	open_out (Filename.concat dir_output ("M_" ^ node_name ^ ".mch")) in
+      Babst_generator.print_prog ast_b babst_file;
       close_out babst_file;
       let bimpl_file =
-	open_out (Filename.concat dir_output ("M_" ^ node_name ^ "_i.imp")) in
-      Bimpl_generator.print_prog 
-	ast_b.implementation bimpl_file node_xml.is_root prog.env_instances;
+      	open_out (Filename.concat dir_output ("M_" ^ node_name ^ "_i.imp")) in
+      Bimpl_generator.print_prog ast_b bimpl_file prog.env_instances;
       close_out bimpl_file;
       
       (* Actualisation de la call_map *)
       let call_map_updated = Call_graph.update_call_map call_map ast_n in
-      (* Actualisation des paramètres de scade2b 
-	 si le noeud utilise une constante ou un enum *)
-      (* let s2b_params_updated = Utils.find_const_and_enum_in_node ast_scade prog s2b_params in *)
 
       call_map_updated, s2b_params
       
-    with e -> Error_handler.scade2b_trad_node e node_xml dir_output ast_scade prog; call_map, s2b_params
+    with e -> Error_handler.scade2b_trad_node e dir_output ast_scade prog; 
+      call_map, s2b_params
     
 
 

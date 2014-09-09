@@ -174,9 +174,12 @@ let print_basetype ppt = function
   | T_Float -> fprintf ppt "%s" "REAL"
   | T_Enum id -> fprintf ppt "%s" id 
 
-let print_sees ppt = function
-    | [] -> ()
-    | sees_l -> fprintf ppt "SEES %a" print_idlist_comma sees_l
+let print_sees ppt abst = 
+  match abst.m_see_const, abst.m_see_enum with
+    | (false, false) -> ()
+    | (true, false) -> fprintf ppt "SEES M_Const"
+    | (false, true) -> fprintf ppt "SEES M_Enum"
+    | (true, true) -> fprintf ppt "SEES M_Const, M_Enum" 
 
 let print_params_machine ppt = function
     | [] -> ()

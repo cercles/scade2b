@@ -20,7 +20,6 @@ let usage = "usage: "^Sys.argv.(0)^" [options] dir/project/"
 let scade_print = ref false
 let norm_print = ref false
 let schedeqs_print = ref false
-let xml_present = ref false
 let debug_xml = ref false
 
 let spec =
@@ -97,7 +96,6 @@ let initialisation_scade2b () =
     { ast_scade_print = !scade_print;
       ast_norm_print = !norm_print;
       ast_schedeqs_print = !schedeqs_print;
-      xml_present = !xml_present;
       dir_output = dir_output;
       m_consts_used = false;
       m_enum_used = false;

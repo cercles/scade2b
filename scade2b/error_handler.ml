@@ -75,8 +75,8 @@ let initialisation_kcg_parsing e lexbuf =
 
 (*** PROG_BUILDER                                  *)
 
-let node_parsing e lexbuf node_xml dir_output node_string consts enums arraytypes =
-  let node_name = node_xml.xml_node_name in
+let node_parsing e lexbuf node_xml dir_output node_string consts enums =
+  let node_name = node_xml.name in
   begin 
     match e with
     | Lexer_scade.Lexical_error s ->
@@ -89,7 +89,7 @@ let node_parsing e lexbuf node_xml dir_output node_string consts enums arraytype
       let msg2 = handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf) in
       output_string !error_log (msg^msg2);
       output_string stderr (msg^msg2)
-    | e -> print_exc_and_exit e 3 (* TODO: vérifier les cas, asert false si ok *)
+    | e -> print_exc_and_exit e 3
   end;
   let lexbuf = Lexing.from_string node_string in 
   let conditions =
@@ -111,13 +111,13 @@ let node_parsing e lexbuf node_xml dir_output node_string consts enums arraytype
       output_string stderr (msg^msg2);
       [], []
   in
-  try
-    let conditions = Conds_retriever.compute_conditions_error_m conditions consts enums node_xml arraytypes in
-    Babsterror_generator.generate node_xml dir_output conditions
-  with e ->
-    Printf.printf "\nERROR UNKNOWN (node_parsing)";
-    Babsterror_generator.generate_without_cond node_xml dir_output
-    
+  (* try *)
+  (*   let conditions = Conds_retriever.compute_conditions_error_m conditions consts enums node_xml in *)
+  (*   Babsterror_generator.generate node_xml dir_output conditions *)
+  (* with e -> *)
+  (*   Printf.printf "\nERROR UNKNOWN (node_parsing)"; *)
+  (*   Babsterror_generator.generate_without_cond node_xml dir_output *)
+  ()    
 
     
 (*** SCADE2B                                       *)
@@ -132,8 +132,8 @@ let scade2b_node_not_found nodename =
 
 
 (* TRANSLATION ERROR : génération d'une machine error *)
-let scade2b_trad_node e node_xml dir_output ast prog =
-  let node_name = node_xml.xml_node_name in
+let scade2b_trad_node e dir_output ast prog =
+  let node_name = ast.p_id in
   begin
     match e with
     | Normalizer.Assert_id_error e ->
@@ -168,14 +168,5 @@ let scade2b_trad_node e node_xml dir_output ast prog =
       output_string stderr msg;
   end;
   let conditions = ast.p_assumes, ast.p_guarantees in
-  try 
-    let conditions = 
-      Conds_retriever.compute_conditions_error_m 
-	conditions 
-	prog.consts
-	prog.enum_types
-	node_xml
-	prog.arraytypes
-    in
-    Babsterror_generator.generate node_xml dir_output conditions
-  with _ -> Babsterror_generator.generate_without_cond node_xml dir_output
+  (* Babsterror_generator.generate ast dir_output conditions *)
+  ()

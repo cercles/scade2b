@@ -136,7 +136,10 @@ let const_enums_used_in_prog nodes =
     (const_used || n_const_used, enum_used || n_enum_used)
   ) (false, false) nodes
 
+
+
 (* (trad) *)
+
 let sees_list sees_cond =
   match sees_cond with
   | (false, false) -> [] 
@@ -176,7 +179,10 @@ let make_subst_id index_id dims tab_id =
   let rec fun_rec size =
     if size = 1 then tab_id else "conc(" ^ (fun_rec (size-1)) ^ ")"
   in
-  (fun_rec (List.length dims)) ^ "(" ^ index_id ^ ")"
+  match dims with
+  | Some d -> 
+    (fun_rec (List.length d)) ^ "(" ^ index_id ^ ")"
+  | None -> assert false
     
 
 (************** CHANGEMENT DE LA REPRESENTATION DES CONSTANTES **************)
