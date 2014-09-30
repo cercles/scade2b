@@ -121,19 +121,21 @@ let
 tel
 
 
+--@ /array_expr/list/check/0
 function vect_real_op_def(x : real; z : real)
   returns (y : real^2)
 let
-  y = [x, z];
+  y = [];
 tel
 
 --@ /atom/float/check
+--@ /array_expr/list/check/1
 function mat_real_op_def(x : real^2; z : real^2)
   returns (y : real^2^2)
 let
   assume A1 : x > 0.0 and x < 1000.0;
   guarantee G1 : y > 0.0 and y < 1000.0;
-  y = [x, z];
+  y = [x];
 tel
 
 

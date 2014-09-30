@@ -5,6 +5,6 @@ OPERATIONS
 
 yy <-- mat_real_op_def(xx, zz) =
  BEGIN
-   yy := {1 |-> xx, 2 |-> zz}
+   yy := {1 |-> xx}
  END
 END

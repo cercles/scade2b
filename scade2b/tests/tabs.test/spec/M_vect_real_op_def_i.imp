@@ -5,6 +5,6 @@ OPERATIONS
 
 yy <-- vect_real_op_def(xx, zz) =
  BEGIN
-   yy := {1 |-> xx, 2 |-> zz}
+   yy := {}
  END
 END
