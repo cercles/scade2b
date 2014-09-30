@@ -53,7 +53,8 @@
 
 %token <string * string> NODE FUNCTION
 %token CONST
-%token <string> ENUM
+%token TYPE
+%token ENUM
 %token <char> CHAR
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE COLON SEMICOL COMMA DOT DOTDOT
 %token CARET EQ
@@ -80,12 +81,23 @@ node_const_enum_list :
  | const_block node_const_enum_list { $1 @ $2 }
  | NODE node_const_enum_list { (Node $1) :: $2 }
  | FUNCTION node_const_enum_list { (Function $1) :: $2 }
- | enum node_const_enum_list { (Enum $1) :: $2 }
+ | enum_block node_const_enum_list { $1 @ $2 }
 ;
 
-enum :
- | ENUM LBRACE id_list RBRACE SEMICOL { { p_enum_id = $1; 
-					  p_enum_list = $3; } }
+enum_block:
+| TYPE enum_decl_list { $2 }
+;
+
+enum_decl_list:
+| enum_decl { [$1] }
+| enum_decl enum_decl_list { $1::$2 }
+;
+
+enum_decl:
+| IDENT EQ ENUM LBRACE id_list RBRACE SEMICOL { Enum { p_enum_id = $1
+                                                     ; p_enum_list = $5
+                                                     }
+                                              }
 ;
 
 id_list :

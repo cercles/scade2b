@@ -4,8 +4,11 @@
     <EnumVal scadeName="Work" targetName="Work"/>
     <EnumVal scadeName="Weekend" targetName="Weekend"/>
   </EnumType>
-  <EnumType scadeName="S" targetName="S">
-    <EnumVal scadeName="Singleton" targetName="Singleton"/>
+  <EnumType scadeName="S1" targetName="S1">
+    <EnumVal scadeName="Singleton1" targetName="Singleton1"/>
+  </EnumType>
+  <EnumType scadeName="S2" targetName="S2">
+    <EnumVal scadeName="Singleton2" targetName="Singleton2"/>
   </EnumType>
   <NoExpNode scadeName="Test_enum" targetCycleFct="Test_enum">
     <Input scadeName="x" scadeType="Day" targetName="x" targetType="kcg_int"/>
