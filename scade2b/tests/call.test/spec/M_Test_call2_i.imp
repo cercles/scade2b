@@ -6,7 +6,7 @@ OPERATIONS
 
 rr <-- Test_call2(xx) =
  VAR ii, jj IN
-   ii, jj <-- Fct2(xx + 2);
+   ii, jj <-- Fct2(xx + 2, xx);
    rr := ii + jj
  END
 END

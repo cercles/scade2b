@@ -3,9 +3,9 @@ REFINES M_Fct2
 
 OPERATIONS
 
-r1, r2 <-- Fct2(xx) =
+r1, r2 <-- Fct2(xx, yy) =
  BEGIN
-   r2 := xx;
+   r2 := yy;
    r1 := xx
  END
 END

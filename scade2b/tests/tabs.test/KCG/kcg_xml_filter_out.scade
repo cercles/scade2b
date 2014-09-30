@@ -1,4 +1,4 @@
---@ /lhs/lhs_id/check/1
+--@ /lhs/lhs_id/check/0
 --@ /type_expr/array/check/1
 --@ /opt_body/equation/check/1
 --@ /opt_body/local_block/check/0

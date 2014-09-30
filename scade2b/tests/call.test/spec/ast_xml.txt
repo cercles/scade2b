@@ -12,6 +12,7 @@ Node :  ScadeName : Test_call -
 
 Node :  ScadeName : Fct2 -  
   Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int - 
+  Input ->  ScadeName : y -  TargetName : y -  TargetType : kcg_int - 
   Output ->  ScadeName : r1 -  TargetName : r1 -  TargetType : kcg_int - 
   Output ->  ScadeName : r2 -  TargetName : r2 -  TargetType : kcg_int - 
 

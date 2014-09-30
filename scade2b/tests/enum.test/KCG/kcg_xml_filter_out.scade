@@ -1,6 +1,8 @@
 --@ /type_block/check/1
 --@ /type_def/enum/check/1
 type Day = enum { Work, Weekend };
+--@ /type_def/enum/check/0
+type S = enum { Singleton };
 node Test_enum(x : Day)
   returns (r : bool)
 let

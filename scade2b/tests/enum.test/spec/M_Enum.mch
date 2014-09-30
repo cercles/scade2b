@@ -1,3 +1,4 @@
 MACHINE M_Enum
-SETS Day = {Work, Weekend}
+SETS S = {Singleton}; 
+Day = {Work, Weekend}
 END

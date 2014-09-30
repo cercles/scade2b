@@ -33,6 +33,7 @@ tel
 --@ /bin_bool_op/and/check
 --@ /bin_bool_op/or/check
 --@ /bin_bool_op/xor/check
+--@ /var_decls/var_id/check/0
 function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
   returns (rr : bool)
 var

@@ -11,6 +11,7 @@
   </NoExpNode>
   <NoExpNode scadeName="Fct2" targetCycleFct="Fct2">
     <Input scadeName="x" scadeType="int" targetName="x" targetType="kcg_int"/>
+    <Input scadeName="y" scadeType="int" targetName="y" targetType="kcg_int"/>
     <Output scadeName="r1" scadeType="int" targetName="r1" targetType="kcg_int"/>
     <Output scadeName="r2" scadeType="int" targetName="r2" targetType="kcg_int"/>
   </NoExpNode>
