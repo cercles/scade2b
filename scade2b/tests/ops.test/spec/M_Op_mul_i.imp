@@ -4,8 +4,7 @@ REFINES M_Op_mul
 OPERATIONS
 
 rr <-- Op_mul(aa, bb) =
- 
+ BEGIN
    rr := aa * bb
-   
- 
+ END
 END

@@ -4,8 +4,7 @@ REFINES M_vect_real_op_caret
 OPERATIONS
 
 yy <-- vect_real_op_caret(xx) =
- 
+ BEGIN
    yy := {1 |-> 3.200000, 2 |-> 3.200000}
-   
- 
+ END
 END

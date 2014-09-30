@@ -4,8 +4,7 @@ REFINES M_vect_int_op_index
 OPERATIONS
 
 yy <-- vect_int_op_index(xx) =
- 
+ BEGIN
    yy := xx(0)
-   
- 
+ END
 END

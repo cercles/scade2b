@@ -4,8 +4,7 @@ REFINES M_Test_guarantee
 OPERATIONS
 
 rr <-- Test_guarantee(xx, yy) =
- 
+ BEGIN
    rr := bool(xx + yy <= 100)
-   
- 
+ END
 END

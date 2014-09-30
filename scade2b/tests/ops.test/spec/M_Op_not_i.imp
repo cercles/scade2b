@@ -4,8 +4,7 @@ REFINES M_Op_not
 OPERATIONS
 
 rr <-- Op_not(aa) =
- 
+ BEGIN
    rr := bool(not (aa = TRUE))
-   
- 
+ END
 END

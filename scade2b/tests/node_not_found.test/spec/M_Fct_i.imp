@@ -4,8 +4,7 @@ REFINES M_Fct
 OPERATIONS
 
 rr <-- Fct(xx) =
- 
+ BEGIN
    rr := TRUE
-   
- 
+ END
 END

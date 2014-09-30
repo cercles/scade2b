@@ -4,8 +4,7 @@ REFINES M_Op_mod
 OPERATIONS
 
 rr <-- Op_mod(aa, bb) =
- 
+ BEGIN
    rr := aa mod bb
-   
- 
+ END
 END

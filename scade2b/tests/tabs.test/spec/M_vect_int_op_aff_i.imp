@@ -4,8 +4,7 @@ REFINES M_vect_int_op_aff
 OPERATIONS
 
 yy <-- vect_int_op_aff(xx) =
- 
+ BEGIN
    yy := xx
-   
- 
+ END
 END

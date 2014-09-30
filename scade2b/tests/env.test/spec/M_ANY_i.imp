@@ -4,8 +4,7 @@ REFINES M_ANY
 OPERATIONS
 
 bb <-- ANY(aa) =
- 
+ BEGIN
    bb := aa
-   
- 
+ END
 END

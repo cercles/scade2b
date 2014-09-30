@@ -4,8 +4,7 @@ SEES M_Consts
 OPERATIONS
 
 rr <-- Test_const(xx) =
- 
+ BEGIN
    rr := xx + C_CST_2(1)
-   
- 
+ END
 END

@@ -4,8 +4,7 @@ REFINES M_Op_div
 OPERATIONS
 
 rr <-- Op_div(aa, bb) =
- 
+ BEGIN
    rr := aa / bb
-   
- 
+ END
 END

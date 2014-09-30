@@ -4,8 +4,7 @@ SEES M_Enum
 OPERATIONS
 
 rr <-- Test_enum(xx) =
- 
+ BEGIN
    rr := TRUE
-   
- 
+ END
 END

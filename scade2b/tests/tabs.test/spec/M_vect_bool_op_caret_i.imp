@@ -4,8 +4,7 @@ REFINES M_vect_bool_op_caret
 OPERATIONS
 
 yy <-- vect_bool_op_caret(xx) =
- 
+ BEGIN
    yy := {1 |-> TRUE, 2 |-> TRUE}
-   
- 
+ END
 END

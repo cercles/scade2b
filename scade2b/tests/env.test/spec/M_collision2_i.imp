@@ -4,8 +4,7 @@ REFINES M_collision2
 OPERATIONS
 
 bb <-- collision2(aa) =
- 
+ BEGIN
    bb := aa
-   
- 
+ END
 END

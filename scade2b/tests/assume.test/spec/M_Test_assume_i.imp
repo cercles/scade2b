@@ -4,8 +4,7 @@ REFINES M_Test_assume
 OPERATIONS
 
 rr <-- Test_assume(xx, yy) =
- 
+ BEGIN
    rr := bool(xx + yy <= 100)
-   
- 
+ END
 END

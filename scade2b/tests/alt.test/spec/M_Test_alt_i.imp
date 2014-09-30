@@ -4,8 +4,7 @@ REFINES M_Test_alt
 OPERATIONS
 
 rr <-- Test_alt(xx, yy, bb) =
- 
+ BEGIN
    IF bb = TRUE THEN rr := xx ELSE rr := yy END
-   
- 
+ END
 END

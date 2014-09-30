@@ -4,8 +4,7 @@ REFINES M_vect_real_op_def
 OPERATIONS
 
 yy <-- vect_real_op_def(xx, zz) =
- 
+ BEGIN
    yy := {1 |-> xx, 2 |-> zz}
-   
- 
+ END
 END

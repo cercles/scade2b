@@ -4,8 +4,7 @@ REFINES M_vect_int_op_rev
 OPERATIONS
 
 yy <-- vect_int_op_rev(xx) =
- 
+ BEGIN
    yy := rev(xx)
-   
- 
+ END
 END

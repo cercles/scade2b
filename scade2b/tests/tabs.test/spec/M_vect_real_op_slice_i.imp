@@ -4,8 +4,7 @@ REFINES M_vect_real_op_slice
 OPERATIONS
 
 yy <-- vect_real_op_slice(xx) =
- 
+ BEGIN
    yy := ((xx /|\ (2 + 1)) \|/ 1)
-   
- 
+ END
 END

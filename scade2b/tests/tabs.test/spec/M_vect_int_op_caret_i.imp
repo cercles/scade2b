@@ -4,8 +4,7 @@ REFINES M_vect_int_op_caret
 OPERATIONS
 
 yy <-- vect_int_op_caret(xx) =
- 
+ BEGIN
    yy := {1 |-> 3, 2 |-> 3}
-   
- 
+ END
 END

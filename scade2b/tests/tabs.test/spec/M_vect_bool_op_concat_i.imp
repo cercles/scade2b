@@ -4,8 +4,7 @@ REFINES M_vect_bool_op_concat
 OPERATIONS
 
 yy <-- vect_bool_op_concat(xx, zz) =
- 
+ BEGIN
    yy := xx ^ zz
-   
- 
+ END
 END

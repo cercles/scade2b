@@ -9,8 +9,7 @@ INITIALISATION
 OPERATIONS
 
 rr <-- register_error_type(aa, bb) =
- 
-   ;
+ BEGIN
    rr := c
- 
+ END
 END

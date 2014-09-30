@@ -5,8 +5,7 @@ IMPORTS M_maths
 OPERATIONS
 
 rr <-- Op_transpose(xx) =
- 
+ BEGIN
    rr <-- transpose(xx, 1, 2)
-   
- 
+ END
 END

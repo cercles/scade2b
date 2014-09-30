@@ -4,8 +4,7 @@ REFINES M_vect_real_op_concat
 OPERATIONS
 
 yy <-- vect_real_op_concat(xx, zz) =
- 
+ BEGIN
    yy := xx ^ zz
-   
- 
+ END
 END

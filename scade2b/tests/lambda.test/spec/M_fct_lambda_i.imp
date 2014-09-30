@@ -9,8 +9,7 @@ INITIALISATION
 OPERATIONS
 
 rr <-- fct_lambda(aa, bb) =
- 
-   ;
+ BEGIN
    rr := aa
- 
+ END
 END
