@@ -1,4 +1,5 @@
 --@ /bin_arith_op/plus/check
+--@ /op_kind/function/check
 function Op_plus(xx : int; yy : int)
   returns (rr : int)
 var
