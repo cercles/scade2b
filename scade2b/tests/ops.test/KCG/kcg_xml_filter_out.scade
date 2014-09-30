@@ -29,6 +29,8 @@ tel
 --@ /type_expr/bool/check
 --@ /bool_atom/false/check
 --@ /bool_atom/true/check
+--@ /bin_bool_op/and/check
+--@ /bin_bool_op/or/check
 function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
   returns (rr : bool)
 var

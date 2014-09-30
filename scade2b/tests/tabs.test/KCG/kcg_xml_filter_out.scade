@@ -1,5 +1,6 @@
 --@ /lhs/lhs_id/check/1
 --@ /type_expr/array/check/1
+--@ /opt_body/equation/check/1
 function vect_int_op_aff(x : int^2)
   returns (y : int^2)
 let
