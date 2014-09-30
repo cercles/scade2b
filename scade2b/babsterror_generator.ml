@@ -71,8 +71,8 @@ let print_operation conditions ppt xml_decl =
   fprintf ppt 
     "OPERATIONS@\n@\n@[%a =@]@\n@[<v 3> PRE@,@[<v>%a@]@]@\n@[<v 3> THEN@,@[<v>%a@]@]@\n END"
     print_op_decl xml_decl
-    Babst_generator.print_prelist pres
-    Babst_generator.print_thenlist posts
+    Babst_generator.print_pre_list pres
+    Babst_generator.print_post_list posts
 
 let print_id_machine ppt id_machine =
   fprintf ppt "M_%s" id_machine
