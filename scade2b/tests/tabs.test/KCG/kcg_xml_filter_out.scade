@@ -28,6 +28,7 @@ let
 tel
 
 --@ /array_expr/index/check
+--@ /atom/integer/check
 function vect_int_op_index(x : int^2)
   returns (y : int)
 let
@@ -122,6 +123,7 @@ let
   y = [x, z];
 tel
 
+--@ /atom/float/check
 function mat_real_op_def(x : real^2; z : real^2)
   returns (y : real^2^2)
 let
