@@ -3,14 +3,14 @@ REFINES M_Test_fby4
 
 CONCRETE_VARIABLES zz
 INVARIANT 
-   zz : INT & (zz > 0)
+   zz : INT
 INITIALISATION 
    zz := 3
 OPERATIONS
 
 yy, zz <-- Test_fby4(xx) =
  VAR ll, mm IN
-   ll := xx; 
+   ll := xx;
    yy := ll;
    zz := ll
  END

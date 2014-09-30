@@ -5,8 +5,8 @@ OPERATIONS
 
 rr <-- Op_unops(aa) =
  VAR bb, cc IN
-   bb := (-aa); 
-   cc := bb; 
+   bb := (-aa);
+   cc := bb;
    rr := bb + cc
  END
 END

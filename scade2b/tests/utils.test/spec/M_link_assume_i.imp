@@ -10,8 +10,8 @@ OPERATIONS
 
 rr <-- link_assume(aa, cc, dd, bb) =
  VAR ee, hh IN
-   rr := bool(not (bb = TRUE)); 
-   ee := (-aa); 
+   rr := bool(not (bb = TRUE));
+   ee := (-aa);
    IF TRUE = TRUE THEN hh := dd ELSE hh := gg END;
    gg := cc
  END

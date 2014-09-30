@@ -5,7 +5,7 @@ OPERATIONS
 
 rr <-- Op_cmp(aa, bb, cc, dd, ee, ff) =
  VAR zz IN
-   zz := bool((((aa <= bb) or (aa >= bb)) & ((cc < dd) or (cc > dd))) & ((bool(ee = ff) = TRUE) or (bool(ee /= ff) = TRUE))); 
+   zz := bool((((aa <= bb) or (aa >= bb)) & ((cc < dd) or (cc > dd))) & ((bool(ee = ff) = TRUE) or (bool(ee /= ff) = TRUE)));
    rr := zz
  END
 END

@@ -5,7 +5,7 @@ OPERATIONS
 
 rr <-- Op_plus(xx, yy) =
  VAR zz IN
-   zz := xx + yy; 
+   zz := xx + yy;
    rr := zz
  END
 END

@@ -10,7 +10,7 @@ OPERATIONS
 
 yy, zz <-- Test_fby5(xx) =
  VAR ll, gg IN
-   ll := xx; 
+   ll := xx;
    yy := ll;
    zz := ll
  END

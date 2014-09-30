@@ -5,7 +5,7 @@ OPERATIONS
 
 ANY_ <-- collision1(aa) =
  VAR collision1_ IN
-   collision1_ := aa; 
+   collision1_ := aa;
    ANY_ := collision1_
  END
 END

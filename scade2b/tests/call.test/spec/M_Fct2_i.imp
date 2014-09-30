@@ -5,7 +5,7 @@ OPERATIONS
 
 r1, r2 <-- Fct2(xx) =
  BEGIN
-   r2 := xx; 
+   r2 := xx;
    r1 := xx
  END
 END

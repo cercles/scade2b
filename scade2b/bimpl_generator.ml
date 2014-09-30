@@ -62,7 +62,7 @@ let print_subs ppt = function
   | Call f -> fprintf ppt "%a" print_call f
   | Simpl s -> fprintf ppt "%a" print_simpl s
 
-let print_subs_list ppt = print_list_semicolon print_subs ppt
+let print_subs_list ppt = print_list ~sep:";" ~break:true ~forcebreak:true print_subs ppt
 
 let print_vars ppt var_list =
   if var_list <> [] then

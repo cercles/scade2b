@@ -6,8 +6,8 @@ OPERATIONS
 
 rr <-- Op_sharp(xx, yy) =
  VAR L1, L2 IN
-   L2 := yy; 
-   L1 := xx; 
+   L2 := yy;
+   L1 := xx;
    rr <-- sharp(L1, L2)
  END
 END

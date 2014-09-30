@@ -13,7 +13,7 @@ OPERATIONS
 y1, y2 <-- Test_fby2(xx) =
  VAR zz IN
    zz := xx;
-   y2 := zz; 
+   y2 := zz;
    y1 := zz
  END
 END
