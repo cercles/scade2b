@@ -77,7 +77,7 @@ prog :
 
 node_const_enum_list :
  |   { [] }
- | const node_const_enum_list { (Const $1) :: $2 }
+ | const_block node_const_enum_list { $1 @ $2 }
  | NODE node_const_enum_list { (Node $1) :: $2 }
  | FUNCTION node_const_enum_list { (Function $1) :: $2 }
  | enum node_const_enum_list { (Enum $1) :: $2 }
@@ -93,10 +93,17 @@ id_list :
  | IDENT COMMA id_list { $1 :: $3 }
 ;
 
-const :
- | CONST IDENT COLON typ EQ expr SEMICOL { { c_id = $2;
-					     c_typ = $4;
-					     c_expr = $6; } }
+const_block:
+| CONST const_decl_list { $2 }
+;
+
+const_decl_list:
+| const_decl { [$1] }
+| const_decl const_decl_list { $1::$2 }
+;
+
+const_decl:
+| IDENT COLON typ EQ expr SEMICOL { Const { c_id = $1; c_typ = $3; c_expr = $5; } }
 ;
 
 typ :

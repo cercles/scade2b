@@ -3,6 +3,8 @@ const C_CST : int = 100;
 
 const C_CST_2 : int^2 = [1, 2];
 
+--@ /const_block/check/2
+const C1 : int = 1; C2 : int = 2;
 
 node Test_const(x : int)
   returns (r : bool)
