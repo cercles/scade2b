@@ -31,6 +31,7 @@ tel
 --@ /bool_atom/true/check
 --@ /bin_bool_op/and/check
 --@ /bin_bool_op/or/check
+--@ /bin_bool_op/xor/check
 function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
   returns (rr : bool)
 var
@@ -38,7 +39,7 @@ var
 let
   zz = ((aa <= bb) or (aa >= bb))
    and ((cc <  dd) or (cc >  dd))
-   and ((ee =  ff) or (ee <> ff))
+   and ((ee =  ff) xor (ee <> ff))
    and false
    and true;
   rr = zz;
