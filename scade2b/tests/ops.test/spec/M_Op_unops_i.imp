@@ -8,6 +8,5 @@ rr <-- Op_unops(aa) =
    bb := (-aa); 
    cc := bb; 
    rr := bb + cc
-   
  END
 END

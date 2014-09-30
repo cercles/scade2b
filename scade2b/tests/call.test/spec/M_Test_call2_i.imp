@@ -8,6 +8,5 @@ rr <-- Test_call2(xx) =
  VAR ii, jj IN
    ii, jj <-- TF2.Fct2(xx + 2); 
    rr := ii + jj
-   
  END
 END

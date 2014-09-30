@@ -9,6 +9,5 @@ rr <-- Op_cast(xx, yy) =
    L1 <-- to_real(xx); 
    L2 := L1 + yy; 
    rr <-- to_int(L2)
-   
  END
 END

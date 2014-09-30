@@ -7,6 +7,5 @@ rr <-- Op_minus(xx, yy) =
  VAR zz IN
    zz := xx - yy; 
    rr := zz
-   
  END
 END
