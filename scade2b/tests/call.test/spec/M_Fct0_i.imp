@@ -1,0 +1,10 @@
+IMPLEMENTATION M_Fct0_i
+REFINES M_Fct0
+
+OPERATIONS
+
+rr <-- Fct0 =
+ BEGIN
+   rr := TRUE
+ END
+END

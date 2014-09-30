@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Test_call0_i
+REFINES M_Test_call0
+
+IMPORTS M_Fct0
+OPERATIONS
+
+rr <-- Test_call0 =
+ BEGIN
+   rr <-- Fct0
+ END
+END

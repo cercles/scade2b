@@ -27,3 +27,16 @@ let
     (i, j) = #2 Fct2(x+2);
     r = i + j;
 tel
+
+node Fct0()
+  returns (r : bool)
+let
+  r = true;
+tel
+
+--@ /apply_expr/list/check/0
+node Test_call0()
+  returns (r : bool)
+let
+    r = #3 Fct0();
+tel

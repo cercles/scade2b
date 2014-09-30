@@ -20,4 +20,11 @@ Node :  ScadeName : Test_call2 -
   Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
   NodeInstance ->  ScadeName : Fct2 -  InstName : 2 - 
 
+Node :  ScadeName : Fct0 -  
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+
+Node :  ScadeName : Test_call0 -  
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 
+  NodeInstance ->  ScadeName : Fct0 -  InstName : 3 - 
+
 
