@@ -1,3 +1,4 @@
+--@ /type_expr/real/check
 function Op_cast(x : int; y : real) returns (r : int)
 var
   L1 : int;
@@ -18,6 +19,7 @@ let
   r = #(L1, L2); --@ /bool_expr/sharp/check/2
 tel
 
+--@ /type_expr/array/check/2
 function Op_transpose(x : int^3^2) returns (r : int^2^3)
 let
   r = transpose (x; 1; 2); --@ /array_expr/transpose/check
