@@ -1,0 +1,10 @@
+IMPLEMENTATION M_Test_ignored_i
+REFINES M_Test_ignored
+
+OPERATIONS
+
+rr <-- Test_ignored(xx) =
+ BEGIN
+   
+ END
+END

@@ -63,6 +63,7 @@ rule token = parse
 		FUNCTION (id, (Buffer.contents buf)) }
 
 	  | "package " ident         { token lexbuf }
+	  | "package public " ident  { token lexbuf }
 	  | "end;"                   { token lexbuf }
 
 	  | "type" (sep | '\n')* (ident as id) sep '=' sep "enum"

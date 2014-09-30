@@ -1,0 +1,8 @@
+--@ /visibility/ignore
+package public P
+node Test_ignored(x : int)
+  returns (r : bool)
+let
+
+tel
+end;
