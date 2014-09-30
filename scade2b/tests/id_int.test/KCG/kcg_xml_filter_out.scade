@@ -1,5 +1,6 @@
 --@ /op_kind/node/check
 --@ /local_block/var_decls/1
+--@ /opt_body/equation/check/2
 node Id_int(x : int)
   returns (y : int)
 var

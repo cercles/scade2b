@@ -1,6 +1,7 @@
 --@ /lhs/lhs_id/check/1
 --@ /type_expr/array/check/1
 --@ /opt_body/equation/check/1
+--@ /opt_body/local_block/check/0
 function vect_int_op_aff(x : int^2)
   returns (y : int^2)
 let
@@ -15,8 +16,10 @@ let
 tel
 
 --@ /array_expr/append/check
+--@ /local_block/var_decls/0
 function vect_int_op_concat(x : int^2; z : int^2)
   returns (y : int^4)
+var
 let
   y = x @ z;
 tel

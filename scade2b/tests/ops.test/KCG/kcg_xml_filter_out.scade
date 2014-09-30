@@ -48,11 +48,11 @@ tel
 
 --@ /unary_arith_op/minus/check
 --@ /unary_arith_op/plus/check
+--@ /var_decls/var_id/check/1
 function Op_unops(aa: int)
   returns (rr: int)
 var
- bb: int;
- cc: int;
+ bb, cc: int;
 let
   bb = -aa;
   cc = +bb;

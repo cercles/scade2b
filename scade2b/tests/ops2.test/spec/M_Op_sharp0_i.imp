@@ -1,0 +1,11 @@
+IMPLEMENTATION M_Op_sharp0_i
+REFINES M_Op_sharp0
+
+IMPORTS M_maths
+OPERATIONS
+
+rr <-- Op_sharp0 =
+ BEGIN
+   rr <-- sharp
+ END
+END
