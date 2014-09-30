@@ -1,3 +1,4 @@
+--@ /params/check/1
 node Fct(x : int)
   returns (r : bool)
 let
@@ -18,6 +19,7 @@ let
 tel
 
 --@ /apply_expr/list/check/2
+--@ /local_block/var_decls/2
 node Test_call2(x : int)
   returns (r : int)
 var
