@@ -1,1 +1,1 @@
--debug_xml -ps -pn -pe
+-debug_xml

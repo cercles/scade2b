@@ -26,6 +26,8 @@ tel
 --@ /bin_relation_op/neq/check
 --@ /type_expr/int/check
 --@ /type_expr/bool/check
+--@ /bool_atom/false/check
+--@ /bool_atom/true/check
 function Op_cmp (aa: int; bb: int; cc: int; dd: int; ee: int; ff: int)
   returns (rr : bool)
 var
@@ -33,7 +35,9 @@ var
 let
   zz = ((aa <= bb) or (aa >= bb))
    and ((cc <  dd) or (cc >  dd))
-   and ((ee =  ff) or (ee <> ff));
+   and ((ee =  ff) or (ee <> ff))
+   and false
+   and true;
   rr = zz;
 tel
 
