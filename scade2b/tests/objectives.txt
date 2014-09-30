@@ -116,7 +116,6 @@
 /params/check/0
 /params/check/2
 /params/check/1
-/type_def/var/error
 /type_def/int/error
 /type_def/array/error
 /type_def/char/error
