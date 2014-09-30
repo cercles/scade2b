@@ -3,7 +3,7 @@ REFINES M_Test_fby6
 
 CONCRETE_VARIABLES yy
 INVARIANT 
-   yy : seq(INT) & dom(yy) = 1 .. 2 & !jj.(jj : dom(yy) => (yy(jj) > 0))
+   yy : seq(INT) & dom(yy) = 1 .. 2
 INITIALISATION 
    yy := P_INI
 OPERATIONS

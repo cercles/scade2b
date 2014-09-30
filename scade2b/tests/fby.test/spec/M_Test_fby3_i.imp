@@ -3,7 +3,7 @@ REFINES M_Test_fby3
 
 CONCRETE_VARIABLES yy
 INVARIANT 
-   yy : INT & (yy > 0)
+   yy : INT
 INITIALISATION 
    yy := 3
 OPERATIONS
