@@ -1,4 +1,4 @@
-MACHINE M_fct_lambda_2(aa)
+MACHINE M_fct_lambda_2(a)
 
 CONSTRAINTS
   aa : INT

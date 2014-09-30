@@ -1,4 +1,4 @@
-IMPLEMENTATION M_fct_lambda_2_i(aa)
+IMPLEMENTATION M_fct_lambda_2_i(a)
 REFINES M_fct_lambda_2
 
 CONCRETE_VARIABLES rr

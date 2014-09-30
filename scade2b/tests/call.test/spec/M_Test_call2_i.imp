@@ -1,12 +1,12 @@
 IMPLEMENTATION M_Test_call2_i
 REFINES M_Test_call2
 
-IMPORTS TF2.M_Fct2
+IMPORTS M_Fct2
 OPERATIONS
 
 rr <-- Test_call2(xx) =
  VAR ii, jj IN
-   ii, jj <-- TF2.Fct2(xx + 2); 
+   ii, jj <-- Fct2(xx + 2);
    rr := ii + jj
  END
 END

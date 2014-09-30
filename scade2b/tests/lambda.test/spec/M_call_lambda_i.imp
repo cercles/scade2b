@@ -1,12 +1,11 @@
 IMPLEMENTATION M_call_lambda_i
 REFINES M_call_lambda
 
-IMPORTS cf1.M_fct_lambda
+IMPORTS M_fct_lambda
 OPERATIONS
 
 rr <-- call_lambda(aa) =
- 
-   rr <-- cf1.fct_lambda(aa)
-   
- 
+ BEGIN
+   rr <-- fct_lambda(aa)
+ END
 END
