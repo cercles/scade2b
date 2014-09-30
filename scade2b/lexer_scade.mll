@@ -58,6 +58,7 @@ rule token = parse
 	  | "bool"                     { T_BOOL }
 	  | "int"                      { T_INT }
 	  | "real"                     { T_REAL }
+	  | "char"                     { T_CHAR }
 
 	  | "if"                       { IF }
 	  | "then"                     { THEN }
