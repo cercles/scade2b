@@ -3,6 +3,8 @@ package public P
 node Test_ignored(x : int)
   returns (r : bool)
 let
-
+    emit x;      --@ /emission_body/id/ignore
+    emit (x);    --@ /emission_body/ids/ignore/0
+    emit (x, x); --@ /emission_body/ids/ignore/1
 tel
 end;

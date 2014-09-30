@@ -107,6 +107,7 @@ rule token = parse
 	  | "false"                    { BOOL (false) }
 	  | "clock"                    { CLOCK }
 	  | "probe"                    { PROBE }
+	  | "emit"                     { EMIT }
 	  | digit+ as n                { INT (int_of_string n) }
 	  | real as r                  { REAL (float_of_string r) }
 	  | ident as id                { IDENT (id) }

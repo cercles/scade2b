@@ -43,6 +43,7 @@
 %token T_BOOL T_INT T_REAL T_CHAR
 %token CLOCK
 %token PROBE
+%token EMIT
 %token <bool> BOOL
 %token <int> INT
 %token <float> REAL
@@ -137,13 +138,19 @@ typ_list :
 
 eq_list :
  |   { [] }
- | eq eq_list { $1 :: $2 }
+ | eq eq_list { $1 @ $2 }
 ;
 
 eq :
- | ASSUME IDENT COLON expr SEMICOL { Assume $4 }
- | GUARANTEE IDENT COLON expr SEMICOL { Guarantee $4 }
- | left_part EQ expr SEMICOL { Eq ($1, $3) }
+ | ASSUME IDENT COLON expr SEMICOL { [Assume $4] }
+ | GUARANTEE IDENT COLON expr SEMICOL { [Guarantee $4] }
+ | left_part EQ expr SEMICOL { [Eq ($1, $3)] }
+ | emission SEMICOL { [] }
+;
+
+emission:
+| EMIT IDENT { }
+| EMIT LPAREN id_list RPAREN { }
 ;
 
 left_part : 
