@@ -5,8 +5,7 @@ OPERATIONS
 
 yy <-- Id_int(xx) =
  VAR zz IN
-   zz := xx; 
+   zz := xx;
    yy := zz
-   
  END
 END
