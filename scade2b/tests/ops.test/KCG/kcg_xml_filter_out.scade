@@ -47,6 +47,7 @@ let
 tel
 
 --@ /unary_arith_op/minus/check
+--@ /unary_arith_op/plus/check
 function Op_unops(aa: int)
   returns (rr: int)
 var
@@ -54,7 +55,7 @@ var
  cc: int;
 let
   bb = -aa;
-  cc = bb;
+  cc = +bb;
   rr = bb + cc;
 tel
 

@@ -170,6 +170,7 @@ expr :
  | expr SUP expr { PE_Op_Relat (Op_gt, $1, $3) }
  | expr SUPEQ expr { PE_Op_Relat (Op_ge, $1, $3) }
  | MINUS expr { PE_Op_Arith1 (Op_minus, $2) }
+ | PLUS expr { $2 }
 /* | T_REAL expr { PE_Op_Arith1 (Op_cast_real, $2) }*/
 /* | T_INT expr { PE_Op_Arith1 (Op_cast_int, $2) }*/
  | expr AND expr { PE_Op_Logic (Op_and, $1, $3) }
