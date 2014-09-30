@@ -10,6 +10,7 @@ let
 tel
 
 --@ /bin_arith_op/minus/check
+--@ /params/check/2
 function Op_minus(xx : int; yy : int)
   returns (rr : int)
 var
