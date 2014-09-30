@@ -55,6 +55,7 @@
 %token CONST
 %token TYPE
 %token ENUM
+%token IMPORTED
 %token <char> CHAR
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE COLON SEMICOL COMMA DOT DOTDOT
 %token CARET EQ
@@ -94,10 +95,16 @@ enum_decl_list:
 ;
 
 enum_decl:
-| IDENT EQ ENUM LBRACE id_list RBRACE SEMICOL { Enum { p_enum_id = $1
-                                                     ; p_enum_list = $5
-                                                     }
-                                              }
+| imported_opt IDENT EQ
+  ENUM LBRACE id_list RBRACE SEMICOL { Enum { p_enum_id = $2
+                                            ; p_enum_list = $6
+                                            }
+                                     }
+;
+
+imported_opt:
+|          { }
+| IMPORTED { }
 ;
 
 id_list :

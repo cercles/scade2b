@@ -1,6 +1,7 @@
 --@ /type_block/check/1
 --@ /type_def/enum/check/1
-type Day = enum { Work, Weekend };
+--@ /type/interface/ignore
+type imported Day = enum { Work, Weekend };
 
 --@ /type_block/check/2
 --@ /type_def/enum/check/0

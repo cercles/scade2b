@@ -68,6 +68,7 @@ rule token = parse
 
           | "type"                   { TYPE }
           | "enum"                   { ENUM }
+          | "imported"               { IMPORTED }
 
 	  | "const"                  { CONST }
 
