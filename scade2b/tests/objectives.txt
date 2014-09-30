@@ -85,7 +85,6 @@
 /list_expr/list/0
 /list_expr/list/1
 /prefix/prefixop/error
-/const_decl/check/1
 /lhs/lhs_id/check/0
 /lhs/lhs_id/check/1
 /lhs/unit/error
