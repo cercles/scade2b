@@ -1,0 +1,9 @@
+--@ /type_expr/record/error
+node Id_int(x:{f : int})
+  returns (y : int)
+var
+  z : int;
+let
+  z = x.f;
+  y = z;
+tel
