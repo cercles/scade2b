@@ -3,6 +3,6 @@ node Id_int(x : int)
 var
   z : int;
 let
-  z = x + (0:'T);
+  z = x + (0:'T); --@ /atom/constraint/error
   y = z;
 tel
