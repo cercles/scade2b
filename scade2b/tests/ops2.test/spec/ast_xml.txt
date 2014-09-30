@@ -11,6 +11,10 @@ Node :  ScadeName : Op_sharp -
   Input ->  ScadeName : y -  TargetName : y -  TargetType : kcg_bool - 
   Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_bool - 
 
+Node :  ScadeName : Op_sharp1 -  
+  Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_bool - 
+  Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_bool - 
+
 Node :  ScadeName : Op_transpose -  
   Input ->  ScadeName : x -  TargetName : x -  TargetType : kcg_int_3_2 - 
   Output ->  ScadeName : r -  TargetName : r -  TargetType : kcg_int - 

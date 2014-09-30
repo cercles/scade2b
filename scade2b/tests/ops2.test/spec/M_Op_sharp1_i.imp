@@ -1,0 +1,12 @@
+IMPLEMENTATION M_Op_sharp1_i
+REFINES M_Op_sharp1
+
+IMPORTS M_maths
+OPERATIONS
+
+rr <-- Op_sharp1(xx) =
+ VAR L1 IN
+   L1 := xx;
+   rr <-- sharp(L1)
+ END
+END

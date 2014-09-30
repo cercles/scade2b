@@ -19,6 +19,14 @@ let
   r = #(L1, L2); --@ /bool_expr/sharp/check/2
 tel
 
+function Op_sharp1(x : bool) returns (r : bool)
+var
+  L1 : int;
+let
+  L1 = x;
+  r = #(L1); --@ /bool_expr/sharp/check/1
+tel
+
 --@ /type_expr/array/check/2
 function Op_transpose(x : int^3^2) returns (r : int^2^3)
 let

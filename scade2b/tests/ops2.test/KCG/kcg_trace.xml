@@ -10,6 +10,10 @@
     <Input scadeName="y" scadeType="bool" targetName="y" targetType="kcg_bool"/>
     <Output scadeName="r" scadeType="bool" targetName="r" targetType="kcg_bool"/>
   </NoExpNode>
+  <NoExpNode scadeName="Op_sharp1" targetCycleFct="Op_sharp1">
+    <Input scadeName="x" scadeType="bool" targetName="x" targetType="kcg_bool"/>
+    <Output scadeName="r" scadeType="bool" targetName="r" targetType="kcg_bool"/>
+  </NoExpNode>
   <NoExpNode scadeName="Op_transpose" targetCycleFct="Op_transpose">
     <Input scadeName="x" scadeType="int^3^2" targetName="x" targetType="kcg_int_3_2"/>
     <Output scadeName="r" scadeType="int" targetName="r" targetType="kcg_int"/>

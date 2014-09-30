@@ -189,7 +189,7 @@ expr :
  | ARRAY_PRED LPAREN IDENT COMMA expr RPAREN { $5 }
  | T_REAL expr { PE_Call ("", "to_real", [$2]) }
  | T_INT expr { PE_Call ("", "to_int", [$2]) }
- | SHARP LPAREN expr COMMA expr_list RPAREN { PE_Call ("", "sharp", $3 :: $5) }
+ | SHARP LPAREN expr_list RPAREN { PE_Call ("", "sharp", $3) }
  | TRANSPOSE LPAREN expr SEMICOL expr SEMICOL expr RPAREN { PE_Call ("", "transpose", [$3; $5; $7]) }
 ;
 
