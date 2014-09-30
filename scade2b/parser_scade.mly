@@ -98,6 +98,7 @@ var_decl :
 ;
 
 decl :
+ |   { [] }
  | id_list COLON typ semi_opt { let typ = $3 in
 				List.map (fun id -> (id, typ)) $1 }
  | id_list COLON typ SEMICOL decl { let typ = $3 in

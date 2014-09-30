@@ -1,0 +1,5 @@
+--@ /params/check/0
+node Test_nop ()
+  returns ()
+let
+tel
