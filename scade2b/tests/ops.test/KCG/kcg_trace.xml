@@ -33,6 +33,11 @@
     <Input scadeName="bb" scadeType="int" targetName="bb" targetType="kcg_int"/>
     <Output scadeName="rr" scadeType="int" targetName="rr" targetType="kcg_int"/>
   </NoExpNode>
+  <NoExpNode scadeName="Op_slash" targetCycleFct="Op_slash">
+    <Input scadeName="aa" scadeType="real" targetName="aa" targetType="kcg_real"/>
+    <Input scadeName="bb" scadeType="real" targetName="bb" targetType="kcg_real"/>
+    <Output scadeName="rr" scadeType="real" targetName="rr" targetType="kcg_real"/>
+  </NoExpNode>
   <NoExpNode scadeName="Op_not" targetCycleFct="Op_not">
     <Input scadeName="aa" scadeType="bool" targetName="aa" targetType="kcg_bool"/>
     <Output scadeName="rr" scadeType="bool" targetName="rr" targetType="kcg_bool"/>

@@ -34,6 +34,11 @@ Node :  ScadeName : Op_div -
   Input ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_int - 
   Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_int - 
 
+Node :  ScadeName : Op_slash -  
+  Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_real - 
+  Input ->  ScadeName : bb -  TargetName : bb -  TargetType : kcg_real - 
+  Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_real - 
+
 Node :  ScadeName : Op_not -  
   Input ->  ScadeName : aa -  TargetName : aa -  TargetType : kcg_bool - 
   Output ->  ScadeName : rr -  TargetName : rr -  TargetType : kcg_bool - 

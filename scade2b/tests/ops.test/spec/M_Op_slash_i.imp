@@ -1,0 +1,10 @@
+IMPLEMENTATION M_Op_slash_i
+REFINES M_Op_slash
+
+OPERATIONS
+
+rr <-- Op_slash(aa, bb) =
+ BEGIN
+   rr := aa / bb
+ END
+END

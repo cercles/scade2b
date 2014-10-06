@@ -60,11 +60,18 @@ let
   rr = bb + cc;
 tel
 
---@ /bin_arith_op/slash/check
+--@ /bin_arith_op/div/check
 function Op_div(aa: int; bb: int)
   returns (rr: int)
 let
   rr = aa div bb;
+tel
+
+--@ /bin_arith_op/slash/check
+function Op_slash(aa: real; bb: real)
+  returns (rr: real)
+let
+  rr = aa / bb;
 tel
 
 --@ /bool_expr/not/check
