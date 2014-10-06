@@ -44,7 +44,7 @@ module Compat = struct
       if !i = 0 && !j = len - 1 then
         s
       else if !j >= !i then
-        String.sub s !i (!j - !i + 1)
+        String.sub s !i (!j - !i + 1) 
       else
         ""
 
@@ -85,11 +85,13 @@ type test_kind =
   | TestFail of string (** failure expected, compare error message *)
 
 let make_test d =
+  if d = ".svn" then None else(
   let testpath = "tests/" ^ d in
   match () with
   | _ when issuffix ".test" d -> Some (TestOK testpath)
   | _ when issuffix ".fail" d -> Some (TestFail testpath)
   | _ -> None
+  )
 
 let find_tests () =
   Sys.readdir "tests"

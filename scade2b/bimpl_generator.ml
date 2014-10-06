@@ -180,4 +180,5 @@ let print_impl_machine ppt b_impl =
 
 let print_prog b_elt file env_inst =
   env_instances := env_inst;
+  node_name := b_elt.name;
   fprintf (formatter_of_out_channel file) "%a@." print_impl_machine b_elt

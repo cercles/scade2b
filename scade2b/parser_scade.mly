@@ -193,7 +193,7 @@ expr :
  | PRAGMA IDENT DOUBLE_COLON IDENT LPAREN expr_list RPAREN { PE_Call ($1, $4, $6) }
  | LPAREN expr RPAREN { $2 }
  | array_expr { PE_Array $1 }
- | ARRAY_PRED LPAREN IDENT COMMA expr RPAREN { $5 }
+ | ARRAY_PRED LPAREN expr RPAREN { $3 }
  | T_REAL expr { PE_Call ("", "to_real", [$2]) }
  | T_INT expr { PE_Call ("", "to_int", [$2]) }
  | SHARP LPAREN expr_list RPAREN { PE_Call ("", "sharp", $3) }

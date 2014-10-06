@@ -65,7 +65,7 @@ let initialisation_kcg_parsing e lexbuf =
     output_string stderr (msg^msg2);
     exit 2
   | Parsing.Parse_error ->
-    let msg = Printf.sprintf "\nCRITICAL ERROR (lexer_kcg): Syntax Error in SCADE," in
+    let msg = Printf.sprintf "\nCRITICAL ERROR (parser_kcg): Syntax Error in SCADE," in
     let msg2 = handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf) in
     output_string !error_log (msg^msg2);
     output_string stderr (msg^msg2);
@@ -75,6 +75,7 @@ let initialisation_kcg_parsing e lexbuf =
 
 (*** PROG_BUILDER                                  *)
 
+(* ERROR : PARSING/LEXING SCADE, GENERATION D'UNE MACHINE ABSTRAITE MINIMALE. *)
 let node_parsing e lexbuf node_xml dir_output node_string consts enums =
   let node_name = node_xml.name in
   begin 
@@ -90,39 +91,13 @@ let node_parsing e lexbuf node_xml dir_output node_string consts enums =
       output_string !error_log (msg^msg2);
       output_string stderr (msg^msg2)
     | e -> print_exc_and_exit e 3
-  end;
-  let lexbuf = Lexing.from_string node_string in 
-  let conditions =
-    try
-      Parser_scade_error.node Lexer_scade_error.token lexbuf
-    with
-    | Lexer_kcg.Lexical_error s ->
-      let msg = Printf.sprintf
-  	"\nWARNING (lexer_scade_error): failed to retrieve conditions in node %s: %s," node_name s in
-      let msg2 = handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf) in
-      output_string !error_log (msg^msg2);
-      output_string stderr (msg^msg2);
-      [], []
-    | Parsing.Parse_error ->
-      let msg = Printf.sprintf
-  	"\nWARNING (parser_scade_error): failed to retrieve conditions in node %s" node_name in
-      let msg2 = handle_error (lexeme_start_p lexbuf, lexeme_end_p lexbuf, lexeme lexbuf) in
-      output_string !error_log (msg^msg2);
-      output_string stderr (msg^msg2);
-      [], []
-  in
-  (* try *)
-  (*   let conditions = Conds_retriever.compute_conditions_error_m conditions consts enums node_xml in *)
-  (*   Babsterror_generator.generate node_xml dir_output conditions *)
-  (* with e -> *)
-  (*   Printf.printf "\nERROR UNKNOWN (node_parsing)"; *)
-  (*   Babsterror_generator.generate_without_cond node_xml dir_output *)
-  ()    
-
+  end
+    
+    
     
 (*** SCADE2B                                       *)
     
-(* WARNING : noeud non trouvé! ne devrait pas arriver *)
+(* WARNING : noeud non trouvé. *)
 let scade2b_node_not_found nodename =
   let msg = Printf.sprintf 
     "\nWARNING (scade2b.translate_nodes): %s not found in prog." nodename
@@ -154,12 +129,6 @@ let scade2b_trad_node e dir_output ast prog =
       in
       output_string !error_log msg;
       output_string stderr msg;
-    | Conds_retriever.Failed -> 
-      let msg = Printf.sprintf
-	"\nERROR : %s Cond_retriever failed!" node_name 
-      in
-      output_string !error_log msg;
-      output_string stderr msg;
     | _ as e ->
       let msg = Printf.sprintf
     	"\nERROR anomaly: %s in node(%s)." (Printexc.to_string e) node_name
@@ -167,6 +136,8 @@ let scade2b_trad_node e dir_output ast prog =
       output_string !error_log msg;
       output_string stderr msg;
   end;
-  let conditions = ast.p_assumes, ast.p_guarantees in
-  (* Babsterror_generator.generate ast dir_output conditions *)
-  ()
+  let ast_b = Conds_retriever.retrieve_ast_b ast prog in
+  let babst_file =
+    open_out (Filename.concat dir_output ("M_" ^ node_name ^ ".mch")) in
+  Babst_generator.print_prog ast_b babst_file;
+  close_out babst_file

@@ -67,7 +67,7 @@ let search_input_in_reg ast_n =
       {ast_n with 
 	n_lambdas = lambdas; 
 	n_env = Env_builder.make_params_ident ast_n.n_env lambdas;
-	n_param_in = ins; 
+	n_param_in = ins;
 	n_pre = pres; 
 	n_eqs = (List.rev !eqs_out)}
     | eq :: eqs_bis -> begin

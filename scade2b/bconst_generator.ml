@@ -49,7 +49,7 @@ let print_concrete_constants ppt = function
 
 let print_machine ppt const_list =
   fprintf ppt
-    "MACHINE M_Consts@\n%a%aEND"
+    "MACHINE M_Const@\n%a%aEND"
     print_concrete_constants (List.map (fun cst -> cst.c_id) const_list)
     print_properties const_list 
 

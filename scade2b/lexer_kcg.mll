@@ -64,6 +64,7 @@ rule token = parse
 
 	  | "package " ident         { token lexbuf }
 	  | "package public " ident  { token lexbuf }
+	  | "open " ident ";"        { token lexbuf }
 	  | "end;"                   { token lexbuf }
 
           | "type"                   { TYPE }
@@ -109,9 +110,6 @@ and node_text = parse
     | '\n' as char { Lexing.new_line lexbuf; 
 		     Buffer.add_char buf char;
 		     node_text lexbuf }
-    | "where"      { raise (Lexical_error "where clause") }
-    | "specialize" { raise (Lexical_error "spec clause") }
-    | "sig"        { raise (Lexical_error "sig clause") }
     | _ as char    { Buffer.add_char buf char;
 		     node_text lexbuf }
 	

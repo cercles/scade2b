@@ -66,7 +66,7 @@ rule token = parse
 
 	  | "fby"                      { FBY }
 
-	  | "Array_PRED"               { ARRAY_PRED }
+	  | "array_predicate"          { ARRAY_PRED }
 
 	  | '+'                        { PLUS }
 	  | '-'                        { MINUS }

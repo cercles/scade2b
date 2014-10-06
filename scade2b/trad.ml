@@ -134,14 +134,13 @@ let translate node sees_cond =
   let env = node.n_env in
   let name = node.n_id in
   let m_params, params_cond =
-    List.split (List.map (fun lambda -> lambda.n_l_ident, lambda.n_l_cond) node.n_lambdas) in
+    List.split (List.map (fun lambda -> id_to_bid env lambda.n_l_ident, lambda.n_l_cond) node.n_lambdas) in
   let m_see_const, m_see_enum = sees_cond in
   let m_constraints = trad_list env n_condition_to_condition params_cond in
   let op_in_params = trad_list env n_decl_to_decl node.n_param_in in
   let op_out_params = trad_list env n_decl_to_decl node.n_param_out in
   let abs_pre_condition = trad_list env n_condition_to_condition node.n_pre in
   let abs_post_condition = trad_list env n_condition_to_condition node.n_post in
-
   let concrete_vars = ref [] in
   let invariant = ref [] in
   let initialisation = ref [] in

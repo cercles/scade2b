@@ -84,7 +84,6 @@ let node_translator node call_map s2b_params prog =
        AVEC MAJ DE LA MAP D'APPEL DE NOEUDS        *)
 
 let translate_prog prog  = 
-
   let s2b_params = prog.s2b_params in
   let call_map = prog.call_map in
   (* Traduction de la liste ordonnée de noeuds *)
@@ -107,7 +106,7 @@ let translate_prog prog  =
   (* Impression des machines M_Consts et M_Enum *)	
   if s2b_params_updated.m_consts_used then begin
     let bconst_file =
-      open_out (Filename.concat s2b_params.dir_output ("M_Consts.mch"))
+      open_out (Filename.concat s2b_params.dir_output ("M_Const.mch"))
     in    
     Bconst_generator.print_m_const prog.consts bconst_file prog.env_prog;
   end;

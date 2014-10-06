@@ -83,6 +83,7 @@ node_const_enum_list :
  | NODE node_const_enum_list { (Node $1) :: $2 }
  | FUNCTION node_const_enum_list { (Function $1) :: $2 }
  | enum_block node_const_enum_list { $1 @ $2 }
+ | error node_const_enum_list { $2 }
 ;
 
 enum_block:
