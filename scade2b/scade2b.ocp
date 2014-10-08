@@ -19,7 +19,6 @@ begin
         "ast_printer_norm.ml"
         "ast_printer_scade.ml"
         "babst_generator.ml"
-        "babsterror_generator.ml"
         "bconst_generator.ml"
         "benum_generator.ml"
         "bimpl_generator.ml"
